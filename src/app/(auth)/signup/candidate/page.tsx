@@ -1,31 +1,75 @@
 "use client";
-import { useState } from "react";
+import axios from "axios";
+import Link from "next/link";
+import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const CandidateSignUp = () => {
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
     useState<boolean>(false);
+  const [isPasswordValid, setIsPasswordValid] = useState<boolean>(true);
+  const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(true);
+
+  // Regular expression for strong password
+  const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const form = e.target as HTMLFormElement;
+
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement)
+      .value;
+    const confirm_password = (
+      form.elements.namedItem("confirm_password") as HTMLInputElement
+    ).value;
+
+    const isValid = passwordPattern.test(password);
+
+    if (!isValid) {
+      return setIsPasswordValid(false);
+    }
+
+    setIsPasswordValid(true);
+
+    if (password !== confirm_password) {
+      return setIsPasswordMatch(false);
+    }
+
+    setIsPasswordMatch(true);
+
+    // create user in db
+    const res = await axios.post(
+      "https://job-portal-backend-xshy.onrender.com/users",
+      { name, email, password, role: "candidate" }
+    );
+    console.log(res.data);
+  };
 
   return (
     <section className="px-4 py-10">
-      <div className="max-w-lg mx-auto bg-blue-100 rounded-lg shadow-lg p-4">
+      <div className="max-w-lg mx-auto bg-blue-200 rounded-lg shadow-lg p-4">
         {/* title */}
-        <h1 className="text-3xl text-black font-bold mb-2">
-          Create an Candidate Account
+        <h1 className="text-xl text-black font-bold mb-2">
+          Create a Candidate Account
         </h1>
+
         {/* small description */}
-        <p className="text-black mb-4 font-medium">
+        <p className="text-black mb-4 font-medium text-sm">
           Join our team to get job opportunities
         </p>
 
         {/* register form */}
-        <form className="space-y-3">
+        <form onSubmit={handleRegister} className="space-y-3">
           <div>
             <p className="text-xs text-gray-500 font-semibold">Name</p>
             <input
               type="text"
-              className="border focus:border-blue-200 border-black w-full mt-1 rounded text-black text-xs p-2"
+              name="name"
+              className="border bg-white/40 border-black w-full mt-1 rounded text-black text-xs p-2"
               placeholder="Enter Your Name"
               required
             />
@@ -35,7 +79,8 @@ const CandidateSignUp = () => {
             <p className="text-xs text-gray-500 font-semibold">Email</p>
             <input
               type="email"
-              className="border focus:border-blue-200 border-black w-full mt-1 rounded text-black text-xs p-2"
+              name="email"
+              className="border bg-white/40 border-black w-full mt-1 rounded text-black text-xs p-2"
               placeholder="Enter Your Email"
               required
             />
@@ -46,7 +91,10 @@ const CandidateSignUp = () => {
             <div className="relative">
               <input
                 type={isShowPassword ? "text" : "password"}
-                className="border focus:border-blue-200 border-black w-full mt-1 rounded text-black text-xs p-2"
+                className={`border bg-white/40 w-full mt-1 rounded text-black text-xs p-2 ${
+                  !isPasswordValid ? "border-red-500" : "border-black"
+                }`}
+                name="password"
                 placeholder="Enter Your Password"
                 required
               />
@@ -64,6 +112,15 @@ const CandidateSignUp = () => {
                   size={17}
                 />
               )}
+
+              {!isPasswordValid && (
+                <p className="text-red-500 text-xs mt-1">
+                  Must be at least 8 characters and include:
+                  <br />• One number
+                  <br />• One lowercase letter
+                  <br />• One uppercase letter
+                </p>
+              )}
             </div>
           </div>
 
@@ -74,8 +131,9 @@ const CandidateSignUp = () => {
             <div className="relative">
               <input
                 type={isShowConfirmPassword ? "text" : "password"}
-                className="border focus:border-blue-200 border-black w-full mt-1 rounded text-black text-xs p-2"
-                placeholder="Repeat The Password"
+                className="border bg-white/40 border-black w-full mt-1 rounded text-black text-xs p-2"
+                placeholder="Enter The Password Again"
+                name="confirm_password"
                 required
               />
 
@@ -96,6 +154,12 @@ const CandidateSignUp = () => {
                   size={17}
                 />
               )}
+
+              {!isPasswordMatch && (
+                <p className="text-red-500 text-xs mt-1">
+                  Password doesn&apos;t match
+                </p>
+              )}
             </div>
           </div>
 
@@ -109,6 +173,16 @@ const CandidateSignUp = () => {
           </div>
         </form>
 
+        <p className="my-2 text-center text-xs text-black">
+          Already Have an Account? Please{" "}
+          <Link
+            href="/login"
+            className="font-semibold text-blue-500 hover:underline"
+          >
+            Login
+          </Link>
+        </p>
+
         {/* divider */}
         <div className="flex gap-1 items-center text-black text-sm my-6">
           <div className="h-0.5 flex-1 bg-black/60 rounded-full"></div>
@@ -116,7 +190,8 @@ const CandidateSignUp = () => {
           <div className="h-0.5 flex-1 bg-black/60 rounded-full"></div>
         </div>
 
-        <GoogleLogin />
+        {/* google login */}
+        {/* <GoogleLogin /> */}
       </div>
     </section>
   );
