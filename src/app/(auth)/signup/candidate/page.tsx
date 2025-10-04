@@ -42,11 +42,15 @@ const CandidateSignUp = () => {
     setIsPasswordMatch(true);
 
     // create user in db
-    const res = await axios.post(
-      "https://job-portal-backend-xshy.onrender.com/users",
-      { name, email, password, role: "candidate" }
-    );
-    console.log(res.data);
+    try {
+      const res = await axios.post(
+        "https://job-portal-backend-xshy.onrender.com/users",
+        { name, email, password, role: "candidate" }
+      );
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

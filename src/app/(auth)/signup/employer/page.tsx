@@ -45,11 +45,15 @@ const EmployerSignUp = () => {
     setIsPasswordMatch(true);
 
     // create user in db
-    const res = await axios.post(
-      "https://job-portal-backend-xshy.onrender.com/users",
-      { name, company_name, email, password, role: "employer" }
-    );
-    console.log(res.data);
+    try {
+      const res = await axios.post(
+        "https://job-portal-backend-xshy.onrender.com/users",
+        { name, company_name, email, password, role: "employer" }
+      );
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
