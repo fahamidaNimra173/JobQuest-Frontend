@@ -1,4 +1,5 @@
 "use client";
+import GoogleLogin from "@/components/GoogleLogin";
 import axios from "axios";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -116,7 +117,7 @@ const LoginPage = () => {
         </div>
 
         {/* google login */}
-        {/* <GoogleLogin /> */}
+        <GoogleLogin />
       </div>
     </section>
   );

@@ -1,4 +1,5 @@
 "use client";
+import GoogleLogin from "@/components/GoogleLogin";
 import axios from "axios";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -209,7 +210,7 @@ const EmployerSignUp = () => {
         </div>
 
         {/* google login */}
-        {/* <GoogleLogin /> */}
+        <GoogleLogin role='employer' />
       </div>
     </section>
   );
