@@ -31,13 +31,13 @@ export const authOptions: NextAuthOptions = {
         );
 
         localStorage.setItem("authToken", JSON.stringify(res.data.token));
-
-        // 3. Clean up the cookie after use
-        if (role) {
-          Cookies.remove("auth_role");
-        }
       } catch (error) {
         console.log("error in options.ts", error);
+      }
+
+      // 3. Clean up the cookie after use
+      if (role) {
+        Cookies.remove("auth_role");
       }
 
       return true;

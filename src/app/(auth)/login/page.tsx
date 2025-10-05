@@ -2,10 +2,13 @@
 import GoogleLogin from "@/components/GoogleLogin";
 import axios from "axios";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
+  const router = useRouter();
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -23,9 +26,11 @@ const LoginPage = () => {
         { email, password }
       );
 
-      localStorage.setItem('authToken', JSON.stringify(res.data.token))
-      localStorage.setItem('user', JSON.stringify(res.data.user))
+      localStorage.setItem("authToken", JSON.stringify(res.data.token));
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       console.log(res.data);
+      router.push("/dashboard");
+      toast.success('You logged in successfully')
     } catch (error) {
       console.log(error);
     }
@@ -120,7 +125,7 @@ const LoginPage = () => {
         </div>
 
         {/* google login */}
-        <GoogleLogin from='login' />
+        <GoogleLogin from="login" />
       </div>
     </section>
   );

@@ -7,6 +7,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { PhoneNumberUtil } from "google-libphonenumber";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -18,6 +20,7 @@ const isPhoneValid = (phone: string) => {
   }
 };
 const CandidateSignUp = () => {
+  const router = useRouter();
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
     useState<boolean>(false);
@@ -77,6 +80,8 @@ const CandidateSignUp = () => {
       localStorage.setItem("authToken", JSON.stringify(res.data.token));
       localStorage.setItem("user", JSON.stringify(res.data.user));
       console.log(res.data);
+      router.push("/dashboard/profile");
+      toast.success('You registered successfully')
     } catch (error) {
       console.log(error);
     }
