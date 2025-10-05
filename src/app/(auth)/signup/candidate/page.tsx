@@ -196,7 +196,7 @@ const CandidateSignUp = () => {
         </div>
 
         {/* google login */}
-        <GoogleLogin role='candidate' />
+        <GoogleLogin role='candidate' from='signup' />
       </div>
     </section>
   );

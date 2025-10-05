@@ -48,7 +48,7 @@ const EmployerSignUp = () => {
     // create user in db
     try {
       const res = await axios.post(
-        "https://job-portal-backend-xshy.onrender.com/users",
+        "https://job-portal-backend-xshy.onrender.com/signup",
         { name, company_name, email, password, role: "employer" }
       );
       console.log(res.data);
@@ -210,7 +210,7 @@ const EmployerSignUp = () => {
         </div>
 
         {/* google login */}
-        <GoogleLogin role='employer' />
+        <GoogleLogin role='employer' from='signup' />
       </div>
     </section>
   );

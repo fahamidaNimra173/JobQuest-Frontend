@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     try {
       const res = await axios.post(
-        "https://job-portal-backend-xshy.onrender.com/users",
+        "https://job-portal-backend-xshy.onrender.com/login",
         { email, password }
       );
       console.log(res.data);
@@ -90,7 +90,7 @@ const LoginPage = () => {
         </form>
 
         <p className="my-2 text-center text-xs text-black">
-          Register as an Candidate? Please{" "}
+          Register as a Candidate? Please{" "}
           <Link
             href="/signup/candidate"
             className="font-semibold text-blue-500 hover:underline"
@@ -117,7 +117,7 @@ const LoginPage = () => {
         </div>
 
         {/* google login */}
-        <GoogleLogin />
+        <GoogleLogin from='login' />
       </div>
     </section>
   );
