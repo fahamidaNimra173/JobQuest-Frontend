@@ -23,6 +23,7 @@ const LoginPage = () => {
         { email, password }
       );
 
+      localStorage.setItem('authToken', JSON.stringify(res.data.token))
       localStorage.setItem('user', JSON.stringify(res.data.user))
       console.log(res.data);
     } catch (error) {

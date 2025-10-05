@@ -7,13 +7,6 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          prompt: "select_account",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
     }),
   ],
 
@@ -32,10 +25,9 @@ export const authOptions: NextAuthOptions = {
           }
         );
 
-        localStorage.setItem('user', JSON.stringify(res.data.user))
-        console.log(res.data);
+        localStorage.setItem('authToken', JSON.stringify(res.data.token))
       } catch (error) {
-        console.log(error);
+        console.log("error in options.ts", error);
       }
 
       return true;

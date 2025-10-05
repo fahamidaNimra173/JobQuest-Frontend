@@ -4,6 +4,19 @@ import axios from "axios";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
+import { PhoneNumberUtil } from "google-libphonenumber";
+
+const phoneUtil = PhoneNumberUtil.getInstance();
+
+const isPhoneValid = (phone: string) => {
+  try {
+    return phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phone));
+  } catch (error) {
+    return false;
+  }
+};
 
 const EmployerSignUp = () => {
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
@@ -11,6 +24,8 @@ const EmployerSignUp = () => {
     useState<boolean>(false);
   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(true);
   const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(true);
+  const [phone, setPhone] = useState<string>("");
+  const isNumberValid = isPhoneValid(phone);
 
   // Regular expression for strong password
   const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
@@ -34,9 +49,9 @@ const EmployerSignUp = () => {
       form.elements.namedItem("confirm_password") as HTMLInputElement
     ).value;
 
-    const isValid = passwordPattern.test(password);
+    const isPasswordValid = passwordPattern.test(password);
 
-    if (!isValid) {
+    if (!isPasswordValid) {
       return setIsPasswordValid(false);
     }
 
@@ -52,10 +67,20 @@ const EmployerSignUp = () => {
     try {
       const res = await axios.post(
         "https://job-portal-backend-xshy.onrender.com/auth/signup",
-        { firstName, lastName, company_name, email, password, role: "employer", provider: 'Email/Password'}
+        {
+          firstName,
+          lastName,
+          company_name,
+          email,
+          phone,
+          password,
+          role: "employer",
+          provider: "Email/Password",
+        }
       );
 
-      localStorage.setItem('user', JSON.stringify(res.data.user))
+      localStorage.setItem("authToken", JSON.stringify(res.data.token));
+      localStorage.setItem("user", JSON.stringify(res.data.user));
       console.log(res.data);
     } catch (error) {
       console.log(error);
@@ -119,6 +144,24 @@ const EmployerSignUp = () => {
               placeholder="Enter Your Email"
               required
             />
+          </div>
+
+          <div>
+            <p className="text-xs text-gray-500 font-semibold">Phone</p>
+            <PhoneInput
+              defaultCountry="bd"
+              value={phone}
+              onChange={(phone) => setPhone(phone)}
+              inputStyle={{
+                width: "100%",
+                backgroundColor: "#D8E9FF",
+              }}
+              required
+            />
+
+            {!isNumberValid && (
+              <p className="text-red-500 text-xs mt-1">Phone is not valid</p>
+            )}
           </div>
 
           <div>
@@ -200,8 +243,9 @@ const EmployerSignUp = () => {
 
           <div className="mt-6">
             <button
+              disabled={!isNumberValid}
               type="submit"
-              className="w-full rounded px-4 py-2 text-white bg-blue-600 text-sm cursor-pointer"
+              className="w-full rounded px-4 py-2 text-white bg-blue-600 text-sm cursor-pointer disabled:bg-gray-300 disabled:text-black/60"
             >
               Register
             </button>
