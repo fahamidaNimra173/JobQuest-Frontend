@@ -1,26 +1,42 @@
 import GoogleProvider from "next-auth/providers/google";
-import type { Account, Profile, User, NextAuthOptions } from "next-auth";
+import type { Profile, NextAuthOptions } from "next-auth";
+import axios from "axios";
 
 export const authOptions: NextAuthOptions = {
-    secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          prompt: "select_account",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
     }),
   ],
 
   callbacks: {
-    async signIn({ user, account, profile }: {
-      user: User;
-      account: Account | null;
-      profile?: Profile;
-    }) {
-      console.log("user:", user);
-      console.log("account:", account);
-      console.log("profile:", profile);
+    async signIn({ profile }: { profile?: Profile }) {
+      const { email, given_name, family_name } = profile as any;
 
-      
+      try {
+        const res = await axios.post(
+          "https://job-portal-backend-xshy.onrender.com/signup",
+          {
+            firstName: given_name,
+            lastName: family_name,
+            email,
+            provider: "Google",
+          }
+        );
+
+        localStorage.setItem('user', JSON.stringify(res.data.user))
+        console.log(res.data);
+      } catch (error) {
+        console.log(error);
+      }
 
       return true;
     },

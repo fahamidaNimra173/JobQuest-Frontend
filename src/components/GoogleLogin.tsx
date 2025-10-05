@@ -7,17 +7,16 @@ interface GoogleLoginProps {
 }
 
 const GoogleLogin: React.FC<GoogleLoginProps> = ({ role, from }) => {
-  const handleGoogleLogin = async (providerName: string) => {
-    await signIn(providerName, {
-      callbackUrl: from === "signup" ? "/dashboard/profile" : "/dashboard",
-      role,
+  const handleGoogleLogin = async () => {
+    await signIn("google", {
+      callbackUrl: from === "signup" ? `/dashboard/profile` : `/dashboard`,
     });
   };
 
   return (
     <div>
       <button
-        onClick={() => handleGoogleLogin("google")}
+        onClick={handleGoogleLogin}
         className="relative cursor-pointer inline-flex w-full items-center justify-center rounded-md border border-gray-400 bg-white px-3.5 py-2.5 font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-black focus:bg-gray-100 focus:text-black focus:outline-none"
         type="button"
       >

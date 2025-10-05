@@ -20,7 +20,10 @@ const EmployerSignUp = () => {
 
     const form = e.target as HTMLFormElement;
 
-    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+    const firstName = (form.elements.namedItem("firstName") as HTMLInputElement)
+      .value;
+    const lastName = (form.elements.namedItem("lastName") as HTMLInputElement)
+      .value;
     const company_name = (
       form.elements.namedItem("company_name") as HTMLInputElement
     ).value;
@@ -49,8 +52,10 @@ const EmployerSignUp = () => {
     try {
       const res = await axios.post(
         "https://job-portal-backend-xshy.onrender.com/signup",
-        { name, company_name, email, password, role: "employer" }
+        { firstName, lastName, company_name, email, password, role: "employer", provider: 'Email/Password'}
       );
+
+      localStorage.setItem('user', JSON.stringify(res.data.user))
       console.log(res.data);
     } catch (error) {
       console.log(error);
@@ -73,12 +78,23 @@ const EmployerSignUp = () => {
         {/* register form */}
         <form onSubmit={handleRegister} className="space-y-3">
           <div>
-            <p className="text-xs text-gray-500 font-semibold">Name</p>
+            <p className="text-xs text-gray-500 font-semibold">First Name</p>
             <input
               type="text"
-              name="name"
+              name="firstName"
               className="border bg-white/40 border-black w-full mt-1 rounded text-black text-xs p-2"
-              placeholder="Enter Your Name"
+              placeholder="Enter Your First Name"
+              required
+            />
+          </div>
+
+          <div>
+            <p className="text-xs text-gray-500 font-semibold">Last Name</p>
+            <input
+              type="text"
+              name="lastName"
+              className="border bg-white/40 border-black w-full mt-1 rounded text-black text-xs p-2"
+              placeholder="Enter Your Last Name"
               required
             />
           </div>
@@ -210,7 +226,7 @@ const EmployerSignUp = () => {
         </div>
 
         {/* google login */}
-        <GoogleLogin role='employer' from='signup' />
+        <GoogleLogin role="employer" from="signup" />
       </div>
     </section>
   );

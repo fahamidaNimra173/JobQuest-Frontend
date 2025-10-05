@@ -20,7 +20,10 @@ const CandidateSignUp = () => {
 
     const form = e.target as HTMLFormElement;
 
-    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+    const firstName = (form.elements.namedItem("firstName") as HTMLInputElement)
+      .value;
+    const lastName = (form.elements.namedItem("lastName") as HTMLInputElement)
+      .value;
     const email = (form.elements.namedItem("email") as HTMLInputElement).value;
     const password = (form.elements.namedItem("password") as HTMLInputElement)
       .value;
@@ -45,9 +48,11 @@ const CandidateSignUp = () => {
     // create user in db
     try {
       const res = await axios.post(
-        "https://job-portal-backend-xshy.onrender.com/users",
-        { name, email, password, role: "candidate" }
+        "https://job-portal-backend-xshy.onrender.com/signup",
+        { firstName, lastName, email, password, role: "candidate", provider: 'Email/Password' }
       );
+
+      localStorage.setItem('user', JSON.stringify(res.data.user))
       console.log(res.data);
     } catch (error) {
       console.log(error);
@@ -70,12 +75,23 @@ const CandidateSignUp = () => {
         {/* register form */}
         <form onSubmit={handleRegister} className="space-y-3">
           <div>
-            <p className="text-xs text-gray-500 font-semibold">Name</p>
+            <p className="text-xs text-gray-500 font-semibold">First Name</p>
             <input
               type="text"
-              name="name"
+              name="firstName"
               className="border bg-white/40 border-black w-full mt-1 rounded text-black text-xs p-2"
-              placeholder="Enter Your Name"
+              placeholder="Enter Your First Name"
+              required
+            />
+          </div>
+
+          <div>
+            <p className="text-xs text-gray-500 font-semibold">Last Name</p>
+            <input
+              type="text"
+              name="lastName"
+              className="border bg-white/40 border-black w-full mt-1 rounded text-black text-xs p-2"
+              placeholder="Enter Your Last Name"
               required
             />
           </div>
@@ -196,7 +212,7 @@ const CandidateSignUp = () => {
         </div>
 
         {/* google login */}
-        <GoogleLogin role='candidate' from='signup' />
+        <GoogleLogin role="candidate" from="signup" />
       </div>
     </section>
   );
