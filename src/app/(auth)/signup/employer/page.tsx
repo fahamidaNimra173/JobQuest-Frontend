@@ -51,7 +51,7 @@ const EmployerSignUp = () => {
     // create user in db
     try {
       const res = await axios.post(
-        "https://job-portal-backend-xshy.onrender.com/signup",
+        "https://job-portal-backend-xshy.onrender.com/auth/signup",
         { firstName, lastName, company_name, email, password, role: "employer", provider: 'Email/Password'}
       );
 

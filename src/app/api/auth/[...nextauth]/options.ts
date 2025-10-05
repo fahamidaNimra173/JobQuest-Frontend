@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
 
       try {
         const res = await axios.post(
-          "https://job-portal-backend-xshy.onrender.com/signup",
+          "https://job-portal-backend-xshy.onrender.com/auth/signup",
           {
             firstName: given_name,
             lastName: family_name,

@@ -19,9 +19,11 @@ const LoginPage = () => {
 
     try {
       const res = await axios.post(
-        "https://job-portal-backend-xshy.onrender.com/login",
+        "https://job-portal-backend-xshy.onrender.com/auth/login",
         { email, password }
       );
+
+      localStorage.setItem('user', JSON.stringify(res.data.user))
       console.log(res.data);
     } catch (error) {
       console.log(error);
