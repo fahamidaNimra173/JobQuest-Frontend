@@ -1,5 +1,6 @@
 import { signIn } from "next-auth/react";
 import React from "react";
+import Cookies from "js-cookie";
 
 interface GoogleLoginProps {
   role?: string; // optional prop
@@ -8,6 +9,11 @@ interface GoogleLoginProps {
 
 const GoogleLogin: React.FC<GoogleLoginProps> = ({ role, from }) => {
   const handleGoogleLogin = async () => {
+    // Set the role in a cookie that expires in 5 minutes
+    if (role) {
+      Cookies.set("auth_role", role, { expires: 1 / 288 });
+    }
+
     await signIn("google", {
       callbackUrl: from === "signup" ? `/dashboard/profile` : `/dashboard`,
     });
