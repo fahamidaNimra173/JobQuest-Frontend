@@ -79,21 +79,59 @@ export default function PostJobPage() {
                             required
                         />
                     </div>
+                    <div>
+                        <label className="label dark:text-white text-gray-800">Job Type</label>
+                        <select
+                            name="jobType"
+                            value={formData.jobType}
+                            onChange={handleChange}
+                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
+                        >
+                            <option>Full-time</option>
+                            <option>Part-time</option>
+                            <option>Contract</option>
+                            <option>Internship</option>
+                        </select>
+                    </div>
 
                     <div>
-                        <label className="label dark:text-white text-gray-800">Company Name</label>
-                        <input
-                            name="companyName"
-                            value={formData.companyName}
+                        <label className="label dark:text-white text-gray-800">Work Arrangement</label>
+                        <select
+                            name="workArrangement"
+                            value={formData.workArrangement}
                             onChange={handleChange}
-                            placeholder="InsightPro"
                             className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                            required
+                        >
+                            <option>On-site</option>
+                            <option>Remote</option>
+                            <option>Hybrid</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="label dark:text-white text-gray-800">Application Deadline</label>
+                        <input
+                            type="date"
+                            name="applicationDeadline"
+                            value={formData.applicationDeadline}
+                            onChange={handleChange}
+                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
                         />
                     </div>
+
                 </div>
 
                 {/* Description fields */}
+                <div>
+                    <label className="label dark:text-white text-gray-800">Company Name</label>
+                    <input
+                        name="companyName"
+                        value={formData.companyName}
+                        onChange={handleChange}
+                        placeholder="InsightPro"
+                        className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
+                        required
+                    />
+                </div>
                 <div>
                     <label className="label dark:text-white text-gray-800">Company Description</label>
                     <textarea
@@ -104,22 +142,22 @@ export default function PostJobPage() {
                         className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
                     />
                 </div>
-
+                <div>
+                    <label className="label flex items-center gap-1">
+                        <MapPin className="w-4 h-4" /> Location
+                    </label>
+                    <input
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        placeholder="London, UK"
+                        className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
+                    />
+                </div>
 
                 {/* Job Details */}
                 <div className="grid gap-4 md:grid-cols-2">
-                    <div>
-                        <label className="label flex items-center gap-1">
-                            <MapPin className="w-4 h-4" /> Location
-                        </label>
-                        <input
-                            name="location"
-                            value={formData.location}
-                            onChange={handleChange}
-                            placeholder="London, UK"
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        />
-                    </div>
+
 
                     <div>
                         <label className="label flex items-center gap-1">
@@ -160,49 +198,10 @@ export default function PostJobPage() {
                         </div>
                     </div>
 
-                    <div>
-                        <label className="label dark:text-white text-gray-800">Application Deadline</label>
-                        <input
-                            type="date"
-                            name="applicationDeadline"
-                            value={formData.applicationDeadline}
-                            onChange={handleChange}
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        />
-                    </div>
+
                 </div>
 
-                {/* Job Type */}
-                <div className="grid gap-4 md:grid-cols-2">
-                    <div>
-                        <label className="label dark:text-white text-gray-800">Job Type</label>
-                        <select
-                            name="jobType"
-                            value={formData.jobType}
-                            onChange={handleChange}
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        >
-                            <option>Full-time</option>
-                            <option>Part-time</option>
-                            <option>Contract</option>
-                            <option>Internship</option>
-                        </select>
-                    </div>
 
-                    <div>
-                        <label className="label dark:text-white text-gray-800">Work Arrangement</label>
-                        <select
-                            name="workArrangement"
-                            value={formData.workArrangement}
-                            onChange={handleChange}
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        >
-                            <option>On-site</option>
-                            <option>Remote</option>
-                            <option>Hybrid</option>
-                        </select>
-                    </div>
-                </div>
 
                 {/* Requirements */}
                 <div className="grid gap-4 md:grid-cols-2">
