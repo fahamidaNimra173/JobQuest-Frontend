@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Prevent flash of unstyled content */
+Prevent flash of unstyled content
 * {
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
@@ -89,26 +89,7 @@ html:not(.dark) {
 .hover\:bg-primary-medium:hover { background-color: var(--primary-medium) !important; }
 .hover\:bg-primary-light:hover { background-color: var(--primary-light) !important; }
 
-/* Input text visibility */
-input, textarea, select {
-  color: var(--foreground) !important;
-  transition: all 0.2s ease;
-}
 
-.dark input,
-.dark textarea,
-.dark select {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-  color: #f9fafb !important;
-}
-
-.dark input:focus,
-.dark textarea:focus,
-.dark select:focus {
-  background-color: #111827 !important;
-  border-color: var(--primary-dark) !important;
-}
 
 /* Theme toggle specific styles */
 [data-theme-toggle] {
@@ -119,24 +100,6 @@ input, textarea, select {
   transform: scale(1.05);
 }
 
-/* Placeholder visibility */
-.placeholder\:text-gray-500::placeholder {
-  color: #6b7280 !important;
-  opacity: 1 !important;
-}
-
-.placeholder\:text-gray-400::placeholder {
-  color: #9ca3af !important;
-  opacity: 1 !important;
-}
-
-.dark .placeholder\:text-gray-500::placeholder {
-  color: #9ca3af !important;
-}
-
-.dark .placeholder\:text-gray-400::placeholder {
-  color: #6b7280 !important;
-}
 
 /* Dark mode card backgrounds */
 .dark .bg-white {
