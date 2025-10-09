@@ -1,14 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Select from "react-select";
-// import { useQuery } from "@tanstack/react-query";
-// import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
-// import { useRouter } from "next/navigation";
-// import Loader from "@/components/Loader";
 
-// ✅ MUI imports
+// MUI imports
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -52,93 +48,37 @@ interface User {
 
 // ---------------------- Main Component ----------------------
 const ManageUsers = () => {
-  // const { user, loading } = useAuth();
-  //   const router = useRouter();
-
   const [searchType, setSearchType] = useState<OptionType>(searchOptions[0]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<OptionType>(roleOptions[0]);
-
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
 
-  // Temporary placeholders to avoid breaking JSX
-  const isLoading = false;
-  const users: User[] = [
-    {
-      _id: "1",
-      name: "Alice Johnson",
-      email: "alice.johnson@example.com",
-      role: "candidate",
-      provider: "google",
-    },
-    {
-      _id: "2",
-      name: "Michael Brown",
-      email: "michael.brown@example.com",
-      role: "employer",
-      provider: "email",
-    },
-    {
-      _id: "3",
-      name: "Sophia Williams",
-      email: "sophia.williams@example.com",
-      role: "admin",
-      provider: "github",
-    },
-    {
-      _id: "4",
-      name: "Daniel Kim",
-      email: "daniel.kim@example.com",
-      role: "candidate",
-      provider: "facebook",
-    },
-    {
-      _id: "5",
-      name: "Olivia Davis",
-      email: "olivia.davis@example.com",
-      role: "employer",
-      provider: "google",
-    },
-    {
-      _id: "6",
-      name: "James Anderson",
-      email: "james.anderson@example.com",
-      role: "candidate",
-      provider: "email",
-    },
-    {
-      _id: "7",
-      name: "Emma Martinez",
-      email: "emma.martinez@example.com",
-      role: "employer",
-      provider: "linkedin",
-    },
-    {
-      _id: "8",
-      name: "William Lee",
-      email: "william.lee@example.com",
-      role: "admin",
-      provider: "github",
-    },
-    {
-      _id: "9",
-      name: "Ava Garcia",
-      email: "ava.garcia@example.com",
-      role: "candidate",
-      provider: "google",
-    },
-    {
-      _id: "10",
-      name: "Ethan Wilson",
-      email: "ethan.wilson@example.com",
-      role: "employer",
-      provider: "email",
-    },
-  ];
+  // Fake users data for demonstration (replace with backend API later)
+  const users: User[] = Array.from({ length: 30 }).map((_, i) => ({
+    _id: (i + 1).toString(),
+    name: `User ${i + 1}`,
+    email: `user${i + 1}@example.com`,
+    role: ["candidate", "employer", "admin"][i % 3],
+    provider: ["google", "email", "github"][i % 3],
+  }));
 
-  const total = 10;
+  // ---------------------- Filtered & Paginated Users ----------------------
+  const filteredUsers = users.filter((u) => {
+    const roleMatch = roleFilter.value === "" || u.role === roleFilter.value;
+    const searchMatch = u[searchType.value as keyof User]
+      .toString()
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    return roleMatch && searchMatch;
+  });
 
+  const paginatedUsers = filteredUsers.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  // ---------------------- Actions ----------------------
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
       title: "Delete user?",
@@ -154,16 +94,34 @@ const ManageUsers = () => {
         await axios.delete(`${window.location.origin}/api/users/${id}`);
         toast.success("User deleted");
       } catch (err: any) {
-        toast.error(
-          err.response?.data?.message || err.message || "Delete failed"
-        );
+        toast.error(err.response?.data?.message || err.message || "Delete failed");
+      }
+    }
+  };
+
+  const handleBan = async (id: string) => {
+    const result = await Swal.fire({
+      title: "Ban user?",
+      text: "Are you sure you want to ban this user?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Ban",
+      cancelButtonText: "No",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.patch(`${window.location.origin}/api/users/${id}`);
+        toast.success("User banned");
+      } catch (err: any) {
+        toast.error(err.response?.data?.message || err.message || "Ban failed");
       }
     }
   };
 
   return (
-    <div className="px-4 py-20">
-      <h2 className="text-2xl font-bold mb-4 text-center text-[#F7602C]">
+    <div className="px-4">
+      <h2 className="text-2xl font-bold mb-4 text-center text-[#7670D6]">
         Manage Users
       </h2>
 
@@ -180,11 +138,7 @@ const ManageUsers = () => {
           }}
           className="w-full md:w-1/3"
           styles={{
-            control: (base) => ({
-              ...base,
-              minHeight: 40,
-              height: 40,
-            }),
+            control: (base) => ({ ...base, minHeight: 40, height: 40 }),
           }}
         />
 
@@ -212,29 +166,19 @@ const ManageUsers = () => {
           }}
           className="w-full md:w-1/3"
           styles={{
-            control: (base) => ({
-              ...base,
-              minHeight: 40,
-              height: 40,
-            }),
+            control: (base) => ({ ...base, minHeight: 40, height: 40 }),
           }}
         />
       </div>
 
       {/* Table */}
-      {isLoading ? (
-        // <Loader />
-        <p className="text-center mt-10 text-gray-600 text-lg font-medium">
-          Loading...
-        </p>
-      ) : users.length === 0 ? (
+      {paginatedUsers.length === 0 ? (
         <p className="text-center mt-10 text-gray-600 text-lg font-medium">
           No users found.
         </p>
       ) : (
         <TableContainer component={Paper}>
           <Table aria-label="users table" size="small">
-            {/* ✅ Header row */}
             <TableHead>
               <TableRow>
                 <TableCell sx={{ py: 0.5 }} align="center">
@@ -247,10 +191,10 @@ const ManageUsers = () => {
                   Email
                 </TableCell>
                 <TableCell sx={{ py: 0.5 }} align="center">
-                  Provider
+                  Role
                 </TableCell>
                 <TableCell sx={{ py: 0.5 }} align="center">
-                  Role
+                  Provider
                 </TableCell>
                 <TableCell sx={{ py: 0.5 }} align="center">
                   Actions
@@ -259,9 +203,9 @@ const ManageUsers = () => {
             </TableHead>
 
             <TableBody>
-              {users.map((u, i) => (
+              {paginatedUsers.map((u, i) => (
                 <TableRow key={u._id}>
-                  <TableCell sx={{ py: 0.5 }}>
+                  <TableCell sx={{ py: 0.5 }} align="center">
                     {page * rowsPerPage + i + 1}
                   </TableCell>
                   <TableCell sx={{ py: 0.5 }} align="center">
@@ -270,31 +214,33 @@ const ManageUsers = () => {
                   <TableCell sx={{ py: 0.5 }} align="center">
                     {u.email}
                   </TableCell>
-                  <TableCell
-                    sx={{ py: 0.5 }}
-                    align="center"
-                    className="capitalize"
-                  >
+                  <TableCell sx={{ py: 0.5 }} align="center" className="capitalize">
                     {u.role}
                   </TableCell>
-                  <TableCell sx={{ py: 0.5 }} align="center">
+                  <TableCell sx={{ py: 0.5 }} align="center" className="capitalize">
                     {u.provider}
                   </TableCell>
                   <TableCell sx={{ py: 0.5 }} align="center">
-                    {u.email === "sophia.williams@example.com" ? (
-                      ""
-                    ) : (
+                    <div className="flex gap-2 items-center justify-center">
+                      <Button
+                        onClick={() => handleBan(u._id)}
+                        variant="contained"
+                        sx={{ fontSize: "12px", padding: "6px" }}
+                        size="small"
+                        color="error"
+                      >
+                        Ban
+                      </Button>
                       <Button
                         onClick={() => handleDelete(u._id)}
                         variant="contained"
                         sx={{ fontSize: "12px", padding: "6px" }}
                         size="small"
-                        className="text-white"
                         color="error"
                       >
                         Delete
                       </Button>
-                    )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -305,14 +251,11 @@ const ManageUsers = () => {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 20, 30]}
                   colSpan={6}
-                  count={total}
+                  count={filteredUsers.length} // filtered count!
                   rowsPerPage={rowsPerPage}
                   page={page}
-                  SelectProps={{
-                    inputProps: { "aria-label": "rows per page" },
-                    native: false,
-                  }}
-                  onPageChange={(_event, newPage) => setPage(newPage)}
+                  SelectProps={{ inputProps: { "aria-label": "rows per page" }, native: false }}
+                  onPageChange={(event, newPage) => setPage(newPage)}
                   onRowsPerPageChange={(event) => {
                     setRowsPerPage(parseInt(event.target.value, 10));
                     setPage(0);
