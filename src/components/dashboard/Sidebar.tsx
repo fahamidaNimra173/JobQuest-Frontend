@@ -8,13 +8,11 @@ import {
   FileText,
   Bell,
   Heart,
-  Settings,
   Lock,
   LogOut,
   Menu,
   X,
-  Briefcase,
-  Search
+  Briefcase
 } from 'lucide-react';
 import clsx from 'clsx';
 import { useToast } from '@/components/ui/Toast';
@@ -27,8 +25,6 @@ const navigation = [
   { name: 'Job Alerts', href: '/dashboard/job-alerts', icon: Bell },
   { name: 'Saved Jobs', href: '/dashboard/saved-jobs', icon: Heart },
   { name: 'My Resume', href: '/dashboard/resume', icon: FileText },
-  { name: 'Job Search', href: '/dashboard/search', icon: Search },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   { name: 'Change Password', href: '/dashboard/change-password', icon: Lock },
 ];
 

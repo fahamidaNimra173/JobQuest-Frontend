@@ -1,5 +1,5 @@
 import React from 'react';
-import { Briefcase, Heart, Bell, Calendar, MapPin, DollarSign, Search, FileText } from 'lucide-react';
+import { Briefcase, Heart, Bell, Calendar, MapPin, DollarSign, FileText } from 'lucide-react';
 import Link from 'next/link';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 
@@ -126,10 +126,6 @@ export default function DashboardOverview({ data }: DashboardOverviewProps) {
         <div className="bg-white rounded-lg shadow-sm border p-6">
           <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
           <div className="space-y-3">
-            <Link href="/dashboard/search" className="w-full text-left p-3 rounded-lg hover:bg-gray-50 flex items-center space-x-3 transition-colors">
-              <Search className="w-5 h-5" style={{color: '#7670d6'}} />
-              <span className="text-sm font-medium">Search New Jobs</span>
-            </Link>
             <Link href="/dashboard/resume" className="w-full text-left p-3 rounded-lg hover:bg-gray-50 flex items-center space-x-3 transition-colors">
               <FileText className="w-5 h-5" style={{color: '#7670d6'}} />
               <span className="text-sm font-medium">Update Resume</span>
