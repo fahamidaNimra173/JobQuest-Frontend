@@ -63,7 +63,7 @@ export default function SettingsContent() {
     setSettings(prev => ({
       ...prev,
       [section]: {
-        ...(prev as any)[section],
+        ...((prev as {[key: string]: unknown})[section] as Record<string, string | boolean> || {}),
         [field]: value
       }
     }));

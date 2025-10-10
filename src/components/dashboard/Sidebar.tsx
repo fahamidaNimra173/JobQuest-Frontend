@@ -115,6 +115,29 @@ export default function Sidebar() {
             })}
           </nav>
 
+          {/* User Info Section */}
+          <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              {/* User Photo */}
+              <div className="w-12 h-12 bg-primary-dark rounded-full flex items-center justify-center flex-shrink-0">
+                <User className="w-6 h-6 text-white" />
+              </div>
+              
+              {/* User Details */}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
+                  John Doe
+                </p>
+                <p className="text-xs text-primary-dark dark:text-primary-medium font-medium">
+                  Software Developer
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  john.doe@example.com
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Logout */}
           <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
             <button 

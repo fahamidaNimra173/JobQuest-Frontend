@@ -1,5 +1,5 @@
 import React from 'react';
-import { Briefcase, Heart, Bell, Eye, Calendar, MapPin, DollarSign, Search, FileText } from 'lucide-react';
+import { Briefcase, Heart, Bell, Calendar, MapPin, DollarSign, Search, FileText } from 'lucide-react';
 import Link from 'next/link';
 import Breadcrumb from '@/components/ui/Breadcrumb';
 
@@ -8,7 +8,6 @@ interface DashboardData {
     appliedJobs: number;
     savedJobs: number;
     jobAlerts: number;
-    profileViews: number;
   };
   recentApplications: Array<{
     id: number;
@@ -52,13 +51,6 @@ export default function DashboardOverview({ data }: DashboardOverviewProps) {
       icon: Bell,
       color: '#7670d6',
       bgColor: 'bg-primary-dark'
-    },
-    {
-      title: 'Profile Views',
-      value: stats.profileViews,
-      icon: Eye,
-      color: '#7670d6',
-      bgColor: 'bg-primary-dark'
     }
   ];
 
@@ -74,7 +66,7 @@ export default function DashboardOverview({ data }: DashboardOverviewProps) {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {statCards.map((stat, index) => (
           <div key={index} className={`rounded-lg p-6 ${stat.bgColor}`}>
             <div className="flex items-center justify-between">
