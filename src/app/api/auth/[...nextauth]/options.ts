@@ -1,7 +1,7 @@
 import GoogleProvider from "next-auth/providers/google";
 import type { Profile, NextAuthOptions } from "next-auth";
 import axios from "axios";
-import Cookies from "js-cookie";
+import { cookies } from "next/headers";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,32 +13,32 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ profile }: { profile?: Profile }) {
-      const { email, given_name, family_name } = profile as any;
+      const { email, given_name } = profile as any;
 
-      // 1. Read the role from the cookie
-      const role = Cookies.get("auth_role");
+      // ✅ Await cookies() properly
+      const cookieStore = await cookies();
+      const role = cookieStore.get("auth_role")?.value;
+
+      console.log("Auth role:", role);
 
       try {
         const res = await axios.post(
-          "https://job-portal-backend-xshy.onrender.com/auth/signup",
+          `https://job-portal-backend-xshy.onrender.com/api/${role === "candidate" ? "candidates" : "employers"}`,
           {
-            firstName: given_name,
-            lastName: family_name,
+            name: `${given_name}`,
             email,
             provider: "Google",
             role,
           }
         );
 
-        localStorage.setItem("authToken", JSON.stringify(res.data.token));
-      } catch (error) {
-        console.log("error in options.ts", error);
+        console.log("Signup success:", res.data);
+      } catch (error: any) {
+        console.error("Error in options.ts:", error.response?.data || error.message);
       }
 
-      // 3. Clean up the cookie after use
-      if (role) {
-        Cookies.remove("auth_role");
-      }
+      // ✅ Remove cookie on server side
+      cookieStore.delete("auth_role");
 
       return true;
     },
