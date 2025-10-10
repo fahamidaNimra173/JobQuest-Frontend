@@ -95,7 +95,7 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
     <div className="space-y-6">
       {/* Breadcrumb */}
       <Breadcrumb items={breadcrumbItems} />
-      
+
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Jobs Applied</h1>
@@ -108,16 +108,20 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Applied</p>
-              <p className="text-2xl font-bold text-gray-900">{appliedJobs.length}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {appliedJobs.length}
+              </p>
             </div>
-            <Briefcase className="w-8 h-8" style={{color: '#7670d6'}} />
+            <Briefcase className="w-8 h-8" style={{ color: "#7670d6" }} />
           </div>
         </div>
         <div className="bg-white rounded-lg p-4 border">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Under Review</p>
-              <p className="text-2xl font-bold text-gray-900">{statusCounts['Under Review'] || 0}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {statusCounts["Under Review"] || 0}
+              </p>
             </div>
             <AlertCircle className="w-8 h-8 text-yellow-500" />
           </div>
@@ -126,7 +130,9 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Interviews</p>
-              <p className="text-2xl font-bold text-gray-900">{statusCounts['Interview Scheduled'] || 0}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {statusCounts["Interview Scheduled"] || 0}
+              </p>
             </div>
             <Calendar className="w-8 h-8 text-green-500" />
           </div>
@@ -135,7 +141,9 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Offers</p>
-              <p className="text-2xl font-bold text-gray-900">{statusCounts['Offer'] || 0}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {statusCounts["Offer"] || 0}
+              </p>
             </div>
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
@@ -154,7 +162,7 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-                style={{'--tw-ring-color': '#7670d6'} as React.CSSProperties}
+                style={{ "--tw-ring-color": "#7670d6" } as React.CSSProperties}
               />
             </div>
           </div>
@@ -164,10 +172,12 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-              style={{'--tw-ring-color': '#7670d6'} as React.CSSProperties}
+              style={{ "--tw-ring-color": "#7670d6" } as React.CSSProperties}
             >
-              {statusOptions.map(status => (
-                <option key={status} value={status}>{status}</option>
+              {statusOptions.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
               ))}
             </select>
           </div>
@@ -175,17 +185,22 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
       </div>
 
       {/* Jobs List */}
-      <div className="bg-white rounded-lg border">
+      <div className="bg-white rounded-lg border overflow-hidden">
         <div className="p-6">
           <div className="space-y-4">
             {filteredJobs.length === 0 ? (
               <div className="text-center py-8">
                 <Briefcase className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">No applications found matching your criteria.</p>
+                <p className="text-gray-500">
+                  No applications found matching your criteria.
+                </p>
               </div>
             ) : (
               filteredJobs.map((job) => (
-                <div key={job.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                <div
+                  key={job.id}
+                  className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-4 flex-1">
                       <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
@@ -194,8 +209,15 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
                       <div className="flex-1">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h3 className="font-semibold text-gray-900">{job.position}</h3>
-                            <p className="font-medium" style={{color: '#7670d6'}}>{job.company}</p>
+                            <h3 className="font-semibold text-gray-900">
+                              {job.position}
+                            </h3>
+                            <p
+                              className="font-medium"
+                              style={{ color: "#7670d6" }}
+                            >
+                              {job.company}
+                            </p>
                             <div className="flex items-center space-x-4 text-sm text-gray-600 mt-2">
                               <div className="flex items-center">
                                 <MapPin className="w-4 h-4 mr-1" />
@@ -207,12 +229,17 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
                               </div>
                               <div className="flex items-center">
                                 <Calendar className="w-4 h-4 mr-1" />
-                                Applied {new Date(job.appliedDate).toLocaleDateString()}
+                                Applied{" "}
+                                {new Date(job.appliedDate).toLocaleDateString()}
                               </div>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <div className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(job.status)}`}>
+                            <div
+                              className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
+                                job.status
+                              )}`}
+                            >
                               {getStatusIcon(job.status)}
                               <span className="ml-1">{job.status}</span>
                             </div>
@@ -243,12 +270,19 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
       {selectedJob && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={() => setSelectedJob(null)} />
+            <div
+              className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
+              onClick={() => setSelectedJob(null)}
+            />
             <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{selectedJob.position}</h3>
-                  <p className="text-blue-600 font-medium">{selectedJob.company}</p>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {selectedJob.position}
+                  </h3>
+                  <p className="text-blue-600 font-medium">
+                    {selectedJob.company}
+                  </p>
                 </div>
                 <button
                   onClick={() => setSelectedJob(null)}
@@ -257,16 +291,20 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
                   <XCircle className="w-6 h-6" />
                 </button>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Status:</span>
-                  <div className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(selectedJob.status)}`}>
+                  <div
+                    className={`flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
+                      selectedJob.status
+                    )}`}
+                  >
                     {getStatusIcon(selectedJob.status)}
                     <span className="ml-1">{selectedJob.status}</span>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Location:</span>
@@ -282,13 +320,19 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Applied:</span>
-                    <span className="font-medium">{new Date(selectedJob.appliedDate).toLocaleDateString()}</span>
+                    <span className="font-medium">
+                      {new Date(selectedJob.appliedDate).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
-                
+
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Job Description</h4>
-                  <p className="text-sm text-gray-600">{selectedJob.description}</p>
+                  <h4 className="font-medium text-gray-900 mb-2">
+                    Job Description
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    {selectedJob.description}
+                  </p>
                 </div>
               </div>
             </div>

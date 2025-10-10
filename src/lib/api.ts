@@ -41,15 +41,35 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config);
-      const data = await response.json();
+      
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      const isJson = contentType && contentType.includes('application/json');
+      
+      let data;
+      if (isJson) {
+        data = await response.json();
+      } else {
+        // If not JSON, likely an error page (HTML)
+        const textContent = await response.text();
+        if (!response.ok) {
+          throw new Error(`Server error (${response.status}): ${response.statusText}`);
+        }
+        // Fallback for non-JSON success responses
+        data = { success: true, data: textContent, message: 'Success' };
+      }
 
       if (!response.ok) {
-        throw new Error(data.message || 'An error occurred');
+        throw new Error(data.message || `Server error (${response.status}): ${response.statusText}`);
       }
 
       return data;
     } catch (error) {
       console.error('API Request failed:', error);
+      // Provide more specific error messages
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to the server. Please check your internet connection and try again.');
+      }
       throw error;
     }
   }
@@ -137,42 +157,7 @@ class ApiClient {
     return this.request('/user/saved-jobs');
   }
 
-  // Job alerts endpoints
-  async getJobAlerts() {
-    return this.request('/user/job-alerts');
-  }
-
-  async createJobAlert(alertData: Record<string, unknown>) {
-    return this.request('/user/job-alerts', {
-      method: 'POST',
-      body: JSON.stringify(alertData),
-    });
-  }
-
-  async updateJobAlert(alertId: string, alertData: Record<string, unknown>) {
-    return this.request(`/user/job-alerts/${alertId}`, {
-      method: 'PUT',
-      body: JSON.stringify(alertData),
-    });
-  }
-
-  async deleteJobAlert(alertId: string) {
-    return this.request(`/user/job-alerts/${alertId}`, {
-      method: 'DELETE',
-    });
-  }
-
-  // Resume endpoints
-  async getResume() {
-    return this.request('/user/resume');
-  }
-
-  async updateResume(resumeData: Record<string, unknown>) {
-    return this.request('/user/resume', {
-      method: 'PUT',
-      body: JSON.stringify(resumeData),
-    });
-  }
+  // Resume file upload endpoints (only used endpoints kept)
 
   async uploadResumeFile(file: File) {
     const formData = new FormData();
@@ -185,16 +170,14 @@ class ApiClient {
     });
   }
 
-  // Settings endpoints
-  async getSettings() {
-    return this.request('/user/settings');
+  async deleteResumeFile(resumeId: string) {
+    return this.request(`/user/resume/${resumeId}`, {
+      method: 'DELETE',
+    });
   }
 
-  async updateSettings(settings: Record<string, unknown>) {
-    return this.request('/user/settings', {
-      method: 'PUT',
-      body: JSON.stringify(settings),
-    });
+  async getUploadedResumes() {
+    return this.request('/user/resume/files');
   }
 }
 

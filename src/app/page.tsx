@@ -47,11 +47,11 @@ export default function Home() {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
               <Link
-                href="/dashboard/search"
+                href="/dashboard"
                 className="bg-white dark:bg-gray-700 text-primary-dark dark:text-primary-light border-2 border-primary-dark dark:border-primary-light px-8 py-4 rounded-lg hover:opacity-90 transition-colors flex items-center justify-center text-lg font-medium"
               >
                 <Search className="w-5 h-5 mr-2" />
-                Search Jobs
+                View Dashboard
               </Link>
             </div>
           </div>
