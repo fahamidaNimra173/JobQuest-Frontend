@@ -1,15 +1,27 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Major_Mono_Display, Sedan_SC, Junge } from 'next/font/google';
 import "./globals.css";
+import Footer from "./component/shared/Footer";
+import Navbar from "./component/shared/Navbar";
+import Script from "next/script";
+import { Toaster } from "react-hot-toast";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+export const majorMono = Major_Mono_Display({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-heading',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+export const sen = Sedan_SC({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-body',
+});
+
+export const junge = Junge({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-accent',
 });
 
 export const metadata: Metadata = {
@@ -25,9 +37,25 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${junge.variable} ${majorMono.variable} ${sen.variable} antialiased scroll-smooth`}
       >
-        {children}
+        <Navbar></Navbar>
+
+        <Script
+          src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.1/dist/dotlottie-wc.js"
+          strategy="beforeInteractive"
+          type="module"
+        />
+
+
+
+          <div className="min-h-screen ">
+            {children}
+            <Toaster position="top-center" reverseOrder={false} />
+
+          </div>
+
+          <Footer></Footer>
       </body>
     </html>
   );
