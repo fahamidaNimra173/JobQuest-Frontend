@@ -185,6 +185,16 @@ class ApiClient {
     });
   }
 
+  async deleteResumeFile(resumeId: string) {
+    return this.request(`/user/resume/${resumeId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getUploadedResumes() {
+    return this.request('/user/resume/files');
+  }
+
   // Settings endpoints
   async getSettings() {
     return this.request('/user/settings');
