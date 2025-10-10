@@ -363,32 +363,6 @@ export default function ChangePasswordContent() {
           </div>
         </form>
       </div>
-
-      {/* Additional Security */}
-      <div className="bg-white rounded-lg border p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Security</h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div>
-              <h4 className="font-medium text-gray-900">Two-Factor Authentication</h4>
-              <p className="text-sm text-gray-600">Add an extra layer of security to your account</p>
-            </div>
-            <button className="px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90 transition-colors">
-              Enable 2FA
-            </button>
-          </div>
-          
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div>
-              <h4 className="font-medium text-gray-900">Active Sessions</h4>
-              <p className="text-sm text-gray-600">Manage devices that are currently logged in</p>
-            </div>
-            <button className="px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90 transition-colors">
-              View Sessions
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
