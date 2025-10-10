@@ -64,7 +64,7 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
         { name: 'Dashboard', href: '/dashboard', icon: Briefcase },
         { name: 'My Profile', href: '/dashboard/profile', icon: User },
         { name: 'Jobs Applied', href: '/dashboard/jobs-applied', icon: Briefcase },
-        { name: 'Job Alerts', href: '/dashboard/job-alerts', icon: Bell },
+        // Removed Job Alerts navigation item
         { name: 'Saved Jobs', href: '/dashboard/saved-jobs', icon: Heart },
         { name: 'My Resume', href: '/dashboard/resume', icon: FileText },
         { name: 'Change Password', href: '/dashboard/change-password', icon: Lock },

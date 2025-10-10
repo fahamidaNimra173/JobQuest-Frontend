@@ -157,30 +157,7 @@ class ApiClient {
     return this.request('/user/saved-jobs');
   }
 
-  // Job alerts endpoints
-  async getJobAlerts() {
-    return this.request('/user/job-alerts');
-  }
-
-  async createJobAlert(alertData: Record<string, unknown>) {
-    return this.request('/user/job-alerts', {
-      method: 'POST',
-      body: JSON.stringify(alertData),
-    });
-  }
-
-  async updateJobAlert(alertId: string, alertData: Record<string, unknown>) {
-    return this.request(`/user/job-alerts/${alertId}`, {
-      method: 'PUT',
-      body: JSON.stringify(alertData),
-    });
-  }
-
-  async deleteJobAlert(alertId: string) {
-    return this.request(`/user/job-alerts/${alertId}`, {
-      method: 'DELETE',
-    });
-  }
+  // Removed job alerts endpoints
 
   // Resume file upload endpoints (only used endpoints kept)
 

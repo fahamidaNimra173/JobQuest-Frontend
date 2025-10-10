@@ -7,7 +7,7 @@ interface DashboardData {
   stats: {
     appliedJobs: number;
     savedJobs: number;
-    jobAlerts: number;
+    // Removed jobAlerts property
   };
   recentApplications: Array<{
     id: number;
@@ -30,6 +30,7 @@ export default function DashboardOverview({ data }: DashboardOverviewProps) {
     { name: 'Overview', href: '/dashboard', current: true }
   ];
 
+  // Removed job alerts stat card
   const statCards = [
     {
       title: 'Applied Jobs',
@@ -42,13 +43,6 @@ export default function DashboardOverview({ data }: DashboardOverviewProps) {
       title: 'Saved Jobs',
       value: stats.savedJobs,
       icon: Heart,
-      color: '#7670d6',
-      bgColor: 'bg-primary-dark'
-    },
-    {
-      title: 'Job Alerts',
-      value: stats.jobAlerts,
-      icon: Bell,
       color: '#7670d6',
       bgColor: 'bg-primary-dark'
     }
@@ -71,7 +65,7 @@ export default function DashboardOverview({ data }: DashboardOverviewProps) {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {statCards.map((stat, index) => (
           <div key={index} className={`rounded-lg p-6 ${stat.bgColor}`}>
             <div className="flex items-center justify-between">
@@ -154,13 +148,7 @@ export default function DashboardOverview({ data }: DashboardOverviewProps) {
               <FileText className="w-5 h-5" style={{ color: "#7670d6" }} />
               <span className="text-sm font-medium">Update Resume</span>
             </Link>
-            <Link
-              href="/dashboard/job-alerts"
-              className="w-full text-left p-3 rounded-lg hover:bg-gray-50 flex items-center space-x-3 transition-colors"
-            >
-              <Bell className="w-5 h-5" style={{ color: "#7670d6" }} />
-              <span className="text-sm font-medium">Set Job Alert</span>
-            </Link>
+            {/* Removed job alerts quick action */}
           </div>
         </div>
 
