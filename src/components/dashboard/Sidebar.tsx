@@ -12,26 +12,82 @@ import {
   LogOut,
   Menu,
   X,
-  Briefcase
+  Briefcase,
+  BarChart3,
+  Users,
+  MessageSquare,
+  Settings,
+  ClipboardList,
+  LucideIcon
 } from 'lucide-react';
 import clsx from 'clsx';
 import { useToast } from '@/components/ui/Toast';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Briefcase },
-  { name: 'My Profile', href: '/dashboard/profile', icon: User },
-  { name: 'Jobs Applied', href: '/dashboard/jobs-applied', icon: Briefcase },
-  { name: 'Job Alerts', href: '/dashboard/job-alerts', icon: Bell },
-  { name: 'Saved Jobs', href: '/dashboard/saved-jobs', icon: Heart },
-  { name: 'My Resume', href: '/dashboard/resume', icon: FileText },
-  { name: 'Change Password', href: '/dashboard/change-password', icon: Lock },
-];
+// Define navigation based on user role
+type UserRole = 'Admin' | 'Candidate' | 'Employer';
+
+interface NavigationItem {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+}
+
+const getNavigationByRole = (role: UserRole): NavigationItem[] => {
+  switch (role) {
+    case 'Admin':
+      return [
+        { name: 'Dashboard', href: '/dashboard', icon: Briefcase },
+        { name: 'Statistics', href: '/dashboard/statistics', icon: BarChart3 },
+        { name: 'Job Posts', href: '/dashboard/job-posts', icon: Briefcase },
+        { name: 'Job Applies', href: '/dashboard/job-applies', icon: ClipboardList },
+        { name: 'Manage Users', href: '/dashboard/manage-users', icon: Users },
+        { name: 'Manage Reviews', href: '/dashboard/manage-reviews', icon: MessageSquare },
+        { name: 'Manage Job Posts', href: '/dashboard/manage-job-posts', icon: Settings },
+        { name: 'Manage Community Posts', href: '/dashboard/manage-community-posts', icon: MessageSquare },
+        { name: 'My Profile', href: '/dashboard/profile', icon: User },
+        { name: 'Change Password', href: '/dashboard/change-password', icon: Lock },
+      ];
+    
+    case 'Employer':
+      return [
+        { name: 'Dashboard', href: '/dashboard', icon: Briefcase },
+        { name: 'Job Posts', href: '/dashboard/job-posts', icon: Briefcase },
+        { name: 'My Jobs', href: '/dashboard/my-jobs', icon: ClipboardList },
+        { name: 'My Profile', href: '/dashboard/profile', icon: User },
+        { name: 'Change Password', href: '/dashboard/change-password', icon: Lock },
+      ];
+    
+    case 'Candidate':
+    default:
+      return [
+        { name: 'Dashboard', href: '/dashboard', icon: Briefcase },
+        { name: 'My Profile', href: '/dashboard/profile', icon: User },
+        { name: 'Jobs Applied', href: '/dashboard/jobs-applied', icon: Briefcase },
+        { name: 'Job Alerts', href: '/dashboard/job-alerts', icon: Bell },
+        { name: 'Saved Jobs', href: '/dashboard/saved-jobs', icon: Heart },
+        { name: 'My Resume', href: '/dashboard/resume', icon: FileText },
+        { name: 'Change Password', href: '/dashboard/change-password', icon: Lock },
+      ];
+  }
+};
 
 export default function Sidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState<UserRole>('Candidate'); // For demo purposes
   const pathname = usePathname();
   const { showToast } = useToast();
+  
+  const navigation = getNavigationByRole(userRole);
+  
+  // Demo function to switch roles - in real app this would come from auth context
+  const switchRole = () => {
+    const roles: UserRole[] = ['Candidate', 'Employer', 'Admin'];
+    const currentIndex = roles.indexOf(userRole);
+    const nextRole = roles[(currentIndex + 1) % roles.length];
+    setUserRole(nextRole);
+    showToast('info', 'Role Changed', `Switched to ${nextRole} view`);
+  };
 
   const handleLogout = () => {
     console.log('Logout clicked');
@@ -125,13 +181,21 @@ export default function Sidebar() {
                   John Doe
                 </p>
                 <p className="text-xs text-primary-dark dark:text-primary-medium font-medium">
-                  Software Developer
+                  {userRole}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                   john.doe@example.com
                 </p>
               </div>
             </div>
+            
+            {/* Demo Role Switcher - Remove in production */}
+            <button
+              onClick={switchRole}
+              className="w-full mt-2 px-3 py-2 text-xs bg-primary-dark text-white rounded-lg hover:opacity-90 transition-colors"
+            >
+              Switch Role (Demo)
+            </button>
           </div>
 
           {/* Logout */}
