@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+<<<<<<< HEAD
+import { ToastContainer } from "react-toastify";
+import AuthProvider from "@/providers/AuthProvider";
+=======
 import { ToastProvider } from '@/components/ui/Toast';
 import { ThemeProvider } from '@/components/theme-provider';
+>>>>>>> 09a0f74469c7489d1e25af5f272102edf5d4ce33
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +20,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+<<<<<<< HEAD
+  title: "Job Quest",
+  description: "Job Quest is a job portal.",
+=======
   title: "JobQuest - Find Your Dream Job",
   description: "Discover thousands of job opportunities with JobQuest. Manage all your job search activities from one dashboard.",
+>>>>>>> 09a0f74469c7489d1e25af5f272102edf5d4ce33
 };
 
 export default function RootLayout({
@@ -25,6 +35,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+<<<<<<< HEAD
+    <html lang="en">
+      <AuthProvider>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          {children}
+          <ToastContainer></ToastContainer>
+        </body>
+      </AuthProvider>
+=======
     <html lang="en" suppressHydrationWarning>
       <head>
         <script
@@ -66,6 +87,7 @@ export default function RootLayout({
           </ToastProvider>
         </ThemeProvider>
       </body>
+>>>>>>> 09a0f74469c7489d1e25af5f272102edf5d4ce33
     </html>
   );
 }
