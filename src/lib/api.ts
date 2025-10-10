@@ -157,8 +157,6 @@ class ApiClient {
     return this.request('/user/saved-jobs');
   }
 
-  // Removed job alerts endpoints
-
   // Resume file upload endpoints (only used endpoints kept)
 
   async uploadResumeFile(file: File) {
