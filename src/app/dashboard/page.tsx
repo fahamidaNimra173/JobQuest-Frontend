@@ -13,8 +13,7 @@ export default async function DashboardPage() {
     stats: {
       appliedJobs: 24,
       savedJobs: 12,
-      jobAlerts: 8,
-      profileViews: 156
+      jobAlerts: 8
     },
     recentApplications: [
       {
