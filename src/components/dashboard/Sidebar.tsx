@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   User,
   FileText,
@@ -18,14 +18,14 @@ import {
   MessageSquare,
   Settings,
   ClipboardList,
-  LucideIcon
-} from 'lucide-react';
-import clsx from 'clsx';
-import { useToast } from '@/components/ui/Toast';
-import ThemeToggle from '@/components/ui/ThemeToggle';
+  LucideIcon,
+} from "lucide-react";
+import clsx from "clsx";
+import { useToast } from "@/components/ui/Toast";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 // Define navigation based on user role
-type UserRole = 'Admin' | 'Candidate' | 'Employer';
+type UserRole = "Admin" | "Candidate" | "Employer";
 
 interface NavigationItem {
   name: string;
@@ -35,76 +35,111 @@ interface NavigationItem {
 
 const getNavigationByRole = (role: UserRole): NavigationItem[] => {
   switch (role) {
-    case 'Admin':
+    case "Admin":
       return [
-        { name: 'Dashboard', href: '/dashboard', icon: Briefcase },
-        { name: 'Statistics', href: '/dashboard/statistics', icon: BarChart3 },
-        { name: 'Job Posts', href: '/dashboard/job-posts', icon: Briefcase },
-        { name: 'Job Applies', href: '/dashboard/job-applies', icon: ClipboardList },
-        { name: 'Manage Users', href: '/dashboard/manage-users', icon: Users },
-        { name: 'Manage Reviews', href: '/dashboard/manage-reviews', icon: MessageSquare },
-        { name: 'Manage Job Posts', href: '/dashboard/manage-job-posts', icon: Settings },
-        { name: 'Manage Community Posts', href: '/dashboard/manage-community-posts', icon: MessageSquare },
-        { name: 'My Profile', href: '/dashboard/profile', icon: User },
-        { name: 'Change Password', href: '/dashboard/change-password', icon: Lock },
+        { name: "Dashboard", href: "/dashboard", icon: Briefcase },
+        { name: "Statistics", href: "/dashboard/statistics", icon: BarChart3 },
+        { name: "Job Posts", href: "/dashboard/job-posts", icon: Briefcase },
+        {
+          name: "Job Applies",
+          href: "/dashboard/job-applies",
+          icon: ClipboardList,
+        },
+        { name: "Manage Users", href: "/dashboard/manage-users", icon: Users },
+        {
+          name: "Manage Reviews",
+          href: "/dashboard/manage-reviews",
+          icon: MessageSquare,
+        },
+        {
+          name: "Manage Job Posts",
+          href: "/dashboard/manage-job-posts",
+          icon: Settings,
+        },
+        {
+          name: "Manage Community Posts",
+          href: "/dashboard/manage-community-posts",
+          icon: MessageSquare,
+        },
+        { name: "My Profile", href: "/dashboard/profile", icon: User },
+        {
+          name: "Change Password",
+          href: "/dashboard/change-password",
+          icon: Lock,
+        },
       ];
-    
-    case 'Employer':
+
+    case "Employer":
       return [
-        { name: 'Dashboard', href: '/dashboard', icon: Briefcase },
-        { name: 'Job Posts', href: '/dashboard/job-posts', icon: Briefcase },
-        { name: 'My Jobs', href: '/dashboard/my-jobs', icon: ClipboardList },
-        { name: 'My Profile', href: '/dashboard/profile', icon: User },
-        { name: 'Change Password', href: '/dashboard/change-password', icon: Lock },
+        { name: "Dashboard", href: "/dashboard", icon: Briefcase },
+        { name: "Job Posts", href: "/dashboard/job-posts", icon: Briefcase },
+        { name: "My Jobs", href: "/dashboard/my-jobs", icon: ClipboardList },
+        { name: "My Profile", href: "/dashboard/profile", icon: User },
+        {
+          name: "Change Password",
+          href: "/dashboard/change-password",
+          icon: Lock,
+        },
       ];
-    
-    case 'Candidate':
+
+    case "Candidate":
     default:
       return [
-        { name: 'Dashboard', href: '/dashboard', icon: Briefcase },
-        { name: 'My Profile', href: '/dashboard/profile', icon: User },
-        { name: 'Jobs Applied', href: '/dashboard/jobs-applied', icon: Briefcase },
-        // Removed Job Alerts navigation item
-        { name: 'Saved Jobs', href: '/dashboard/saved-jobs', icon: Heart },
-        { name: 'My Resume', href: '/dashboard/resume', icon: FileText },
-        { name: 'Change Password', href: '/dashboard/change-password', icon: Lock },
+        { name: "Dashboard", href: "/dashboard", icon: Briefcase },
+        { name: "My Profile", href: "/dashboard/profile", icon: User },
+        {
+          name: "Jobs Applied",
+          href: "/dashboard/jobs-applied",
+          icon: Briefcase,
+        },
+        { name: "Saved Jobs", href: "/dashboard/saved-jobs", icon: Heart },
+        // { name: 'My Resume', href: '/dashboard/resume', icon: FileText },
+        {
+          name: "Change Password",
+          href: "/dashboard/change-password",
+          icon: Lock,
+        },
       ];
   }
 };
 
 export default function Sidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [userRole, setUserRole] = useState<UserRole>('Candidate'); // For demo purposes
+  const [userRole, setUserRole] = useState<UserRole>("Candidate"); // For demo purposes
   const pathname = usePathname();
   const { showToast } = useToast();
-  
+
   const navigation = getNavigationByRole(userRole);
-  
+
   // Demo function to switch roles - in real app this would come from auth context
   const switchRole = () => {
-    const roles: UserRole[] = ['Candidate', 'Employer', 'Admin'];
+    const roles: UserRole[] = ["Candidate", "Employer", "Admin"];
     const currentIndex = roles.indexOf(userRole);
     const nextRole = roles[(currentIndex + 1) % roles.length];
     setUserRole(nextRole);
-    showToast('info', 'Role Changed', `Switched to ${nextRole} view`);
+    showToast("info", "Role Changed", `Switched to ${nextRole} view`);
   };
 
   const handleLogout = () => {
-    console.log('Logout clicked');
-    
+    console.log("Logout clicked");
+
     // Clear any stored authentication data
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('jobquest-theme'); // Optional: preserve theme
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("jobquest-theme"); // Optional: preserve theme
       sessionStorage.clear();
     }
-    
+
     // Show success toast
-    showToast('success', 'Logged out successfully', 'You have been logged out of your account.');
-    
+    showToast(
+      "success",
+      "Logged out successfully",
+      "You have been logged out of your account."
+    );
+
     // Redirect to home page after a brief delay
     setTimeout(() => {
-      window.location.href = '/';
+      window.location.href = "/";
     }, 1000);
   };
 
@@ -123,17 +158,21 @@ export default function Sidebar() {
       {/* Sidebar */}
       <div
         className={clsx(
-          'fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transform transition-all duration-200 ease-in-out lg:translate-x-0',
+          "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transform transition-all duration-200 ease-in-out lg:translate-x-0 overflow-y-auto",
           {
-            'translate-x-0': isMobileMenuOpen,
-            '-translate-x-full': !isMobileMenuOpen,
+            "translate-x-0": isMobileMenuOpen,
+            "-translate-x-full": !isMobileMenuOpen,
           }
         )}
       >
-        <div className="flex flex-col h-full">
+        {/* Added overflow-y-auto to make sidebar scrollable */}
+        <div className="flex flex-col min-h-screen">
           {/* Logo */}
           <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
-            <Link href="/dashboard" className="text-2xl font-bold text-primary-dark dark:text-primary-medium transition-colors duration-200">
+            <Link
+              href="/dashboard"
+              className="text-2xl font-bold text-primary-dark dark:text-primary-medium transition-colors duration-200"
+            >
               JobQuest
             </Link>
             {/* Theme toggle in sidebar for mobile */}
@@ -151,12 +190,15 @@ export default function Sidebar() {
                   key={item.name}
                   href={item.href}
                   className={clsx(
-                    'flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200',
+                    "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200",
                     {
-                      'bg-primary-dark dark:bg-primary-medium text-white border-r-4 border-white': isActive,
+                      "bg-primary-dark dark:bg-primary-medium text-white border-r-4 border-white":
+                        isActive,
                     },
-                    !isActive && 'text-gray-600 hover:bg-primary-dark hover:text-white',
-                    !isActive && 'dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100'
+                    !isActive &&
+                      "text-gray-600 hover:bg-primary-dark hover:text-white",
+                    !isActive &&
+                      "dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100"
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -174,7 +216,7 @@ export default function Sidebar() {
               <div className="w-12 h-12 bg-primary-dark rounded-full flex items-center justify-center flex-shrink-0">
                 <User className="w-6 h-6 text-white" />
               </div>
-              
+
               {/* User Details */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
@@ -188,7 +230,7 @@ export default function Sidebar() {
                 </p>
               </div>
             </div>
-            
+
             {/* Demo Role Switcher - Remove in production */}
             <button
               onClick={switchRole}
@@ -200,7 +242,7 @@ export default function Sidebar() {
 
           {/* Logout */}
           <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
-            <button 
+            <button
               onClick={handleLogout}
               type="button"
               className="flex items-center w-full px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
