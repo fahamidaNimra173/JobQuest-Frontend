@@ -60,7 +60,7 @@ const ManageUsers = () => {
     name: `User ${i + 1}`,
     email: `user${i + 1}@example.com`,
     role: ["candidate", "employer", "admin"][i % 3],
-    provider: ["google", "email", "github"][i % 3],
+    provider: ["google", "email"][i % 2],
   }));
 
   // ---------------------- Filtered & Paginated Users ----------------------
@@ -94,7 +94,9 @@ const ManageUsers = () => {
         await axios.delete(`${window.location.origin}/api/users/${id}`);
         toast.success("User deleted");
       } catch (err: any) {
-        toast.error(err.response?.data?.message || err.message || "Delete failed");
+        toast.error(
+          err.response?.data?.message || err.message || "Delete failed"
+        );
       }
     }
   };
@@ -111,7 +113,7 @@ const ManageUsers = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.patch(`${window.location.origin}/api/users/${id}`);
+        await axios.patch(`${window.location.origin}/api/users/${id}`, {status: 'banned'});
         toast.success("User banned");
       } catch (err: any) {
         toast.error(err.response?.data?.message || err.message || "Ban failed");
@@ -121,7 +123,7 @@ const ManageUsers = () => {
 
   return (
     <div className="px-4">
-      <h2 className="text-2xl font-bold mb-4 text-center text-[#7670D6]">
+      <h2 className="text-3xl font-bold mb-4 text-center text-[#7670D6]">
         Manage Users
       </h2>
 
@@ -214,10 +216,18 @@ const ManageUsers = () => {
                   <TableCell sx={{ py: 0.5 }} align="center">
                     {u.email}
                   </TableCell>
-                  <TableCell sx={{ py: 0.5 }} align="center" className="capitalize">
+                  <TableCell
+                    sx={{ py: 0.5 }}
+                    align="center"
+                    className="capitalize"
+                  >
                     {u.role}
                   </TableCell>
-                  <TableCell sx={{ py: 0.5 }} align="center" className="capitalize">
+                  <TableCell
+                    sx={{ py: 0.5 }}
+                    align="center"
+                    className="capitalize"
+                  >
                     {u.provider}
                   </TableCell>
                   <TableCell sx={{ py: 0.5 }} align="center">
@@ -254,7 +264,10 @@ const ManageUsers = () => {
                   count={filteredUsers.length} // filtered count!
                   rowsPerPage={rowsPerPage}
                   page={page}
-                  SelectProps={{ inputProps: { "aria-label": "rows per page" }, native: false }}
+                  SelectProps={{
+                    inputProps: { "aria-label": "rows per page" },
+                    native: false,
+                  }}
                   onPageChange={(event, newPage) => setPage(newPage)}
                   onRowsPerPageChange={(event) => {
                     setRowsPerPage(parseInt(event.target.value, 10));
