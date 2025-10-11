@@ -1,6 +1,7 @@
-import Link from 'next/link';
-import { ArrowRight, Briefcase, Users, Search, Star } from 'lucide-react';
-import ThemeToggle from '@/components/ui/ThemeToggle';
+import Link from "next/link";
+import { ArrowRight, Briefcase, Users, Search, Star } from "lucide-react";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import JoinUsDropdown from "@/components/ui/JoinUsDropdown";
 
 export default function Home() {
   return (
@@ -11,16 +12,13 @@ export default function Home() {
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
               <Briefcase className="w-8 h-8 text-primary-dark mr-2" />
-              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">JobQuest</span>
+              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                JobQuest
+              </span>
             </div>
             <div className="flex items-center space-x-4">
               <ThemeToggle />
-              <Link
-                href="/dashboard"
-                className="bg-primary-dark text-white px-6 py-2 rounded-lg hover:opacity-90 transition-colors"
-              >
-                Go to Dashboard
-              </Link>
+              <JoinUsDropdown />
             </div>
           </div>
         </div>
@@ -34,9 +32,10 @@ export default function Home() {
               Find Your Dream Job
               <span className="text-primary-dark"> Today</span>
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-              Discover thousands of job opportunities with all the information you need.
-              Its your future. Come find it. Manage all your job search activities from one dashboard.
+            <p className="text-xl text-gray-800 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+              Discover thousands of job opportunities with all the information
+              you need. Its your future. Come find it. Manage all your job
+              search activities from one dashboard.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -62,29 +61,38 @@ export default function Home() {
               <div className="bg-primary-light dark:bg-primary-dark w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-primary-dark dark:text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Smart Job Search</h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Use our advanced filters to find jobs that match your skills, experience, and preferences.
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                Smart Job Search
+              </h3>
+              <p className="text-gray-900 dark:text-gray-300">
+                Use our advanced filters to find jobs that match your skills,
+                experience, and preferences.
               </p>
             </div>
-            
+
             <div className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-lg border border-gray-200 dark:border-gray-700 text-center transition-colors duration-300">
               <div className="bg-primary-light dark:bg-primary-dark w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-primary-dark dark:text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Professional Network</h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Connect with recruiters and employers. Build your professional network and get noticed.
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                Professional Network
+              </h3>
+              <p className="text-gray-900 dark:text-gray-300">
+                Connect with recruiters and employers. Build your professional
+                network and get noticed.
               </p>
             </div>
-            
+
             <div className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-lg border border-gray-200 dark:border-gray-700 text-center transition-colors duration-300">
               <div className="bg-primary-light dark:bg-primary-dark w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Star className="w-8 h-8 text-primary-dark dark:text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Career Growth</h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Track your applications, save interesting jobs, and get personalized career recommendations.
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                Career Growth
+              </h3>
+              <p className="text-gray-900 dark:text-gray-300">
+                Track your applications, save interesting jobs, and get
+                personalized career recommendations.
               </p>
             </div>
           </div>
