@@ -73,7 +73,7 @@ const CandidateSignUp = () => {
           phone,
           password,
           role: "candidate",
-          provider: "Email/Password",
+          authProvider: "Email/Password",
         }
       );
 

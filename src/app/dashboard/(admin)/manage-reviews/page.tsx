@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import Swal from "sweetalert2";
 import ReviewsTable from "@/components/dashboard/(admin)/ReviewsTable";
 import { useToast } from "@/components/ui/Toast";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 
 // ✅ Shared table style generator
 const getTableStyles = (isDark: boolean) => ({
@@ -153,8 +154,21 @@ const ManageReviews = () => {
     page * rowsPerPage + rowsPerPage
   );
 
+  const breadcrumbItems = [
+    {
+      name: "Manage Reviews",
+      href: "/dashboard/manage-reviews",
+      current: true,
+    },
+  ];
+
   return (
-    <div className="px-4" suppressHydrationWarning>
+    <div className="px-4">
+      {/* Breadcrumb */}
+      <div className="mb-6">
+        <Breadcrumb items={breadcrumbItems} />
+      </div>
+
       <h2 className="text-3xl font-bold mb-4 text-center text-[#7670D6]">
         Manage Reviews
       </h2>

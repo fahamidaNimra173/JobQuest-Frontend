@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import { useToast } from "@/components/ui/Toast";
 import UsersTable from "@/components/dashboard/(admin)/UsersTable";
 import UsersFilter from "@/components/dashboard/(admin)/UsersFilter";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 
 // ---------------------- Filters ----------------------
 interface OptionType {
@@ -107,6 +108,10 @@ const ManageUsers = () => {
     page * rowsPerPage + rowsPerPage
   );
 
+  const breadcrumbItems = [
+    { name: "Manage Users", href: "/dashboard/manage-users", current: true },
+  ];
+
   // ---------------------- Actions ----------------------
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
@@ -158,6 +163,11 @@ const ManageUsers = () => {
 
   return (
     <div className="px-4">
+      {/* Breadcrumb */}
+      <div className="mb-6">
+        <Breadcrumb items={breadcrumbItems} />
+      </div>
+
       <h2 className="text-3xl font-bold mb-4 text-center text-[#7670D6]">
         Manage Users
       </h2>

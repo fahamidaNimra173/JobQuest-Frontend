@@ -55,9 +55,9 @@ export default function RootLayout({
           disableTransitionOnChange={false}
           storageKey="jobquest-theme"
         >
-          <ToastProvider>
-            {children}
-          </ToastProvider>
+          <QueryProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
       {/* </AuthProvider> */}

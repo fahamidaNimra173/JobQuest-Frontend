@@ -31,7 +31,7 @@ export const authOptions: NextAuthOptions = {
             firstName,
             lastName,
             email,
-            provider: "Google",
+            authProvider: "Google",
             role,
           }
         );
