@@ -1,13 +1,14 @@
 "use client";
 import GoogleLogin from "@/components/GoogleLogin";
+import { useToast } from "@/components/ui/Toast";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { toast } from "react-toastify";
 
 const LoginPage = () => {
+  const { showToast } = useToast();
   const router = useRouter();
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
 
@@ -20,19 +21,20 @@ const LoginPage = () => {
     const password = (form.elements.namedItem("password") as HTMLInputElement)
       .value;
 
-    try {
-      const res = await axios.post(
+      try {
+        const res = await axios.post(
         "https://job-portal-backend-xshy.onrender.com/auth/login",
         { email, password }
       );
-
+      
       localStorage.setItem("authToken", JSON.stringify(res.data.token));
       localStorage.setItem("user", JSON.stringify(res.data.user));
       console.log(res.data);
       router.push("/dashboard");
-      toast.success("You logged in successfully");
+      showToast("success", "You logged in successfully");
     } catch (error) {
       console.log(error);
+      showToast("error", error.message);
     }
   };
 
@@ -92,7 +94,7 @@ const LoginPage = () => {
               type="submit"
               className="w-full rounded px-4 py-2 text-white bg-blue-600 text-sm cursor-pointer"
             >
-              Register
+              Login
             </button>
           </div>
         </form>

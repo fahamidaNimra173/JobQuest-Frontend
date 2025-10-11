@@ -22,9 +22,9 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Button, TextField } from "@mui/material";
-import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import TablePaginationActions from "@/lib/pagination";
+import { useToast } from "@/components/ui/Toast";
 
 // ---------------------- Filters ----------------------
 interface OptionType {
@@ -82,6 +82,7 @@ const getTableStyles = (isDark: boolean) => ({
 
 // ---------------------- Main Component ----------------------
 const ManageUsers = () => {
+  const { showToast } = useToast();
   const { resolvedTheme } = useTheme();
   const [searchType, setSearchType] = useState<OptionType>(searchOptions[0]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -133,9 +134,10 @@ const ManageUsers = () => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`${window.location.origin}/api/users/${id}`);
-        toast.success("User deleted");
+        showToast("success", "User deleted");
       } catch (err: any) {
-        toast.error(
+        showToast(
+          "error",
           err.response?.data?.message || err.message || "Delete failed"
         );
       }
@@ -157,9 +159,12 @@ const ManageUsers = () => {
         await axios.patch(`${window.location.origin}/api/users/${id}`, {
           status: "banned",
         });
-        toast.success("User banned");
+        showToast("success", "User banned");
       } catch (err: any) {
-        toast.error(err.response?.data?.message || err.message || "Ban failed");
+        showToast(
+          "error",
+          err.response?.data?.message || err.message || "Ban failed"
+        );
       }
     }
   };
