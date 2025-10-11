@@ -5,8 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   User,
-  FileText,
-  Bell,
   Heart,
   Lock,
   LogOut,
@@ -16,7 +14,6 @@ import {
   BarChart3,
   Users,
   MessageSquare,
-  Settings,
   ClipboardList,
   LucideIcon,
 } from "lucide-react";
@@ -50,11 +47,6 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
           name: "Manage Reviews",
           href: "/dashboard/manage-reviews",
           icon: MessageSquare,
-        },
-        {
-          name: "Manage Job Posts",
-          href: "/dashboard/manage-job-posts",
-          icon: Settings,
         },
         {
           name: "Manage Community Posts",

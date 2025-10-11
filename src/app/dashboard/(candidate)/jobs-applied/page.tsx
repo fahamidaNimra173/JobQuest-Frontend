@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import JobsAppliedContent from '@/components/dashboard/JobsAppliedContent';
+import JobsAppliedContent from '@/components/dashboard/(candidate)/JobsAppliedContent';
 
 export const metadata: Metadata = {
   title: 'Jobs Applied - JobQuest',
