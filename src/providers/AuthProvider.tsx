@@ -5,12 +5,11 @@ import { SessionProvider, useSession } from "next-auth/react";
 import Cookies from "js-cookie";
 
 interface User {
-  id?: string;
+  _id?: string;
   firstName?: string;
   lastName?: string;
   email?: string;
   role?: string;
-  [key: string]: any;
 }
 
 interface AuthContextType {

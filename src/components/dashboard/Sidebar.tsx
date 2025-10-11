@@ -13,7 +13,7 @@ import {
   Briefcase,
   BarChart3,
   Users,
-  MessageSquare,
+  // MessageSquare,
   ClipboardList,
   LucideIcon,
 } from "lucide-react";
@@ -43,16 +43,16 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
           icon: ClipboardList,
         },
         { name: "Manage Users", href: "/dashboard/manage-users", icon: Users },
-        {
-          name: "Manage Reviews",
-          href: "/dashboard/manage-reviews",
-          icon: MessageSquare,
-        },
-        {
-          name: "Manage Community Posts",
-          href: "/dashboard/manage-community-posts",
-          icon: MessageSquare,
-        },
+        // {
+        //   name: "Manage Reviews",
+        //   href: "/dashboard/manage-reviews",
+        //   icon: MessageSquare,
+        // },
+        // {
+        //   name: "Manage Community Posts",
+        //   href: "/dashboard/manage-community-posts",
+        //   icon: MessageSquare,
+        // },
         { name: "My Profile", href: "/dashboard/profile", icon: User },
         {
           name: "Change Password",
