@@ -1,30 +1,17 @@
 "use client";
-
 import { useState } from "react";
-import Select from "react-select";
 import axios from "axios";
 import { useTheme } from "next-themes";
-
 import {
   selectStylesOverride,
   darkSelectStylesOverride,
   selectTheme,
   darkSelectTheme,
 } from "@/lib/selectStyles";
-
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableFooter from "@mui/material/TableFooter";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Button, TextField } from "@mui/material";
 import Swal from "sweetalert2";
-import TablePaginationActions from "@/lib/pagination";
 import { useToast } from "@/components/ui/Toast";
+import UsersTable from "@/components/dashboard/(admin)/UsersTable";
+import UsersFilter from "@/components/dashboard/(admin)/UsersFilter";
 
 // ---------------------- Filters ----------------------
 interface OptionType {
@@ -170,93 +157,25 @@ const ManageUsers = () => {
   };
 
   return (
-    <div className="px-4" suppressHydrationWarning>
+    <div className="px-4">
       <h2 className="text-3xl font-bold mb-4 text-center text-[#7670D6]">
         Manage Users
       </h2>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center mb-6">
-        <Select
-          options={searchOptions}
-          value={searchType}
-          onChange={(selected) => {
-            if (selected) {
-              setSearchType(selected);
-              setPage(0);
-            }
-          }}
-          className="w-full md:w-1/3"
-          styles={currentSelectStyles}
-          theme={currentSelectTheme}
-          isSearchable={false}
-        />
-
-        <TextField
-          label={`Search by ${searchType.value}`}
-          variant="outlined"
-          size="small"
-          sx={{
-            height: 40,
-            "& .MuiOutlinedInput-root": {
-              color: "var(--foreground)",
-              backgroundColor: "var(--background)",
-              "& fieldset": {
-                borderColor: "#d1d5db",
-              },
-              "&:hover fieldset": {
-                borderColor: "#9ca3af",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "#7670D6",
-              },
-            },
-            "& .MuiOutlinedInput-input::placeholder": {
-              color: "#9ca3af",
-              opacity: 1,
-            },
-            "& .MuiInputBase-input::placeholder": {
-              color: "#9ca3af",
-              opacity: 1,
-            },
-            "& .MuiInputLabel-root": {
-              color: "var(--foreground)",
-            },
-            "& .MuiInputLabel-root.Mui-focused": {
-              color: "#7670D6",
-            },
-            ".dark &": {
-              "& .MuiOutlinedInput-input::placeholder": {
-                color: "#6b7280",
-              },
-              "& .MuiInputLabel-root": {
-                color: "#f9fafb",
-              },
-            },
-          }}
-          className="w-full md:w-1/3"
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setPage(0);
-          }}
-        />
-
-        <Select
-          options={roleOptions}
-          value={roleFilter}
-          onChange={(selected) => {
-            if (selected) {
-              setRoleFilter(selected);
-              setPage(0);
-            }
-          }}
-          className="w-full md:w-1/3"
-          styles={currentSelectStyles}
-          theme={currentSelectTheme}
-          isSearchable={false}
-        />
-      </div>
+      <UsersFilter
+        searchOptions={searchOptions}
+        searchType={searchType}
+        setSearchTerm={setSearchTerm}
+        setPage={setPage}
+        setSearchType={setSearchType}
+        currentSelectStyles={currentSelectStyles}
+        currentSelectTheme={currentSelectTheme}
+        searchTerm={searchTerm}
+        roleOptions={roleOptions}
+        roleFilter={roleFilter}
+        setRoleFilter={setRoleFilter}
+      ></UsersFilter>
 
       {/* Table */}
       {paginatedUsers.length === 0 ? (
@@ -264,204 +183,17 @@ const ManageUsers = () => {
           No users found.
         </p>
       ) : (
-        <TableContainer
-          component={Paper}
-          sx={{
-            backgroundColor: tableStyles.paper.backgroundColor,
-            color: tableStyles.paper.color,
-          }}
-          suppressHydrationWarning
-        >
-          <Table aria-label="users table" size="small">
-            <TableHead
-              sx={{ backgroundColor: tableStyles.tableHead.backgroundColor }}
-            >
-              <TableRow>
-                <TableCell
-                  sx={{
-                    py: 0.5,
-                    ...tableStyles.tableHeadCell,
-                  }}
-                  align="center"
-                >
-                  #
-                </TableCell>
-                <TableCell
-                  sx={{
-                    py: 0.5,
-                    ...tableStyles.tableHeadCell,
-                  }}
-                  align="center"
-                >
-                  Name
-                </TableCell>
-                <TableCell
-                  sx={{
-                    py: 0.5,
-                    ...tableStyles.tableHeadCell,
-                  }}
-                  align="center"
-                >
-                  Email
-                </TableCell>
-                <TableCell
-                  sx={{
-                    py: 0.5,
-                    ...tableStyles.tableHeadCell,
-                  }}
-                  align="center"
-                >
-                  Role
-                </TableCell>
-                <TableCell
-                  sx={{
-                    py: 0.5,
-                    ...tableStyles.tableHeadCell,
-                  }}
-                  align="center"
-                >
-                  Provider
-                </TableCell>
-                <TableCell
-                  sx={{
-                    py: 0.5,
-                    ...tableStyles.tableHeadCell,
-                  }}
-                  align="center"
-                >
-                  Actions
-                </TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {paginatedUsers.map((u, i) => (
-                <TableRow
-                  key={u._id}
-                  sx={{
-                    backgroundColor: tableStyles.tableRow.backgroundColor,
-                    "&:hover": tableStyles.tableRow["&:hover"],
-                  }}
-                >
-                  <TableCell
-                    sx={{
-                      py: 0.5,
-                      ...tableStyles.tableBodyCell,
-                    }}
-                    align="center"
-                  >
-                    {page * rowsPerPage + i + 1}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      py: 0.5,
-                      ...tableStyles.tableBodyCell,
-                    }}
-                    align="center"
-                  >
-                    {u.name}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      py: 0.5,
-                      ...tableStyles.tableBodyCell,
-                    }}
-                    align="center"
-                  >
-                    {u.email}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      py: 0.5,
-                      ...tableStyles.tableBodyCell,
-                    }}
-                    align="center"
-                    className="capitalize"
-                  >
-                    {u.role}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      py: 0.5,
-                      ...tableStyles.tableBodyCell,
-                    }}
-                    align="center"
-                    className="capitalize"
-                  >
-                    {u.provider}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      py: 0.5,
-                      ...tableStyles.tableBodyCell,
-                    }}
-                    align="center"
-                  >
-                    <div className="flex gap-2 items-center justify-center">
-                      <Button
-                        onClick={() => handleBan(u._id)}
-                        variant="contained"
-                        sx={{ fontSize: "12px", padding: "6px" }}
-                        size="small"
-                        color="error"
-                      >
-                        Ban
-                      </Button>
-                      <Button
-                        onClick={() => handleDelete(u._id)}
-                        variant="contained"
-                        sx={{ fontSize: "12px", padding: "6px" }}
-                        size="small"
-                        color="error"
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-
-            <TableFooter>
-              <TableRow
-                sx={{
-                  backgroundColor: tableStyles.tableHead.backgroundColor,
-                }}
-              >
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 20, 30]}
-                  colSpan={6}
-                  count={filteredUsers.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  SelectProps={{
-                    inputProps: { "aria-label": "rows per page" },
-                    native: false,
-                    MenuProps: {
-                      container: document.body, // prevent portal errors
-                      disablePortal: true, // ✅ render in same subtree
-                    },
-                  }}
-                  onPageChange={(event, newPage) => setPage(newPage)}
-                  onRowsPerPageChange={(event) => {
-                    setRowsPerPage(parseInt(event.target.value, 10));
-                    setPage(0);
-                  }}
-                  ActionsComponent={TablePaginationActions}
-                  sx={{
-                    color: tableStyles.tableBodyCell.color,
-                    "& .MuiIconButton-root": {
-                      color: tableStyles.tableBodyCell.color,
-                    },
-                    "& .MuiSelect-root": {
-                      color: tableStyles.tableBodyCell.color,
-                    },
-                  }}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </TableContainer>
+        <UsersTable
+          tableStyles={tableStyles}
+          paginatedUsers={paginatedUsers}
+          filteredUsers={filteredUsers}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          setPage={setPage}
+          setRowsPerPage={setRowsPerPage}
+          handleBan={handleBan}
+          handleDelete={handleDelete}
+        ></UsersTable>
       )}
     </div>
   );
