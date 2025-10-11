@@ -3,8 +3,15 @@
 import { useState } from "react";
 import Select from "react-select";
 import axios from "axios";
+import { useTheme } from "next-themes";
 
-// MUI imports
+import {
+  selectStylesOverride,
+  darkSelectStylesOverride,
+  selectTheme,
+  darkSelectTheme,
+} from "@/lib/selectStyles";
+
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -46,15 +53,49 @@ interface User {
   provider: string;
 }
 
+// ---------------------- Table Styles ----------------------
+const getTableStyles = (isDark: boolean) => ({
+  paper: {
+    backgroundColor: isDark ? "#1f2937" : "#ffffff",
+    color: isDark ? "#f9fafb" : "#000000",
+  },
+  tableHead: {
+    backgroundColor: isDark ? "#111827" : "#f3f4f6",
+  },
+  tableHeadCell: {
+    color: isDark ? "#f9fafb" : "#000000",
+    fontWeight: 600,
+    backgroundColor: isDark ? "#111827" : "#f3f4f6",
+    borderColor: isDark ? "#374151" : "#e5e7eb",
+  },
+  tableBodyCell: {
+    color: isDark ? "#f9fafb" : "#000000",
+    borderColor: isDark ? "#374151" : "#e5e7eb",
+  },
+  tableRow: {
+    backgroundColor: isDark ? "#1f2937" : "#ffffff",
+    "&:hover": {
+      backgroundColor: isDark ? "#374151" : "#f9fafb",
+    },
+  },
+});
+
 // ---------------------- Main Component ----------------------
 const ManageUsers = () => {
+  const { resolvedTheme } = useTheme();
   const [searchType, setSearchType] = useState<OptionType>(searchOptions[0]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<OptionType>(roleOptions[0]);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
 
-  // Fake users data for demonstration (replace with backend API later)
+  const isDark = resolvedTheme === "dark";
+  const currentSelectStyles = isDark
+    ? darkSelectStylesOverride
+    : selectStylesOverride;
+  const currentSelectTheme = isDark ? darkSelectTheme : selectTheme;
+  const tableStyles = getTableStyles(isDark);
+
   const users: User[] = Array.from({ length: 30 }).map((_, i) => ({
     _id: (i + 1).toString(),
     name: `User ${i + 1}`,
@@ -113,7 +154,9 @@ const ManageUsers = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.patch(`${window.location.origin}/api/users/${id}`, {status: 'banned'});
+        await axios.patch(`${window.location.origin}/api/users/${id}`, {
+          status: "banned",
+        });
         toast.success("User banned");
       } catch (err: any) {
         toast.error(err.response?.data?.message || err.message || "Ban failed");
@@ -122,7 +165,7 @@ const ManageUsers = () => {
   };
 
   return (
-    <div className="px-4">
+    <div className="px-4" suppressHydrationWarning>
       <h2 className="text-3xl font-bold mb-4 text-center text-[#7670D6]">
         Manage Users
       </h2>
@@ -139,16 +182,53 @@ const ManageUsers = () => {
             }
           }}
           className="w-full md:w-1/3"
-          styles={{
-            control: (base) => ({ ...base, minHeight: 40, height: 40 }),
-          }}
+          styles={currentSelectStyles}
+          theme={currentSelectTheme}
+          isSearchable={false}
         />
 
         <TextField
           label={`Search by ${searchType.value}`}
           variant="outlined"
           size="small"
-          sx={{ height: 40 }}
+          sx={{
+            height: 40,
+            "& .MuiOutlinedInput-root": {
+              color: "var(--foreground)",
+              backgroundColor: "var(--background)",
+              "& fieldset": {
+                borderColor: "#d1d5db",
+              },
+              "&:hover fieldset": {
+                borderColor: "#9ca3af",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "#7670D6",
+              },
+            },
+            "& .MuiOutlinedInput-input::placeholder": {
+              color: "#9ca3af",
+              opacity: 1,
+            },
+            "& .MuiInputBase-input::placeholder": {
+              color: "#9ca3af",
+              opacity: 1,
+            },
+            "& .MuiInputLabel-root": {
+              color: "var(--foreground)",
+            },
+            "& .MuiInputLabel-root.Mui-focused": {
+              color: "#7670D6",
+            },
+            ".dark &": {
+              "& .MuiOutlinedInput-input::placeholder": {
+                color: "#6b7280",
+              },
+              "& .MuiInputLabel-root": {
+                color: "#f9fafb",
+              },
+            },
+          }}
           className="w-full md:w-1/3"
           value={searchTerm}
           onChange={(e) => {
@@ -167,9 +247,9 @@ const ManageUsers = () => {
             }
           }}
           className="w-full md:w-1/3"
-          styles={{
-            control: (base) => ({ ...base, minHeight: 40, height: 40 }),
-          }}
+          styles={currentSelectStyles}
+          theme={currentSelectTheme}
+          isSearchable={false}
         />
       </div>
 
@@ -179,26 +259,71 @@ const ManageUsers = () => {
           No users found.
         </p>
       ) : (
-        <TableContainer component={Paper}>
+        <TableContainer
+          component={Paper}
+          sx={{
+            backgroundColor: tableStyles.paper.backgroundColor,
+            color: tableStyles.paper.color,
+          }}
+          suppressHydrationWarning
+        >
           <Table aria-label="users table" size="small">
-            <TableHead>
+            <TableHead
+              sx={{ backgroundColor: tableStyles.tableHead.backgroundColor }}
+            >
               <TableRow>
-                <TableCell sx={{ py: 0.5 }} align="center">
+                <TableCell
+                  sx={{
+                    py: 0.5,
+                    ...tableStyles.tableHeadCell,
+                  }}
+                  align="center"
+                >
                   #
                 </TableCell>
-                <TableCell sx={{ py: 0.5 }} align="center">
+                <TableCell
+                  sx={{
+                    py: 0.5,
+                    ...tableStyles.tableHeadCell,
+                  }}
+                  align="center"
+                >
                   Name
                 </TableCell>
-                <TableCell sx={{ py: 0.5 }} align="center">
+                <TableCell
+                  sx={{
+                    py: 0.5,
+                    ...tableStyles.tableHeadCell,
+                  }}
+                  align="center"
+                >
                   Email
                 </TableCell>
-                <TableCell sx={{ py: 0.5 }} align="center">
+                <TableCell
+                  sx={{
+                    py: 0.5,
+                    ...tableStyles.tableHeadCell,
+                  }}
+                  align="center"
+                >
                   Role
                 </TableCell>
-                <TableCell sx={{ py: 0.5 }} align="center">
+                <TableCell
+                  sx={{
+                    py: 0.5,
+                    ...tableStyles.tableHeadCell,
+                  }}
+                  align="center"
+                >
                   Provider
                 </TableCell>
-                <TableCell sx={{ py: 0.5 }} align="center">
+                <TableCell
+                  sx={{
+                    py: 0.5,
+                    ...tableStyles.tableHeadCell,
+                  }}
+                  align="center"
+                >
                   Actions
                 </TableCell>
               </TableRow>
@@ -206,31 +331,67 @@ const ManageUsers = () => {
 
             <TableBody>
               {paginatedUsers.map((u, i) => (
-                <TableRow key={u._id}>
-                  <TableCell sx={{ py: 0.5 }} align="center">
+                <TableRow
+                  key={u._id}
+                  sx={{
+                    backgroundColor: tableStyles.tableRow.backgroundColor,
+                    "&:hover": tableStyles.tableRow["&:hover"],
+                  }}
+                >
+                  <TableCell
+                    sx={{
+                      py: 0.5,
+                      ...tableStyles.tableBodyCell,
+                    }}
+                    align="center"
+                  >
                     {page * rowsPerPage + i + 1}
                   </TableCell>
-                  <TableCell sx={{ py: 0.5 }} align="center">
+                  <TableCell
+                    sx={{
+                      py: 0.5,
+                      ...tableStyles.tableBodyCell,
+                    }}
+                    align="center"
+                  >
                     {u.name}
                   </TableCell>
-                  <TableCell sx={{ py: 0.5 }} align="center">
+                  <TableCell
+                    sx={{
+                      py: 0.5,
+                      ...tableStyles.tableBodyCell,
+                    }}
+                    align="center"
+                  >
                     {u.email}
                   </TableCell>
                   <TableCell
-                    sx={{ py: 0.5 }}
+                    sx={{
+                      py: 0.5,
+                      ...tableStyles.tableBodyCell,
+                    }}
                     align="center"
                     className="capitalize"
                   >
                     {u.role}
                   </TableCell>
                   <TableCell
-                    sx={{ py: 0.5 }}
+                    sx={{
+                      py: 0.5,
+                      ...tableStyles.tableBodyCell,
+                    }}
                     align="center"
                     className="capitalize"
                   >
                     {u.provider}
                   </TableCell>
-                  <TableCell sx={{ py: 0.5 }} align="center">
+                  <TableCell
+                    sx={{
+                      py: 0.5,
+                      ...tableStyles.tableBodyCell,
+                    }}
+                    align="center"
+                  >
                     <div className="flex gap-2 items-center justify-center">
                       <Button
                         onClick={() => handleBan(u._id)}
@@ -257,16 +418,24 @@ const ManageUsers = () => {
             </TableBody>
 
             <TableFooter>
-              <TableRow>
+              <TableRow
+                sx={{
+                  backgroundColor: tableStyles.tableHead.backgroundColor,
+                }}
+              >
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 20, 30]}
                   colSpan={6}
-                  count={filteredUsers.length} // filtered count!
+                  count={filteredUsers.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   SelectProps={{
                     inputProps: { "aria-label": "rows per page" },
                     native: false,
+                    MenuProps: {
+                      container: document.body, // prevent portal errors
+                      disablePortal: true, // ✅ render in same subtree
+                    },
                   }}
                   onPageChange={(event, newPage) => setPage(newPage)}
                   onRowsPerPageChange={(event) => {
@@ -274,6 +443,15 @@ const ManageUsers = () => {
                     setPage(0);
                   }}
                   ActionsComponent={TablePaginationActions}
+                  sx={{
+                    color: tableStyles.tableBodyCell.color,
+                    "& .MuiIconButton-root": {
+                      color: tableStyles.tableBodyCell.color,
+                    },
+                    "& .MuiSelect-root": {
+                      color: tableStyles.tableBodyCell.color,
+                    },
+                  }}
                 />
               </TableRow>
             </TableFooter>
