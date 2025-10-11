@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import ResumeContent from '@/components/dashboard/ResumeContent';
+import ResumeContent from '@/components/dashboard/(candidate)/ResumeContent';
 
 export const metadata: Metadata = {
   title: 'My Resume - JobQuest',

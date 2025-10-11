@@ -30,7 +30,7 @@ const LoginPage = () => {
       localStorage.setItem("user", JSON.stringify(res.data.user));
       console.log(res.data);
       router.push("/dashboard");
-      toast.success('You logged in successfully')
+      toast.success("You logged in successfully");
     } catch (error) {
       console.log(error);
     }
@@ -38,7 +38,7 @@ const LoginPage = () => {
 
   return (
     <section className="px-4 py-10">
-      <div className="max-w-lg mx-auto bg-blue-200 rounded-lg shadow-lg p-4">
+      <div className="max-w-lg mx-auto bg-primary-dark rounded-lg shadow-lg p-4">
         {/* title */}
         <h1 className="text-xl text-black font-bold mb-2">Welcome Back</h1>
 
@@ -50,7 +50,7 @@ const LoginPage = () => {
         {/* register form */}
         <form onSubmit={handleLogin} className="space-y-3">
           <div>
-            <p className="text-xs text-gray-500 font-semibold">Email</p>
+            <p className="text-xs text-black/60 font-semibold">Email</p>
             <input
               type="email"
               name="email"
@@ -61,7 +61,7 @@ const LoginPage = () => {
           </div>
 
           <div>
-            <p className="text-xs text-gray-500 font-semibold">Password</p>
+            <p className="text-xs text-black/60 font-semibold">Password</p>
             <div className="relative">
               <input
                 type={isShowPassword ? "text" : "password"}
@@ -74,13 +74,13 @@ const LoginPage = () => {
               {isShowPassword ? (
                 <FaEyeSlash
                   onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
+                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
                   size={17}
                 />
               ) : (
                 <FaEye
                   onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
+                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
                   size={17}
                 />
               )}
@@ -97,31 +97,31 @@ const LoginPage = () => {
           </div>
         </form>
 
-        <p className="my-2 text-center text-xs text-black">
+        <p className="my-2 text-center text-xs text-black/70 font-semibold">
           Register as a Candidate? Please{" "}
           <Link
             href="/signup/candidate"
-            className="font-semibold text-blue-500 hover:underline"
+            className="text-blue-700 hover:underline"
           >
             Signup Candidate
           </Link>
         </p>
 
-        <p className="my-2 text-center text-xs text-black">
+        <p className="my-2 text-center text-xs text-black/70 font-semibold">
           Register as an Employer? Please{" "}
           <Link
             href="/signup/employer"
-            className="font-semibold text-blue-500 hover:underline"
+            className="text-blue-700 hover:underline"
           >
             Signup Employer
           </Link>
         </p>
 
         {/* divider */}
-        <div className="flex gap-1 items-center text-black text-sm my-6">
-          <div className="h-0.5 flex-1 bg-black/60 rounded-full"></div>
-          OR
-          <div className="h-0.5 flex-1 bg-black/60 rounded-full"></div>
+        <div className="flex items-center gap-2 my-6">
+          <div className="flex-1 border-t-2 border-black/60"></div>
+          <span className="text-black text-sm font-medium">OR</span>
+          <div className="flex-1 border-t-2 border-black/60"></div>
         </div>
 
         {/* google login */}
