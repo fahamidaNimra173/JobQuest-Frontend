@@ -162,7 +162,7 @@ export default function Sidebar() {
           {/* Logo */}
           <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
             <Link
-              href="/dashboard"
+              href="/"
               className="text-2xl font-bold text-primary-dark dark:text-primary-medium transition-colors duration-200"
             >
               JobQuest
