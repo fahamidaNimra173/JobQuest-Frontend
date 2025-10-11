@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import JoinUsDropdown from '@/components/ui/JoinUsDropdown';
+
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -83,6 +85,7 @@ export default function Navbar() {
                                     <ChevronDown size={16} />
                                 </button>
 
+
                                 {/* Dropdown Menu */}
                                 {isDropdownOpen && (
                                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
@@ -105,14 +108,7 @@ export default function Navbar() {
                                 )}
                             </div>
                         ) : (
-                            <button
-                                className={`px-6 py-2 rounded-lg font-medium transition-all ${isScrolled
-                                    ? 'bg-white text-[#7670d6] hover:bg-gray-100'
-                                    : 'bg-[#7670d6] text-white hover:bg-[#6660c6]'
-                                    }`}
-                            >
-                                Sign Up
-                            </button>
+                            <JoinUsDropdown></JoinUsDropdown>
                         )}
                     </div>
 
