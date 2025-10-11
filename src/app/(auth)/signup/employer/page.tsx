@@ -8,7 +8,7 @@ import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { PhoneNumberUtil } from "google-libphonenumber";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+import { useToast } from "@/components/ui/Toast";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -21,6 +21,7 @@ const isPhoneValid = (phone: string) => {
 };
 
 const EmployerSignUp = () => {
+  const {showToast} = useToast()
   const router = useRouter();
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
@@ -85,7 +86,7 @@ const EmployerSignUp = () => {
       localStorage.setItem("user", JSON.stringify(res.data.user));
       console.log(res.data);
       router.push("/dashboard/profile");
-      toast.success("You registered successfully");
+      showToast("success", "You registered successfully");
     } catch (error) {
       console.log(error);
     }

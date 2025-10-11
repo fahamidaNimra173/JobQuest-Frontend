@@ -3,8 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useTheme } from "next-themes";
 import Swal from "sweetalert2";
-import { toast } from "react-toastify";
 import ReviewsTable from "@/components/dashboard/(admin)/ReviewsTable";
+import { useToast } from "@/components/ui/Toast";
 
 // ✅ Shared table style generator
 const getTableStyles = (isDark: boolean) => ({
@@ -45,6 +45,7 @@ interface Reviews {
 }
 
 const ManageReviews = () => {
+  const { showToast } = useToast();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
   const tableStyles = getTableStyles(isDark);
@@ -88,9 +89,10 @@ const ManageReviews = () => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`${window.location.origin}/api/reviews/${id}`);
-        toast.success("Review rejected");
+        showToast("success", "Review rejected");
       } catch (err: any) {
-        toast.error(
+        showToast(
+          "error",
           err.response?.data?.message || err.message || "Reject failed"
         );
       }
@@ -110,9 +112,10 @@ const ManageReviews = () => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`${window.location.origin}/api/reviews/${id}`);
-        toast.success("Review deleted");
+        showToast("success", "Review deleted");
       } catch (err: any) {
-        toast.error(
+        showToast(
+          "error",
           err.response?.data?.message || err.message || "Delete failed"
         );
       }
@@ -134,9 +137,10 @@ const ManageReviews = () => {
         await axios.patch(`${window.location.origin}/api/reviews/${id}`, {
           status: "approved",
         });
-        toast.success("Review approved");
+        showToast("success", "Review approved");
       } catch (err: any) {
-        toast.error(
+        showToast(
+          "error",
           err.response?.data?.message || err.message || "Approve failed"
         );
       }

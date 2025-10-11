@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ToastContainer } from "react-toastify";
 // import AuthProvider from "@/providers/AuthProvider";
 import { ToastProvider } from "@/components/ui/Toast";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -67,7 +66,6 @@ export default function RootLayout({
         >
           <ToastProvider>
             {children}
-            <ToastContainer></ToastContainer>
           </ToastProvider>
         </ThemeProvider>
       </body>
