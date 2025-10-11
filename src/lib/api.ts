@@ -163,6 +163,12 @@ class ApiClient {
     });
   }
 
+  async getCandidateJobStatus(jobId: string) {
+    return this.request(`/candidates/by-job/${jobId}`, {
+      method: 'GET',
+    });
+  }
+
   async getCandidateResumes() {
     return this.request('/candidates/resumes', {
       method: 'GET',
