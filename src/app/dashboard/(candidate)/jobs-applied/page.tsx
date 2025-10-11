@@ -27,7 +27,7 @@ export default function JobsAppliedPage() {
     const fetchAppliedJobs = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.getApplications();
+        const response = await apiClient.getCandidateApplications();
         
         if (response.success) {
           // Transform API data to match component expectations

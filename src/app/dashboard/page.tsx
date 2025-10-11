@@ -28,10 +28,10 @@ export default function DashboardPage() {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        // Fetch applications and saved jobs in parallel
+        // Fetch applications and saved jobs in parallel using candidate-specific endpoints
         const [applicationsResponse, savedJobsResponse] = await Promise.all([
-          apiClient.getApplications(),
-          apiClient.getSavedJobs()
+          apiClient.getCandidateApplications(),
+          apiClient.getCandidateSavedJobs()
         ]);
 
         if (applicationsResponse.success && savedJobsResponse.success) {

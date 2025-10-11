@@ -29,7 +29,7 @@ export default function SavedJobsPage() {
     const fetchSavedJobs = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.getSavedJobs();
+        const response = await apiClient.getCandidateSavedJobs();
         
         if (response.success) {
           // Transform API data to match component expectations

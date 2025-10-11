@@ -112,6 +112,7 @@ class ApiClient {
     });
   }
 
+  // Candidate endpoints
   async getCandidateProfile() {
     return this.request('/candidates/profile', {
       method: 'GET',
@@ -122,6 +123,68 @@ class ApiClient {
     return this.request('/candidates/profile', {
       method: 'PUT',
       data: profileData,
+    });
+  }
+
+  async getCandidateApplications() {
+    return this.request('/candidates/applications', {
+      method: 'GET',
+    });
+  }
+
+  async getCandidateSavedJobs() {
+    return this.request('/candidates/saved-jobs', {
+      method: 'GET',
+    });
+  }
+
+  async saveJobForCandidate(jobId: string) {
+    return this.request(`/candidates/saved-jobs/${jobId}`, {
+      method: 'POST',
+    });
+  }
+
+  async unsaveJobForCandidate(jobId: string) {
+    return this.request(`/candidates/saved-jobs/${jobId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async applyToJobAsCandidate(jobId: string, applicationData: Record<string, unknown>) {
+    return this.request(`/candidates/applications/${jobId}`, {
+      method: 'POST',
+      data: applicationData,
+    });
+  }
+
+  async getCandidateApplicationStatus(applicationId: string) {
+    return this.request(`/candidates/applications/${applicationId}`, {
+      method: 'GET',
+    });
+  }
+
+  async getCandidateResumes() {
+    return this.request('/candidates/resumes', {
+      method: 'GET',
+    });
+  }
+
+  async uploadCandidateResume(file: File) {
+    const formData = new FormData();
+    formData.append('resume', file);
+
+    return this.request('/candidates/resumes', {
+      method: 'POST',
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  }
+
+  async deleteCandidateResume(resumeId: string) {
+    return this.request(`/candidates/resumes/${resumeId}`, {
+      method: 'DELETE',
     });
   }
 
@@ -146,26 +209,7 @@ class ApiClient {
     });
   }
 
-  async applyToJob(jobId: string, applicationData: Record<string, unknown>) {
-    return this.request(`/jobs/${jobId}/apply`, {
-      method: 'POST',
-      data: applicationData,
-    });
-  }
-
-  async saveJob(jobId: string) {
-    return this.request(`/jobs/${jobId}/save`, {
-      method: 'POST',
-    });
-  }
-
-  async unsaveJob(jobId: string) {
-    return this.request(`/jobs/${jobId}/unsave`, {
-      method: 'DELETE',
-    });
-  }
-
-  // Applications endpoints
+  // Applications endpoints (deprecated - use candidate-specific endpoints)
   async getApplications() {
     return this.request('/applications', {
       method: 'GET',
@@ -178,14 +222,14 @@ class ApiClient {
     });
   }
 
-  // Saved jobs endpoints
+  // Saved jobs endpoints (deprecated - use candidate-specific endpoints)
   async getSavedJobs() {
     return this.request('/user/saved-jobs', {
       method: 'GET',
     });
   }
 
-  // Resume file upload endpoints (only used endpoints kept)
+  // Resume file upload endpoints (deprecated - use candidate-specific endpoints)
   async uploadResumeFile(file: File) {
     const formData = new FormData();
     formData.append('resume', file);
