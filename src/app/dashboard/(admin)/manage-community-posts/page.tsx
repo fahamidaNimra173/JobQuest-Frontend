@@ -2,10 +2,9 @@
 import { useState } from "react";
 import axios from "axios";
 import { useTheme } from "next-themes";
-
-import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import CommunityPostsTable from "@/components/dashboard/(admin)/CommunityPostsTable";
+import { useToast } from "@/components/ui/Toast";
 
 // ✅ Shared table style generator
 const getTableStyles = (isDark: boolean) => ({
@@ -44,6 +43,7 @@ interface CommunityPost {
 }
 
 const ManageCommunityPosts = () => {
+  const { showToast } = useToast();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
   const tableStyles = getTableStyles(isDark);
@@ -83,9 +83,10 @@ const ManageCommunityPosts = () => {
         await axios.delete(
           `${window.location.origin}/api/communityPosts/${id}`
         );
-        toast.success("Post rejected");
+        showToast("success", "Post rejected");
       } catch (err: any) {
-        toast.error(
+        showToast(
+          "error",
           err.response?.data?.message || err.message || "Reject failed"
         );
       }
@@ -105,9 +106,10 @@ const ManageCommunityPosts = () => {
     if (result.isConfirmed) {
       try {
         await axios.delete(`${window.location.origin}/api/users/${id}`);
-        toast.success("Post deleted");
+        showToast("success", "Post deleted");
       } catch (err: any) {
-        toast.error(
+        showToast(
+          "error",
           err.response?.data?.message || err.message || "Delete failed"
         );
       }
@@ -130,9 +132,10 @@ const ManageCommunityPosts = () => {
           `${window.location.origin}/api/communityPosts/${id}`,
           { status: "approved" }
         );
-        toast.success("Post approved");
+        showToast("success", "Post approved");
       } catch (err: any) {
-        toast.error(
+        showToast(
+          "error",
           err.response?.data?.message || err.message || "Approve failed"
         );
       }
