@@ -189,13 +189,13 @@ const EmployerSignUp = () => {
               {isShowPassword ? (
                 <FaEyeSlash
                   onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
+                  className="absolute top-3 right-3 cursor-pointer z-10 text-black dark:text-white"
                   size={17}
                 />
               ) : (
                 <FaEye
                   onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
+                  className="absolute top-3 right-3 cursor-pointer z-10 text-black dark:text-white"
                   size={17}
                 />
               )}
@@ -229,7 +229,7 @@ const EmployerSignUp = () => {
                   onClick={() =>
                     setIsShowConfirmPassword(!isShowConfirmPassword)
                   }
-                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
+                  className="absolute top-3 right-3 cursor-pointer z-10 text-black dark:text-white"
                   size={17}
                 />
               ) : (
@@ -237,7 +237,7 @@ const EmployerSignUp = () => {
                   onClick={() =>
                     setIsShowConfirmPassword(!isShowConfirmPassword)
                   }
-                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
+                  className="absolute top-3 right-3 cursor-pointer z-10 text-black dark:text-white"
                   size={17}
                 />
               )}

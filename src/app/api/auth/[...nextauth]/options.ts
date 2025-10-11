@@ -13,19 +13,23 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ profile }: { profile?: Profile }) {
-      const { email, given_name } = profile as any;
-
+      const { email } = profile as any;
+      
       // ✅ Await cookies() properly
       const cookieStore = await cookies();
       const role = cookieStore.get("auth_role")?.value;
 
-      console.log("Auth role:", role);
+      const firstName = profile?.name?.split(" ")[0];
+      const lastName = profile?.name?.split(" ")[1];
 
       try {
         const res = await axios.post(
-          `https://job-portal-backend-xshy.onrender.com/api/${role === "candidate" ? "candidates" : "employers"}`,
+          `https://job-portal-backend-xshy.onrender.com/api/${
+            role === "candidate" ? "candidates" : "employers"
+          }`,
           {
-            name: `${given_name}`,
+            firstName,
+            lastName,
             email,
             provider: "Google",
             role,
@@ -34,7 +38,10 @@ export const authOptions: NextAuthOptions = {
 
         console.log("Signup success:", res.data);
       } catch (error: any) {
-        console.error("Error in options.ts:", error.response?.data || error.message);
+        console.error(
+          "Error in options.ts:",
+          error.response?.data || error.message
+        );
       }
 
       // ✅ Remove cookie on server side
