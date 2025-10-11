@@ -1,13 +1,13 @@
 import React from 'react';
 import Sidebar from '@/components/dashboard/Sidebar';
-
+import '../dashboard.css'
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-all duration-300">
+    <div className="min-h-screen dashboard-layout bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-all duration-300">
       <div className="flex">
         {/* Sidebar */}
         <Sidebar />
