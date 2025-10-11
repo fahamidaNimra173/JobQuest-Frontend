@@ -1,32 +1,33 @@
 
 
-import JobCard from '../component/shared/Cards';
+
 import { Search, MapPin, Briefcase, Calendar, Tag, Filter } from 'lucide-react';
-import { job } from '../types/job';
+import AllJobs from '../component/AllJobs';
+// import { job } from '../types/job';
 
 
 
-async function getAllJobs(): Promise<job[]> {
-  try {
-    const res = await fetch('https://job-portal-backend-xshy.onrender.com/api/jobs', {
-      cache: 'no-store',
-    });
+// async function getAllJobs(): Promise<job[]> {
+//   try {
+//     const res = await fetch('https://job-portal-backend-xshy.onrender.com/api/jobs', {
+//       cache: 'no-store',
+//     });
 
-    if (!res.ok) {
-      throw new Error('Failed to fetch jobs');
-    }
+//     if (!res.ok) {
+//       throw new Error('Failed to fetch jobs');
+//     }
 
-    const data = await res.json();
-    const jobs = Array.isArray(data) ? data : data.jobs;
-    return jobs;
-  } catch (error) {
-    console.error('Error fetching jobs:', error);
-    return [];
-  }
-}
+//     const data = await res.json();
+//     const jobs = Array.isArray(data) ? data : data.jobs;
+//     return jobs;
+//   } catch (error) {
+//     console.error('Error fetching jobs:', error);
+//     return [];
+//   }
+// }
 
 export default async function BrowseJobsPage() {
-  const jobs = await getAllJobs();
+  // const jobs = await getAllJobs();
 
   return (
     <div className="min-h-screen ">
@@ -41,7 +42,7 @@ export default async function BrowseJobsPage() {
         <div className="relative z-10 h-full flex items-center justify-center">
           <div className="text-center text-white">
             <h1 className="text-4xl md:text-5xl font-bold mb-2 pt-20">Browse All Jobs</h1>
-            <p className="text-lg md:text-xl">Find your perfect opportunity from {jobs.length} available positions</p>
+            <p className="text-lg md:text-xl">Find your perfect opportunity from  available positions</p>
           </div>
         </div>
       </div>
@@ -176,9 +177,10 @@ export default async function BrowseJobsPage() {
 
           {/* Job Cards Section - Scrollable */}
           <main className="flex-1">
+            <AllJobs></AllJobs>
 
 
-            {jobs.length > 0 ? (
+            {/* {jobs.length > 0 ? (
               <div className="grid grid-cols-1  gap-6">
                 {jobs.map((job) => (
                   <JobCard key={job._id} job={job} />
@@ -188,7 +190,7 @@ export default async function BrowseJobsPage() {
               <div className="bg-white rounded-xl shadow-md p-12 text-center">
                 <p className="text-gray-500 text-lg">No jobs found matching your criteria.</p>
               </div>
-            )}
+            )} */}
           </main>
         </div>
       </div>

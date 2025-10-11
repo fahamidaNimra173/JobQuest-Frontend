@@ -56,7 +56,7 @@ export default function AboutUsPage() {
             image: Image2,
 
             email: "mailto:mottasimsadi@gmail.com",
-            linkedin: "https://linkedin.com/in/mottasim",
+            linkedin: "https://linkedin.com/in/mottasimsadi",
             portfolio: "https://mottasim-sadi.netlify.app/",
             github: "https://github.com/mottasimsadi",
         },

@@ -78,7 +78,7 @@ export default async function Home() {
         <ThreeDMarqueeDemo></ThreeDMarqueeDemo>
       </div>
           <div className="mb-20 lg:mb-40">
-            <h1 className="text-3xl  mt-20 mb-10 font-bold font-mono text-shadow-md shadow-black  px-6 md:text-4xl  text-primary-dark "><span className="text-yellow-500">Words</span> Words That <span className="text-yellow-500">Inspire </span>Us</h1>
+            <h1 className="text-3xl text-center mt-20 mb-10 font-bold font-mono text-shadow-md shadow-black  px-6 md:text-4xl  text-primary-dark "><span className="text-yellow-500">Words</span> That <span className="text-yellow-500">Inspire </span>Us</h1>
             <AnimatedTestimonialsDemo></AnimatedTestimonialsDemo>
           </div>
       

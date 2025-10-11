@@ -5,6 +5,7 @@ import Footer from "./component/shared/Footer";
 import Navbar from "./component/shared/Navbar";
 import Script from "next/script";
 import { Toaster } from "react-hot-toast";
+import Provider from '../app/Provider/QueryProvider'
 
 export const majorMono = Major_Mono_Display({
   weight: '400',
@@ -50,7 +51,7 @@ export default function RootLayout({
 
 
           <div className="min-h-screen ">
-            {children}
+            <Provider>{children}</Provider>
             <Toaster position="top-center" reverseOrder={false} />
 
           </div>

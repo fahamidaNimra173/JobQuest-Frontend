@@ -1,81 +1,126 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { Heart, Send, Smile } from 'lucide-react';
+import { Heart, Send, Smile, Laugh } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axiosInstance from '@/lib/axios';
 
 interface Post {
-    id: number;
-    author: string;
-    avatar: string;
-    content: string;
-    timestamp: string;
-    likes: number;
-    loves: number;
-    userReaction: 'like' | 'love' | null;
+    _id: string;
+    username: string;
+    email: string;
+    postTitle: string;
+    post: string;
+    totalLikes: number;
+    totalHaha: number;
+    totalLove: number;
+    postDate: string;
+    userReaction?: 'like' | 'love' | 'haha' | null;
 }
 
+interface CreatePostData {
+    username: string;
+    email: string;
+    postTitle: string;
+    post: string;
+}
+
+interface ReactionData {
+    postId: string;
+    reactionType: 'like' | 'love' | 'haha';
+}
+
+// Time ago helper function
+const getTimeAgo = (timestamp: string): string => {
+    const now = new Date();
+    const postTime = new Date(timestamp);
+    const diffInMs = now.getTime() - postTime.getTime();
+    const diffInSeconds = Math.floor(diffInMs / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+    const diffInWeeks = Math.floor(diffInDays / 7);
+    const diffInMonths = Math.floor(diffInDays / 30);
+    const diffInYears = Math.floor(diffInDays / 365);
+
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes} ${diffInMinutes === 1 ? 'minute' : 'minutes'} ago`;
+    if (diffInHours < 24) return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`;
+    if (diffInDays < 7) return `${diffInDays} ${diffInDays === 1 ? 'day' : 'days'} ago`;
+    if (diffInWeeks < 4) return `${diffInWeeks} ${diffInWeeks === 1 ? 'week' : 'weeks'} ago`;
+    if (diffInMonths < 12) return `${diffInMonths} ${diffInMonths === 1 ? 'month' : 'months'} ago`;
+    return `${diffInYears} ${diffInYears === 1 ? 'year' : 'years'} ago`;
+};
+
+// Avatar generator based on username
+const getAvatar = (username: string): string => {
+    const avatars = ['👤', '👨', '👩', '🧑', '👨‍💼', '👩‍💼', '🧑‍💼', '👨‍💻', '👩‍💻', '🧑‍💻'];
+    const index = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % avatars.length;
+    return avatars[index];
+};
+
 export default function CommunityPage() {
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [newPostTitle, setNewPostTitle] = useState('');
     const [newPost, setNewPost] = useState('');
-    const [dotLottieLoaded, setDotLottieLoaded] = useState(false);
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        // Load dotlottie-wc script
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs';
-        script.type = 'module';
-        script.onload = () => setDotLottieLoaded(true);
-        document.head.appendChild(script);
+    // Fetch posts
+    const { data: posts = [], isLoading } = useQuery<Post[]>({
+        queryKey: ['posts'],
+        queryFn: async () => {
+            const response = await axiosInstance.get('/community');
+            return response.data;
+        },
+    });
 
-        return () => {
-            document.head.removeChild(script);
-        };
-    }, []);
+    // Create post mutation
+    const createPostMutation = useMutation({
+        mutationFn: async (postData: CreatePostData) => {
+            const response = await axiosInstance.post('/community', postData);
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['posts'] });
+            setNewPostTitle('');
+            setNewPost('');
+        },
+    });
+
+    // React to post mutation
+    const reactToPostMutation = useMutation({
+        mutationFn: async (reactionData: ReactionData) => {
+            const response = await axiosInstance.post(`/community/${reactionData.postId}/react`, {
+                reactionType: reactionData.reactionType,
+            });
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['posts'] });
+        },
+    });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newPost.trim()) return;
+        if (!newPost.trim() || !newPostTitle.trim()) return;
 
-        const post: Post = {
-            id: Date.now(),
-            author: 'Fahamida',
-            avatar: '👤',
-            content: newPost,
-            timestamp: 'Just now',
-            likes: 0,
-            loves: 0,
-            userReaction: null
-        };
-
-        setPosts([post, ...posts]);
-        setNewPost('');
+        createPostMutation.mutate({
+            username: 'fahamida_nimra', // Replace with actual user data from auth
+            email: 'fahamida@example.com', // Replace with actual user data from auth
+            postTitle: newPostTitle,
+            post: newPost,
+        });
     };
 
-    const handleReaction = (postId: number, reaction: 'like' | 'love') => {
-        setPosts(posts.map(post => {
-            if (post.id === postId) {
-                const isCurrentReaction = post.userReaction === reaction;
-
-                return {
-                    ...post,
-                    likes: reaction === 'like'
-                        ? (isCurrentReaction ? post.likes - 1 : post.userReaction === 'love' ? post.likes + 1 : post.likes + 1)
-                        : post.userReaction === 'like' ? post.likes - 1 : post.likes,
-                    loves: reaction === 'love'
-                        ? (isCurrentReaction ? post.loves - 1 : post.userReaction === 'like' ? post.loves + 1 : post.loves + 1)
-                        : post.userReaction === 'love' ? post.loves - 1 : post.loves,
-                    userReaction: isCurrentReaction ? null : reaction
-                };
-            }
-            return post;
-        }));
+    const handleReaction = (postId: string, reaction: 'like' | 'love' | 'haha') => {
+        reactToPostMutation.mutate({
+            postId,
+            reactionType: reaction,
+        });
     };
 
     return (
         <div style={{
             minHeight: '100vh',
-
-
             display: 'flex',
             gap: '24px',
             padding: '24px 6px',
@@ -83,7 +128,6 @@ export default function CommunityPage() {
         }}>
             {/* Left Section - Animation and Welcome (Fixed) */}
             <div style={{
-                // width: '400px',
                 flexShrink: 0,
                 position: 'sticky',
                 top: '24px',
@@ -101,7 +145,6 @@ export default function CommunityPage() {
                 }}
                     className='flex flex-col items-center justify-center'
                 >
-
                     {/* Animation */}
                     <div style={{
                         display: 'flex',
@@ -178,11 +221,33 @@ export default function CommunityPage() {
                     marginBottom: '24px',
                     boxShadow: '0 2px 12px rgba(118, 112, 214, 0.08)'
                 }}>
-                    <div onSubmit={handleSubmit} style={{ display: 'contents' }}>
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <input
+                            type="text"
+                            value={newPostTitle}
+                            onChange={(e) => setNewPostTitle(e.target.value)}
+                            placeholder="Post Title"
+                            disabled={createPostMutation.isPending}
+                            style={{
+                                width: '100%',
+                                border: '2px solid #d3d2ea',
+                                borderRadius: '12px',
+                                padding: '16px',
+                                fontSize: '15px',
+                                fontFamily: 'inherit',
+                                outline: 'none',
+                                transition: 'border-color 0.2s',
+                                boxSizing: 'border-box',
+                                fontWeight: '600'
+                            }}
+                            onFocus={(e) => e.target.style.borderColor = '#7670d6'}
+                            onBlur={(e) => e.target.style.borderColor = '#d3d2ea'}
+                        />
                         <textarea
                             value={newPost}
                             onChange={(e) => setNewPost(e.target.value)}
                             placeholder="What's on your mind?"
+                            disabled={createPostMutation.isPending}
                             style={{
                                 width: '100%',
                                 minHeight: '100px',
@@ -199,51 +264,61 @@ export default function CommunityPage() {
                             onFocus={(e) => e.target.style.borderColor = '#7670d6'}
                             onBlur={(e) => e.target.style.borderColor = '#d3d2ea'}
                             onKeyDown={(e) => {
-                                if (e.key === 'Enter' && e.ctrlKey && newPost.trim()) {
+                                if (e.key === 'Enter' && e.ctrlKey && newPost.trim() && newPostTitle.trim()) {
                                     handleSubmit(e);
                                 }
                             }}
                         />
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <button
-                                onClick={handleSubmit}
-                                disabled={!newPost.trim()}
+                                type="submit"
+                                disabled={!newPost.trim() || !newPostTitle.trim() || createPostMutation.isPending}
                                 style={{
-                                    background: newPost.trim() ? '#7670d6' : '#d3d2ea',
+                                    background: (newPost.trim() && newPostTitle.trim() && !createPostMutation.isPending) ? '#7670d6' : '#d3d2ea',
                                     color: 'white',
                                     border: 'none',
                                     borderRadius: '10px',
                                     padding: '12px 24px',
                                     fontSize: '15px',
                                     fontWeight: '600',
-                                    cursor: newPost.trim() ? 'pointer' : 'not-allowed',
+                                    cursor: (newPost.trim() && newPostTitle.trim() && !createPostMutation.isPending) ? 'pointer' : 'not-allowed',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '8px',
                                     transition: 'all 0.2s'
                                 }}
                                 onMouseEnter={(e) => {
-                                    if (newPost.trim()) {
+                                    if (newPost.trim() && newPostTitle.trim() && !createPostMutation.isPending) {
                                         e.currentTarget.style.background = '#9da0dc';
                                         e.currentTarget.style.transform = 'translateY(-2px)';
                                     }
                                 }}
                                 onMouseLeave={(e) => {
-                                    if (newPost.trim()) {
+                                    if (newPost.trim() && newPostTitle.trim() && !createPostMutation.isPending) {
                                         e.currentTarget.style.background = '#7670d6';
                                         e.currentTarget.style.transform = 'translateY(0)';
                                     }
                                 }}
                             >
                                 <Send size={18} />
-                                Post
+                                {createPostMutation.isPending ? 'Posting...' : 'Post'}
                             </button>
                         </div>
-                    </div>
+                    </form>
                 </div>
 
                 {/* Posts Feed */}
-                {posts.length === 0 ? (
+                {isLoading ? (
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '16px',
+                        padding: '64px 32px',
+                        textAlign: 'center',
+                        boxShadow: '0 2px 12px rgba(118, 112, 214, 0.08)'
+                    }}>
+                        <p style={{ color: '#9da0dc', fontSize: '15px' }}>Loading posts...</p>
+                    </div>
+                ) : posts.length === 0 ? (
                     <div style={{
                         background: 'white',
                         borderRadius: '16px',
@@ -278,7 +353,7 @@ export default function CommunityPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         {posts.map(post => (
                             <div
-                                key={post.id}
+                                key={post._id}
                                 style={{
                                     background: 'white',
                                     borderRadius: '16px',
@@ -307,27 +382,38 @@ export default function CommunityPage() {
                                         background: '#f8f3ed',
                                         borderRadius: '50%'
                                     }}>
-                                        {post.avatar}
+                                        {getAvatar(post.username)}
                                     </div>
-                                    <div>
+                                    <div style={{ flex: 1 }}>
                                         <div style={{ fontWeight: '600', color: '#7670d6', fontSize: '15px' }}>
-                                            {post.author}
+                                            {post.username}
                                         </div>
                                         <div style={{ fontSize: '13px', color: '#9da0dc' }}>
-                                            {post.timestamp}
+                                            {getTimeAgo(post.postDate)}
                                         </div>
                                     </div>
                                 </div>
 
+                                {/* Post Title */}
+                                <h3 style={{
+                                    color: '#333',
+                                    fontSize: '18px',
+                                    fontWeight: '700',
+                                    margin: '0 0 12px 0',
+                                    lineHeight: '1.4'
+                                }}>
+                                    {post.postTitle}
+                                </h3>
+
                                 {/* Post Content */}
                                 <p style={{
-                                    color: '#333',
+                                    color: '#555',
                                     fontSize: '15px',
                                     lineHeight: '1.6',
                                     margin: '0 0 16px 0',
                                     whiteSpace: 'pre-wrap'
                                 }}>
-                                    {post.content}
+                                    {post.post}
                                 </p>
 
                                 {/* Reactions */}
@@ -338,7 +424,8 @@ export default function CommunityPage() {
                                     borderTop: '1px solid #f8f3ed'
                                 }}>
                                     <button
-                                        onClick={() => handleReaction(post.id, 'like')}
+                                        onClick={() => handleReaction(post._id, 'like')}
+                                        disabled={reactToPostMutation.isPending}
                                         style={{
                                             display: 'flex',
                                             alignItems: 'center',
@@ -361,10 +448,11 @@ export default function CommunityPage() {
                                         }}
                                     >
                                         <Smile size={18} />
-                                        {post.likes > 0 && post.likes}
+                                        {post.totalLikes > 0 && post.totalLikes}
                                     </button>
                                     <button
-                                        onClick={() => handleReaction(post.id, 'love')}
+                                        onClick={() => handleReaction(post._id, 'love')}
+                                        disabled={reactToPostMutation.isPending}
                                         style={{
                                             display: 'flex',
                                             alignItems: 'center',
@@ -387,7 +475,34 @@ export default function CommunityPage() {
                                         }}
                                     >
                                         <Heart size={18} fill={post.userReaction === 'love' ? 'white' : 'none'} />
-                                        {post.loves > 0 && post.loves}
+                                        {post.totalLove > 0 && post.totalLove}
+                                    </button>
+                                    <button
+                                        onClick={() => handleReaction(post._id, 'haha')}
+                                        disabled={reactToPostMutation.isPending}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '6px',
+                                            padding: '8px 16px',
+                                            border: 'none',
+                                            borderRadius: '10px',
+                                            background: post.userReaction === 'haha' ? '#7670d6' : '#f8f3ed',
+                                            color: post.userReaction === 'haha' ? 'white' : '#7670d6',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            fontWeight: '600',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.background = post.userReaction === 'haha' ? '#9da0dc' : '#d3d2ea';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.background = post.userReaction === 'haha' ? '#7670d6' : '#f8f3ed';
+                                        }}
+                                    >
+                                        <Laugh size={18} />
+                                        {post.totalHaha > 0 && post.totalHaha}
                                     </button>
                                 </div>
                             </div>
