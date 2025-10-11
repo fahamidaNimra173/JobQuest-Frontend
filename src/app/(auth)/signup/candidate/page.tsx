@@ -80,7 +80,7 @@ const CandidateSignUp = () => {
       localStorage.setItem("user", JSON.stringify(res.data.user));
       console.log(res.data);
       router.push("/dashboard/profile");
-      toast.success('You registered successfully')
+      toast.success("You registered successfully");
     } catch (error) {
       console.log(error);
     }
@@ -88,7 +88,7 @@ const CandidateSignUp = () => {
 
   return (
     <section className="px-4 py-10">
-      <div className="max-w-lg mx-auto bg-blue-200 rounded-lg shadow-lg p-4">
+      <div className="max-w-lg mx-auto bg-primary-dark rounded-lg shadow-lg p-4">
         {/* title */}
         <h1 className="text-xl text-black font-bold mb-2">
           Create a Candidate Account
@@ -102,62 +102,66 @@ const CandidateSignUp = () => {
         {/* register form */}
         <form onSubmit={handleRegister} className="space-y-3">
           <div>
-            <p className="text-xs text-gray-500 font-semibold">First Name</p>
+            <p className="text-xs text-black/60 font-semibold">First Name</p>
             <input
               type="text"
               name="firstName"
-              className="border bg-white/40 border-black w-full mt-1 rounded text-black text-xs p-2"
+              className="border   border-black w-full mt-1 rounded text-black text-xs p-2"
               placeholder="Enter Your First Name"
               required
             />
           </div>
 
           <div>
-            <p className="text-xs text-gray-500 font-semibold">Last Name</p>
+            <p className="text-xs text-black/60 font-semibold">Last Name</p>
             <input
               type="text"
               name="lastName"
-              className="border bg-white/40 border-black w-full mt-1 rounded text-black text-xs p-2"
+              className="border   border-black w-full mt-1 rounded text-black text-xs p-2"
               placeholder="Enter Your Last Name"
               required
             />
           </div>
 
           <div>
-            <p className="text-xs text-gray-500 font-semibold">Email</p>
+            <p className="text-xs text-black/60 font-semibold">Email</p>
             <input
               type="email"
               name="email"
-              className="border bg-white/40 border-black w-full mt-1 rounded text-black text-xs p-2"
+              className="border border-black w-full mt-1 rounded text-black text-xs p-2"
               placeholder="Enter Your Email"
               required
             />
           </div>
 
           <div>
-            <p className="text-xs text-gray-500 font-semibold">Phone</p>
+            <p className="text-xs text-black/60 font-semibold">Phone</p>
             <PhoneInput
               defaultCountry="bd"
               value={phone}
               onChange={(phone) => setPhone(phone)}
               inputStyle={{
                 width: "100%",
-                backgroundColor: "#D8E9FF",
+                backgroundColor: "var(--primary-lightest)",
+                color: "var(--foreground)",
+                border: "1px solid #d1d5db",
               }}
               required
             />
 
             {!isNumberValid && (
-              <p className="text-red-500 text-xs mt-1">Phone is not valid</p>
+              <p className="text-red-600 font-semibold text-xs mt-1">
+                Phone is not valid
+              </p>
             )}
           </div>
 
           <div>
-            <p className="text-xs text-gray-500 font-semibold">Password</p>
+            <p className="text-xs text-black/60 font-semibold">Password</p>
             <div className="relative">
               <input
                 type={isShowPassword ? "text" : "password"}
-                className={`border bg-white/40 w-full mt-1 rounded text-black text-xs p-2 ${
+                className={`border   w-full mt-1 rounded text-black text-xs p-2 ${
                   !isPasswordValid ? "border-red-500" : "border-black"
                 }`}
                 name="password"
@@ -168,19 +172,19 @@ const CandidateSignUp = () => {
               {isShowPassword ? (
                 <FaEyeSlash
                   onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
+                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
                   size={17}
                 />
               ) : (
                 <FaEye
                   onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
+                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
                   size={17}
                 />
               )}
 
               {!isPasswordValid && (
-                <p className="text-red-500 text-xs mt-1">
+                <p className="text-red-600 font-semibold text-xs mt-1">
                   Must be at least 8 characters and include:
                   <br />• One number
                   <br />• One lowercase letter
@@ -191,13 +195,13 @@ const CandidateSignUp = () => {
           </div>
 
           <div>
-            <p className="text-xs text-gray-500 font-semibold">
+            <p className="text-xs text-black/60 font-semibold">
               Confirm Password
             </p>
             <div className="relative">
               <input
                 type={isShowConfirmPassword ? "text" : "password"}
-                className="border bg-white/40 border-black w-full mt-1 rounded text-black text-xs p-2"
+                className="border   dark:bg-primary-light border-black w-full mt-1 rounded text-black text-xs p-2"
                 placeholder="Enter The Password Again"
                 name="confirm_password"
                 required
@@ -208,7 +212,7 @@ const CandidateSignUp = () => {
                   onClick={() =>
                     setIsShowConfirmPassword(!isShowConfirmPassword)
                   }
-                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
+                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
                   size={17}
                 />
               ) : (
@@ -216,13 +220,13 @@ const CandidateSignUp = () => {
                   onClick={() =>
                     setIsShowConfirmPassword(!isShowConfirmPassword)
                   }
-                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
+                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
                   size={17}
                 />
               )}
 
               {!isPasswordMatch && (
-                <p className="text-red-500 text-xs mt-1">
+                <p className="text-red-600 font-semibold text-xs mt-1">
                   Password doesn&apos;t match
                 </p>
               )}
@@ -240,21 +244,18 @@ const CandidateSignUp = () => {
           </div>
         </form>
 
-        <p className="my-2 text-center text-xs text-black">
+        <p className="my-2 text-center text-xs text-black/70 font-semibold">
           Already Have an Account? Please{" "}
-          <Link
-            href="/login"
-            className="font-semibold text-blue-500 hover:underline"
-          >
+          <Link href="/login" className="text-blue-700 hover:underline">
             Login
           </Link>
         </p>
 
         {/* divider */}
-        <div className="flex gap-1 items-center text-black text-sm my-6">
-          <div className="h-0.5 flex-1 bg-black/60 rounded-full"></div>
-          OR
-          <div className="h-0.5 flex-1 bg-black/60 rounded-full"></div>
+        <div className="flex items-center gap-2 my-6">
+          <div className="flex-1 border-t-2 border-black/60"></div>
+          <span className="text-black text-sm font-medium">OR</span>
+          <div className="flex-1 border-t-2 border-black/60"></div>
         </div>
 
         {/* google login */}
