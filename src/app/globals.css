@@ -37,21 +37,22 @@
 
 /* Global theme application with force inheritance */
 html,
-html *,
-body,
-body * {
+/* html *, */
+body
+/* body * */
+ {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 html {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
+  background-color: var(--background);
+  color: var(--foreground);
   color-scheme: light;
 }
 
 html.dark {
-  background-color: var(--background) !important;
-  color: var(--foreground) !important;
+  background-color: var(--background);
+  color: var(--foreground);
   color-scheme: dark;
 }
 
