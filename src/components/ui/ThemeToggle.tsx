@@ -11,12 +11,11 @@ interface ThemeToggleProps {
 
 export default function ThemeToggle({ className = '', showTooltip = true }: ThemeToggleProps) {
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme, resolvedTheme, systemTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
-    console.log('ThemeToggle mounted:', { theme, resolvedTheme, systemTheme });
-  }, [theme, resolvedTheme, systemTheme]);
+  }, []);
 
   // Don't render until mounted to avoid hydration mismatch
   if (!mounted) {
@@ -32,46 +31,7 @@ export default function ThemeToggle({ className = '', showTooltip = true }: Them
   }
 
   const handleToggle = () => {
-    const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark';
-    console.log('Theme toggle clicked!', {
-      current: resolvedTheme,
-      new: newTheme,
-      theme,
-      systemTheme
-    });
-    
-    // Update theme via next-themes
-    setTheme(newTheme);
-    
-    // Force immediate DOM update for better responsiveness
-    setTimeout(() => {
-      const html = document.documentElement;
-      const body = document.body;
-      
-      if (newTheme === 'dark') {
-        html.classList.add('dark');
-        body.classList.add('dark');
-        html.style.colorScheme = 'dark';
-      } else {
-        html.classList.remove('dark');
-        body.classList.remove('dark');
-        html.style.colorScheme = 'light';
-      }
-      
-      // Force re-render of all elements
-      const allElements = document.querySelectorAll('*');
-      allElements.forEach(el => {
-        if (el instanceof HTMLElement) {
-          el.style.transition = 'all 0.3s ease';
-        }
-      });
-      
-      console.log('Theme force-applied:', {
-        htmlDark: html.classList.contains('dark'),
-        bodyDark: body.classList.contains('dark'),
-        colorScheme: html.style.colorScheme
-      });
-    }, 10);
+    setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   };
 
   const isDark = resolvedTheme === 'dark';

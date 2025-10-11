@@ -1,7 +1,7 @@
 'use client';
 
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -13,12 +13,22 @@ interface ThemeProviderProps {
 
 export function ThemeProvider({ 
   children, 
-  defaultTheme = 'light',
-  enableSystem = false,
+  defaultTheme = 'system',
+  enableSystem = true,
   disableTransitionOnChange = false,
   storageKey = 'jobquest-theme',
   ...props 
 }: ThemeProviderProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <>{children}</>;
+  }
+
   return (
     <NextThemesProvider 
       attribute="class"
@@ -26,11 +36,7 @@ export function ThemeProvider({
       enableSystem={enableSystem}
       disableTransitionOnChange={disableTransitionOnChange}
       storageKey={storageKey}
-      themes={['light', 'dark']}
-      value={{
-        light: 'light',
-        dark: 'dark'
-      }}
+      themes={['light', 'dark', 'system']}
       {...props}
     >
       {children}

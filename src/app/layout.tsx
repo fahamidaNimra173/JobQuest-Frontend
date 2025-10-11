@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -35,19 +35,10 @@ export default function RootLayout({
               (function() {
                 try {
                   var theme = localStorage.getItem('jobquest-theme');
-                  var root = document.documentElement;
                   if (theme === 'dark') {
-                    root.classList.add('dark');
-                    root.style.colorScheme = 'dark';
-                  } else {
-                    root.classList.remove('dark');
-                    root.style.colorScheme = 'light';
+                    document.documentElement.classList.add('dark');
                   }
-                } catch (e) {
-                  // Fallback to light mode if localStorage is not available
-                  document.documentElement.classList.remove('dark');
-                  document.documentElement.style.colorScheme = 'light';
-                }
+                } catch (e) {}
               })();
             `,
           }}
@@ -59,8 +50,8 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <ThemeProvider
-          defaultTheme="light"
-          enableSystem={false}
+          defaultTheme="system"
+          enableSystem={true}
           disableTransitionOnChange={false}
           storageKey="jobquest-theme"
         >
