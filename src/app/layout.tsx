@@ -1,10 +1,39 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+
+import {
+  Major_Mono_Display,
+  Sedan_SC,
+  Junge,
+  Geist,
+  Geist_Mono,
+} from "next/font/google";
 import "./globals.css";
+import "./landing.css";
+import Script from "next/script";
+import { Toaster } from "react-hot-toast";
+import Provider from "../app/Provider/QueryProvider";
 // import AuthProvider from "@/providers/AuthProvider";
 import { ToastProvider } from "@/components/ui/Toast";
 import { ThemeProvider } from "@/components/theme-provider";
+import LayoutClientWrapper from "./component/shared/LayoutClientWrapper";
 
+export const majorMono = Major_Mono_Display({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
+
+export const sen = Sedan_SC({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-body",
+});
+
+export const junge = Junge({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-accent",
+});
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -46,7 +75,7 @@ export default function RootLayout({
       </head>
       {/* <AuthProvider> */}
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200`}
+        className={`${junge.variable} ${majorMono.variable} ${sen.variable} ${geistMono.variable} ${geistSans.variable} antialiased scroll-smooth`}
         suppressHydrationWarning={true}
       >
         <ThemeProvider
@@ -55,11 +84,23 @@ export default function RootLayout({
           disableTransitionOnChange={false}
           storageKey="jobquest-theme"
         >
-          <QueryProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </QueryProvider>
+          <Script
+            src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.1/dist/dotlottie-wc.js"
+            strategy="beforeInteractive"
+            type="module"
+          />
+
+          <ToastProvider>
+            <Provider>
+              <LayoutClientWrapper>
+                <div className="landing-layout min-h-screen">{children}</div>
+              </LayoutClientWrapper>
+            </Provider>
+            <Toaster position="top-center" reverseOrder={false} />
+          </ToastProvider>
         </ThemeProvider>
       </body>
+
       {/* </AuthProvider> */}
     </html>
   );

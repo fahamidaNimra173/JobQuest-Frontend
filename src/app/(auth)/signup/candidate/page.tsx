@@ -88,7 +88,7 @@ const CandidateSignUp = () => {
   };
 
   return (
-    <section className="px-4 py-10">
+    <section className="px-4 pb-10 pt-30">
       <div className="max-w-lg mx-auto bg-primary-dark rounded-lg shadow-lg p-4">
         {/* title */}
         <h1 className="text-xl text-black font-bold mb-2">
@@ -143,9 +143,9 @@ const CandidateSignUp = () => {
               onChange={(phone) => setPhone(phone)}
               inputStyle={{
                 width: "100%",
-                backgroundColor: "var(--primary-lightest)",
-                color: "var(--foreground)",
-                border: "1px solid #d1d5db",
+                backgroundColor: "transparent",
+                color: "black",
+                border: "1px solid black",
               }}
               required
             />

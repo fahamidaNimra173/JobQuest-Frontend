@@ -13,7 +13,7 @@ import {
   Briefcase,
   BarChart3,
   Users,
-  MessageSquare,
+  // MessageSquare,
   ClipboardList,
   LucideIcon,
 } from "lucide-react";

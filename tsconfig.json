@@ -22,6 +22,8 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/lib/pagination.tsx"],
+  
+  "include": ["next-env.d.ts","src/app/types/global.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/component/AllJobs.jsx","src/lib/pagination.tsx"],
+
   "exclude": ["node_modules"]
 }
