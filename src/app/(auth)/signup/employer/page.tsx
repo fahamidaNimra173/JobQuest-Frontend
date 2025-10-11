@@ -42,7 +42,7 @@ const EmployerSignUp = () => {
       .value;
     const lastName = (form.elements.namedItem("lastName") as HTMLInputElement)
       .value;
-    const company_name = (
+    const companyName = (
       form.elements.namedItem("company_name") as HTMLInputElement
     ).value;
     const email = (form.elements.namedItem("email") as HTMLInputElement).value;
@@ -69,11 +69,10 @@ const EmployerSignUp = () => {
     // create user in db
     try {
       const res = await axios.post(
-        "https://job-portal-backend-xshy.onrender.com/auth/signup",
+        `https://job-portal-backend-xshy.onrender.com/api/employers`,
         {
-          firstName,
-          lastName,
-          company_name,
+          name: `${firstName} ${lastName}` ,
+          companyName,
           email,
           phone,
           password,
