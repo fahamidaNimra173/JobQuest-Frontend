@@ -17,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axios";
 import { useAuth } from "@/providers/AuthProvider";
 import { Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // ---------------------- Filters ----------------------
 interface OptionType {
@@ -65,7 +66,7 @@ const getTableStyles = (isDark: boolean) => ({
 
 // ---------------------- Main Component ----------------------
 const ManageUsers = () => {
-  const { loading } = useAuth();
+  const { loading, user } = useAuth();
   const { showToast } = useToast();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -74,11 +75,19 @@ const ManageUsers = () => {
   const [roleFilter, setRoleFilter] = useState<OptionType>(roleOptions[0]);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const router = useRouter();
 
   // ✅ Ensure component is mounted before accessing theme
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user) router.push("/login");
+      else if (user.role !== "admin") router.push("/forbidden");
+    }
+  }, [user, loading, router]);
 
   const isDark = mounted && resolvedTheme === "dark";
   const currentSelectStyles = isDark
@@ -136,10 +145,12 @@ const ManageUsers = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(
-          `https://job-portal-backend-xshy.onrender.com/api/users/${id}`
-        );
-        showToast("success", "User deleted");
+        const res = await axiosInstance.delete(`/users/${id}`);
+
+        if (res.status === 200) {
+          showToast("success", "User deleted");
+          refetch();
+        }
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
           showToast(

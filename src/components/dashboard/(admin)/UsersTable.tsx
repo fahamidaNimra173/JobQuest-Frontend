@@ -9,6 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Button } from "@mui/material";
 import TablePaginationActions from "@/lib/pagination";
+import { useAuth } from "@/providers/AuthProvider";
 
 // -------------------------------------------------------------
 // ✅ Type Definitions
@@ -69,6 +70,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
   setRowsPerPage,
   handleDelete,
 }) => {
+  const { user } = useAuth();
   return (
     <TableContainer
       component={Paper}
@@ -115,7 +117,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 sx={{ py: 0.5, ...tableStyles.tableBodyCell }}
                 align="center"
               >
-                {u.firstName + ' ' + u.lastName}
+                {u.name}
               </TableCell>
               <TableCell
                 sx={{ py: 0.5, ...tableStyles.tableBodyCell }}
@@ -126,6 +128,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
               <TableCell
                 sx={{ py: 0.5, ...tableStyles.tableBodyCell }}
                 align="center"
+                className="capitalize"
               >
                 {u.role}
               </TableCell>
@@ -141,17 +144,19 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 sx={{ py: 0.5, ...tableStyles.tableBodyCell }}
                 align="center"
               >
-                <div className="flex items-center justify-center gap-2">
-                  <Button
-                    onClick={() => handleDelete(u._id)}
-                    variant="contained"
-                    sx={{ fontSize: "12px", padding: "6px" }}
-                    size="small"
-                    color="error"
-                  >
-                    Delete
-                  </Button>
-                </div>
+                {user?.email !== u.email && (
+                  <div className="flex items-center justify-center gap-2">
+                    <Button
+                      onClick={() => handleDelete(u._id)}
+                      variant="contained"
+                      sx={{ fontSize: "12px", padding: "6px" }}
+                      size="small"
+                      color="error"
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           ))}
