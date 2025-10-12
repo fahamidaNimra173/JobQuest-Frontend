@@ -1,7 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-// import axios, { AxiosError } from "axios";
 import { useTheme } from "next-themes";
 import Swal from "sweetalert2";
 import CommunityPostsTable from "@/components/dashboard/(admin)/CommunityPostsTable";
@@ -47,11 +46,18 @@ interface CommunityPost {
 const ManageCommunityPosts = () => {
   const { showToast } = useToast();
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
-  const tableStyles = getTableStyles(isDark);
+  const [mounted, setMounted] = useState(false);
 
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+
+  // ✅ Ensure component is mounted before accessing theme
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && resolvedTheme === "dark";
+  const tableStyles = getTableStyles(isDark);
 
   const communityPosts: CommunityPost[] = Array.from({ length: 30 }).map(
     (_, i) => ({
@@ -83,21 +89,18 @@ const ManageCommunityPosts = () => {
     if (result.isConfirmed) {
       try {
         await axios.delete(
-          `${window.location.origin}/api/communityPosts/${id}`
+          `https://job-portal-backend-xshy.onrender.com/api/communityPosts/${id}`
         );
         showToast("success", "Post rejected");
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
-          // ✅ safely access Axios error fields
           showToast(
             "error",
             err.response?.data?.message || err.message || "Reject failed"
           );
         } else if (err instanceof Error) {
-          // ✅ standard JS error
           showToast("error", err.message || "Reject failed");
         } else {
-          // ✅ fallback for unexpected cases
           showToast("error", "Reject failed");
         }
       }
@@ -116,24 +119,23 @@ const ManageCommunityPosts = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`${window.location.origin}/api/communityPosts/${id}`);
-        showToast("success", "Post rejected");
+        await axios.delete(
+          `https://job-portal-backend-xshy.onrender.com/api/communityPosts/${id}`
+        );
+        showToast("success", "Post deleted");
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
           showToast(
             "error",
-            err.response?.data?.message || err.message || "Reject failed"
+            err.response?.data?.message || err.message || "Delete failed"
           );
         } else if (err instanceof Error) {
-          showToast("error", err.message || "Reject failed");
+          showToast("error", err.message || "Delete failed");
         } else {
-          showToast("error", "Reject failed");
+          showToast("error", "Delete failed");
         }
       }
     }
-
-
-
   };
 
   const handleApprove = async (id: string) => {
@@ -148,9 +150,12 @@ const ManageCommunityPosts = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.patch(`${window.location.origin}/api/communityPosts/${id}`, {
-          status: "approved",
-        });
+        await axios.patch(
+          `https://job-portal-backend-xshy.onrender.com/api/communityPosts/${id}`,
+          {
+            status: "approved",
+          }
+        );
         showToast("success", "Post approved");
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
@@ -165,8 +170,6 @@ const ManageCommunityPosts = () => {
         }
       }
     }
-
-
   };
 
   // ✅ Paginated Data
@@ -182,6 +185,11 @@ const ManageCommunityPosts = () => {
       current: true,
     },
   ];
+
+  // ✅ Don't render until mounted on client
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="px-4">
@@ -211,7 +219,7 @@ const ManageCommunityPosts = () => {
           communityPosts={communityPosts}
           setRowsPerPage={setRowsPerPage}
           setPage={setPage}
-        ></CommunityPostsTable>
+        />
       )}
     </div>
   );

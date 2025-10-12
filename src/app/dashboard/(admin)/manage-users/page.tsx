@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useTheme } from "next-themes";
 import {
@@ -72,13 +72,19 @@ const getTableStyles = (isDark: boolean) => ({
 const ManageUsers = () => {
   const { showToast } = useToast();
   const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [searchType, setSearchType] = useState<OptionType>(searchOptions[0]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<OptionType>(roleOptions[0]);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
 
-  const isDark = resolvedTheme === "dark";
+  // ✅ Ensure component is mounted before accessing theme
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && resolvedTheme === "dark";
   const currentSelectStyles = isDark
     ? darkSelectStylesOverride
     : selectStylesOverride;
@@ -125,7 +131,7 @@ const ManageUsers = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`${window.location.origin}/api/users/${id}`);
+        await axios.delete(`https://job-portal-backend-xshy.onrender.com/api/users/${id}`);
         showToast("success", "User deleted");
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
@@ -133,12 +139,12 @@ const ManageUsers = () => {
             "error",
             err.response?.data?.message || err.message || "Delete failed"
           );
+        } else if (err instanceof Error) {
+          showToast("error", err.message || "Delete failed");
+        } else {
+          showToast("error", "Delete failed");
         }
-
       }
-
-
-
     }
   };
 
@@ -154,22 +160,29 @@ const ManageUsers = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.patch(`${window.location.origin}/api/users/${id}`, {
+        await axios.patch(`https://job-portal-backend-xshy.onrender.com/api/users/${id}`, {
           status: "banned",
         });
         showToast("success", "User banned");
-      }
-      catch (err: unknown) {
+      } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
           showToast(
             "error",
             err.response?.data?.message || err.message || "Ban failed"
           );
+        } else if (err instanceof Error) {
+          showToast("error", err.message || "Ban failed");
+        } else {
+          showToast("error", "Ban failed");
         }
-
       }
     }
   };
+
+  // ✅ Don't render until mounted on client
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="px-4">
@@ -195,7 +208,7 @@ const ManageUsers = () => {
         roleOptions={roleOptions}
         roleFilter={roleFilter}
         setRoleFilter={setRoleFilter}
-      ></UsersFilter>
+      />
 
       {/* Table */}
       {paginatedUsers.length === 0 ? (
@@ -213,7 +226,7 @@ const ManageUsers = () => {
           setRowsPerPage={setRowsPerPage}
           handleBan={handleBan}
           handleDelete={handleDelete}
-        ></UsersTable>
+        />
       )}
     </div>
   );
