@@ -10,8 +10,7 @@ interface AuthContextType {
   user: any | null;
   loading: boolean;
   register: (
-    firstName: string,
-    lastName: string,
+    name: string,
     phone: string,
     email: string,
     password: string,
@@ -55,8 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Conditional register function with optional extra field
   const register = async (
-    firstName: string,
-    lastName: string,
+    name: string,
     phone: string,
     email: string,
     password: string,
@@ -66,8 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setLoading(true);
     try {
       const payload: any = {
-        firstName,
-        lastName,
+        name,
         email,
         phone,
         password,

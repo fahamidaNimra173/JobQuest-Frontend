@@ -19,7 +19,7 @@ const isPhoneValid = (phone: string) => {
 };
 
 const EmployerSignUp = () => {
-  const {register} = useAuth()
+  const { register } = useAuth();
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
     useState<boolean>(false);
@@ -64,7 +64,8 @@ const EmployerSignUp = () => {
 
     setIsPasswordMatch(true);
 
-    register(firstName, lastName, phone, email, password, 'employer', companyName)
+    const name = `${firstName} ${lastName}`;
+    register(name, phone, email, password, "employer", companyName);
   };
 
   return (
@@ -132,7 +133,7 @@ const EmployerSignUp = () => {
               defaultCountry="bd"
               value={phone}
               onChange={(phone) => setPhone(phone)}
-               inputStyle={{
+              inputStyle={{
                 width: "100%",
                 backgroundColor: "transparent",
                 color: "black",
