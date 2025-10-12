@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import ApplicantProfileModal from '@/app/(dashboard)/employer/components/applicants/ApplicantProfileModal';
-import SkeletonCard from '@/app/(dashboard)/employer/components/SkeletonCard';
-import CandidateCard from '@/app/(dashboard)/employer/components/applicants/CandidateCard';
+import ApplicantProfileModal from '@/app/dashboard/(employer)/components/applicants/ApplicantProfileModal';
+import SkeletonCard from '@/app/dashboard/(employer)/components/SkeletonCard';
+import CandidateCard from '@/app/dashboard/(employer)/components/applicants/CandidateCard';
 
 interface Applicant {
     _id: string;
@@ -89,32 +89,32 @@ export default function JobApplicantsPage() {
         console.log(id, notes)
     };
     const changeStatus = async (applicantId: string, newStatus: string) => {
-  console.log(applicantId, newStatus);
-  try {
-    // 1️⃣ Update UI instantly (optimistic update)
-    setAppliedCandidates((prev) =>
-      prev.map((app) =>
-        app._id === applicantId ? { ...app, status: newStatus } : app
-      )
-    );
+        console.log(applicantId, newStatus);
+        try {
+            // 1️⃣ Update UI instantly (optimistic update)
+            setAppliedCandidates((prev) =>
+                prev.map((app) =>
+                    app._id === applicantId ? { ...app, status: newStatus } : app
+                )
+            );
 
-    // 2️⃣ Send update to backend
-    const res = await fetch(`${API}/${jobId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ applicantId, status: newStatus }),
-    });
+            // 2️⃣ Send update to backend
+            const res = await fetch(`${API}/${jobId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ applicantId, status: newStatus }),
+            });
 
-    if (!res.ok) {
-      throw new Error('Failed to update in DB');
-    }
+            if (!res.ok) {
+                throw new Error('Failed to update in DB');
+            }
 
-    const updatedJob = await res.json();
-    console.log('Updated job:', updatedJob);
-  } catch (error) {
-    console.error('Failed to update status:', error);
-  }
-};
+            const updatedJob = await res.json();
+            console.log('Updated job:', updatedJob);
+        } catch (error) {
+            console.error('Failed to update status:', error);
+        }
+    };
 
 
 

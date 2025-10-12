@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import JobCard from "@/app/(dashboard)/employer/components/JobCard";
+import JobCard from "@/app/dashboard/(employer)/components/JobCard";
 import SkeletonCard from "../components/SkeletonCard";
 
 interface Job {
