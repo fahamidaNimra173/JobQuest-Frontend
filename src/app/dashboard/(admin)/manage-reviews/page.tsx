@@ -91,11 +91,14 @@ const ManageReviews = () => {
       try {
         await axios.delete(`${window.location.origin}/api/reviews/${id}`);
         showToast("success", "Review rejected");
-      } catch (err: any) {
-        showToast(
-          "error",
-          err.response?.data?.message || err.message || "Reject failed"
-        );
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          showToast(
+            "error",
+            err.response?.data?.message || err.message || "Reject failed"
+          );
+        }
+
       }
     }
   };
@@ -114,11 +117,14 @@ const ManageReviews = () => {
       try {
         await axios.delete(`${window.location.origin}/api/reviews/${id}`);
         showToast("success", "Review deleted");
-      } catch (err: any) {
-        showToast(
-          "error",
-          err.response?.data?.message || err.message || "Delete failed"
-        );
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          showToast(
+            "error",
+            err.response?.data?.message || err.message || "Delete failed"
+          );
+        }
+
       }
     }
   };
@@ -139,11 +145,15 @@ const ManageReviews = () => {
           status: "approved",
         });
         showToast("success", "Review approved");
-      } catch (err: any) {
-        showToast(
-          "error",
-          err.response?.data?.message || err.message || "Approve failed"
-        );
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          showToast(
+            "error",
+            err.response?.data?.message || err.message || "Approve failed"
+          );
+
+        }
+
       }
     }
   };

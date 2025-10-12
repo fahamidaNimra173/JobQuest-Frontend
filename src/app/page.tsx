@@ -12,7 +12,8 @@ import { ReviewSection } from "./component/Review";
 async function getLatestJobs(): Promise<job[]> {
   try {
     const res = await fetch('https://job-portal-backend-xshy.onrender.com/api/jobs', {
-      cache: 'no-store', // Always fetch fresh data
+      // cache: 'no-store', // Always fetch fresh data
+      next: { revalidate: 60 }
       // OR use: next: { revalidate: 60 } // Revalidate every 60 seconds
     });
 

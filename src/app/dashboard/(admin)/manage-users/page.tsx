@@ -127,12 +127,18 @@ const ManageUsers = () => {
       try {
         await axios.delete(`${window.location.origin}/api/users/${id}`);
         showToast("success", "User deleted");
-      } catch (err: any) {
-        showToast(
-          "error",
-          err.response?.data?.message || err.message || "Delete failed"
-        );
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          showToast(
+            "error",
+            err.response?.data?.message || err.message || "Delete failed"
+          );
+        }
+
       }
+
+
+
     }
   };
 
@@ -152,11 +158,15 @@ const ManageUsers = () => {
           status: "banned",
         });
         showToast("success", "User banned");
-      } catch (err: any) {
-        showToast(
-          "error",
-          err.response?.data?.message || err.message || "Ban failed"
-        );
+      }
+      catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          showToast(
+            "error",
+            err.response?.data?.message || err.message || "Ban failed"
+          );
+        }
+
       }
     }
   };
