@@ -71,6 +71,7 @@ const ManageCommunityPosts = () => {
   );
 
   const handleReject = async (id: string) => {
+    const Swal = (await import("sweetalert2")).default;
     const result = await Swal.fire({
       title: "Reject Community post?",
       text: "Are you sure you want to reject this post?",
