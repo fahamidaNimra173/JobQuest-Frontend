@@ -1,14 +1,12 @@
 "use client";
-import GoogleLogin from "@/components/GoogleLogin";
-import axios from "axios";
+// import GoogleLogin from "@/components/GoogleLogin";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { PhoneNumberUtil } from "google-libphonenumber";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/Toast";
+import { useAuth } from "@/providers/AuthProvider";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -21,8 +19,7 @@ const isPhoneValid = (phone: string) => {
 };
 
 const EmployerSignUp = () => {
-  const {showToast} = useToast()
-  const router = useRouter();
+  const {register} = useAuth()
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
     useState<boolean>(false);
@@ -67,33 +64,11 @@ const EmployerSignUp = () => {
 
     setIsPasswordMatch(true);
 
-    // create user in db
-    try {
-      const res = await axios.post(
-        `https://job-portal-backend-xshy.onrender.com/api/employers`,
-        {
-          name: `${firstName} ${lastName}`,
-          companyName,
-          email,
-          phone,
-          password,
-          role: "employer",
-          provider: "Email/Password",
-        }
-      );
-
-      localStorage.setItem("authToken", JSON.stringify(res.data.token));
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      console.log(res.data);
-      router.push("/dashboard/profile");
-      showToast("success", "You registered successfully");
-    } catch (error) {
-      console.log(error);
-    }
+    register(firstName, lastName, phone, email, password, 'employer', companyName)
   };
 
   return (
-    <section className="px-4 py-10">
+    <section className="px-4 pb-10 pt-30">
       <div className="max-w-lg mx-auto bg-primary-dark rounded-lg shadow-lg p-4">
         {/* title */}
         <h1 className="text-xl text-black font-bold mb-2">
@@ -157,11 +132,11 @@ const EmployerSignUp = () => {
               defaultCountry="bd"
               value={phone}
               onChange={(phone) => setPhone(phone)}
-              inputStyle={{
+               inputStyle={{
                 width: "100%",
-                backgroundColor: "var(--primary-lightest)",
-                color: "var(--foreground)",
-                border: "1px solid #d1d5db",
+                backgroundColor: "transparent",
+                color: "black",
+                border: "1px solid black",
               }}
               required
             />
@@ -189,13 +164,13 @@ const EmployerSignUp = () => {
               {isShowPassword ? (
                 <FaEyeSlash
                   onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
+                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
                   size={17}
                 />
               ) : (
                 <FaEye
                   onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
+                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
                   size={17}
                 />
               )}
@@ -229,7 +204,7 @@ const EmployerSignUp = () => {
                   onClick={() =>
                     setIsShowConfirmPassword(!isShowConfirmPassword)
                   }
-                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
+                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
                   size={17}
                 />
               ) : (
@@ -237,7 +212,7 @@ const EmployerSignUp = () => {
                   onClick={() =>
                     setIsShowConfirmPassword(!isShowConfirmPassword)
                   }
-                  className="absolute top-3 right-3 cursor-pointer z-10 dark:text-white"
+                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
                   size={17}
                 />
               )}
@@ -269,14 +244,14 @@ const EmployerSignUp = () => {
         </p>
 
         {/* divider */}
-        <div className="flex items-center gap-2 my-6">
+        {/* <div className="flex items-center gap-2 my-6">
           <div className="flex-1 border-t-2 border-black/60"></div>
           <span className="text-black text-sm font-medium">OR</span>
           <div className="flex-1 border-t-2 border-black/60"></div>
-        </div>
+        </div> */}
 
         {/* google login */}
-        <GoogleLogin role="employer" from="signup" />
+        {/* <GoogleLogin role="employer" from="signup" /> */}
       </div>
     </section>
   );

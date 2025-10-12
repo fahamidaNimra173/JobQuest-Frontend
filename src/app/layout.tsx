@@ -1,10 +1,39 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+
+import {
+  Major_Mono_Display,
+  Sedan_SC,
+  Junge,
+  Geist,
+  Geist_Mono,
+} from "next/font/google";
 import "./globals.css";
-// import AuthProvider from "@/providers/AuthProvider";
+import "./landing.css";
+import Script from "next/script";
+import { Toaster } from "react-hot-toast";
+import Provider from "../app/Provider/QueryProvider";
 import { ToastProvider } from "@/components/ui/Toast";
 import { ThemeProvider } from "@/components/theme-provider";
+import LayoutClientWrapper from "./component/shared/LayoutClientWrapper";
+import { AuthProvider } from "@/providers/AuthProvider";
 
+export const majorMono = Major_Mono_Display({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
+
+export const sen = Sedan_SC({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-body",
+});
+
+export const junge = Junge({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-accent",
+});
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -44,23 +73,34 @@ export default function RootLayout({
           }}
         />
       </head>
-      {/* <AuthProvider> */}
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200`}
-        suppressHydrationWarning={true}
-      >
-        <ThemeProvider
-          defaultTheme="system"
-          enableSystem={true}
-          disableTransitionOnChange={false}
-          storageKey="jobquest-theme"
-        >
-          <ToastProvider>
-            {children}
-          </ToastProvider>
-        </ThemeProvider>
-      </body>
-      {/* </AuthProvider> */}
+      <ToastProvider>
+        <AuthProvider>
+          <body
+            className={`${junge.variable} ${majorMono.variable} ${sen.variable} ${geistMono.variable} ${geistSans.variable} antialiased scroll-smooth`}
+            suppressHydrationWarning={true}
+          >
+            <ThemeProvider
+              defaultTheme="system"
+              enableSystem={true}
+              disableTransitionOnChange={false}
+              storageKey="jobquest-theme"
+            >
+              <Script
+                src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.8.1/dist/dotlottie-wc.js"
+                strategy="beforeInteractive"
+                type="module"
+              />
+
+              <Provider>
+                <LayoutClientWrapper>
+                  <div className="landing-layout min-h-screen">{children}</div>
+                </LayoutClientWrapper>
+              </Provider>
+              <Toaster position="top-center" reverseOrder={false} />
+            </ThemeProvider>
+          </body>
+        </AuthProvider>
+      </ToastProvider>
     </html>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 type ToastType = 'success' | 'error' | 'warning' | 'info';
@@ -33,6 +34,12 @@ interface ToastProviderProps {
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  // ✅ Ensure component is mounted before rendering portal
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const removeToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
@@ -83,33 +90,36 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       
-      {/* Toast Container */}
-      <div className="fixed top-4 right-4 z-50 space-y-2">
-        {toasts.map((toast) => (
-          <div
-            key={toast.id}
-            className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg border-l-4 ${getBorderColor(toast.type)} p-4 min-w-[320px] max-w-md animate-in slide-in-from-right duration-300 transition-colors`}
-          >
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                {getIcon(toast.type)}
+      {/* ✅ Use createPortal to render outside the normal component tree */}
+      {mounted && createPortal(
+        <div className="fixed top-4 right-4 z-50 space-y-2 pointer-events-none">
+          {toasts.map((toast) => (
+            <div
+              key={toast.id}
+              className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg border-l-4 ${getBorderColor(toast.type)} p-4 min-w-[320px] max-w-md animate-in slide-in-from-right duration-300 transition-colors pointer-events-auto`}
+            >
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  {getIcon(toast.type)}
+                </div>
+                <div className="ml-3 flex-1">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{toast.title}</p>
+                  {toast.message && (
+                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">{toast.message}</p>
+                  )}
+                </div>
+                <button
+                  onClick={() => removeToast(toast.id)}
+                  className="ml-4 flex-shrink-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-              <div className="ml-3 flex-1">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{toast.title}</p>
-                {toast.message && (
-                  <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">{toast.message}</p>
-                )}
-              </div>
-              <button
-                onClick={() => removeToast(toast.id)}
-                className="ml-4 flex-shrink-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-              >
-                <X className="w-4 h-4" />
-              </button>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>,
+        document.body
+      )}
     </ToastContext.Provider>
   );
 };

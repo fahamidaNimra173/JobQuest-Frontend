@@ -1,111 +1,182 @@
 "use client";
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import axiosInstance from "@/lib/axios";
+import { useToast } from "@/components/ui/Toast";
+import axios from "axios";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { SessionProvider, useSession } from "next-auth/react";
-import Cookies from "js-cookie";
-
-interface User {
-  id?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  role?: string;
-  [key: string]: any;
-}
-
+// ✅ Define the type for the Auth Context
 interface AuthContextType {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  setUser: (user: User) => void;
-  setToken: (token: string) => void;
-  updateUser: (data: Partial<User>) => void;
-  logout: () => void;
+  user: any | null;
+  loading: boolean;
+  register: (
+    firstName: string,
+    lastName: string,
+    phone: string,
+    email: string,
+    password: string,
+    role: string,
+    companyName?: string
+  ) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
-  return context;
-};
+// ✅ Create context with proper type
+const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const { showToast } = useToast();
+  const [user, setUser] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const fetched = useRef(false);
 
-  // NextAuth session
-  const { data: session } = useSession();
-
-  // Load user & token from localStorage on mount (JWT login)
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("authToken");
+    if (fetched.current) return;
+    fetched.current = true;
 
-    if (storedUser) setUser(JSON.parse(storedUser));
-    if (storedToken) setToken(JSON.parse(storedToken));
+    const fetchUser = async () => {
+      try {
+        const res = await axiosInstance.get(`/auth/check`);
+        setUser(res.data.user || null);
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
   }, []);
 
-  // Sync NextAuth Google login
-  useEffect(() => {
-    if (session?.user) {
-      const googleUser: User = {
-        firstName: session.user.name?.split(" ")[0],
-        lastName: session.user.name?.split(" ")[1] || "",
-        email: session.user.email,
-        role: Cookies.get("auth_role") || "candidate", // default role
+  // Conditional register function with optional extra field
+  const register = async (
+    firstName: string,
+    lastName: string,
+    phone: string,
+    email: string,
+    password: string,
+    role: string,
+    companyName?: string
+  ): Promise<void> => {
+    setLoading(true);
+    try {
+      const payload: any = {
+        firstName,
+        lastName,
+        email,
+        phone,
+        password,
+        role,
+        provider: "Email/Password",
       };
 
-      setUser(googleUser);
-      localStorage.setItem("user", JSON.stringify(googleUser));
+      if (companyName) {
+        payload.companyName = companyName;
+      }
 
-      // If token already exists in localStorage from previous login
-      const storedToken = localStorage.getItem("authToken");
-      if (storedToken) setToken(JSON.parse(storedToken));
+      const res = await axiosInstance.post("/auth/signup", payload);
+
+      if (res.status === 201) {
+        setUser(res.data.user);
+        router.push("/dashboard/profile");
+        showToast("success", "You registered successfully");
+      } else {
+        showToast("error", res.data.message || "Registration failed");
+      }
+    } catch (error) {
+      console.log(error);
+      let errorMessage = "Registration failed";
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      showToast("error", errorMessage);
+    } finally {
+      setLoading(false);
     }
-  }, [session]);
-
-  // Update user partially (e.g., updating firstName, lastName, role)
-  const updateUser = (data: Partial<User>) => {
-    const updatedUser = { ...user, ...data } as User;
-    setUser(updatedUser);
-    localStorage.setItem("user", JSON.stringify(updatedUser));
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem("user");
-    localStorage.removeItem("authToken");
-    Cookies.remove("auth_role");
+  // Login function
+  const login = async (email: string, password: string): Promise<void> => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.post(`/auth/login`, {
+        email,
+        password,
+      });
+
+      if (res.status === 200) {
+        setUser(res.data.user);
+        router.push("/dashboard");
+        showToast("success", "Logged in successfully");
+      } else {
+        showToast("error", res.data.message || "Login failed");
+      }
+    } catch (err) {
+      console.error(err);
+      let errorMessage = "Login failed";
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      showToast("error", errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Logout function
+  const logout = async (): Promise<void> => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.post(`/auth/logout`);
+      if (res.status === 200) {
+        router.push('/login')
+        setUser(null);
+        showToast("success", "Logged out successfully");
+      }
+    } catch (err) {
+      console.error(err);
+      let errorMessage = "Logout failed";
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      showToast("error", errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Create the context value with proper type
+  const value: AuthContextType = {
+    user,
+    loading,
+    register,
+    login,
+    logout,
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        isAuthenticated: !!token || !!session,
-        setUser: (userData) => {
-          setUser(userData);
-          localStorage.setItem("user", JSON.stringify(userData));
-        },
-        setToken: (t) => {
-          setToken(t);
-          localStorage.setItem("authToken", JSON.stringify(t));
-        },
-        updateUser,
-        logout,
-      }}
-    >
-      <SessionProvider>{children}</SessionProvider>
+    <AuthContext.Provider value={value}>
+      {children}
     </AuthContext.Provider>
   );
 };
 
-export default AuthProvider;
+// ✅ Custom hook with proper type checking
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

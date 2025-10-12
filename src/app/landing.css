@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Landing Theme Variables */
+:root {
+  --primary-dark: #7670d6;
+  --primary-medium: #9da0dc;
+  --primary-light: #d3d2ea;
+  --primary-lightest: #f8f3ed;
+  --background: var(--primary-lightest);
+  --foreground: #1a1a1a;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  scroll-behavior: smooth;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Optional Dark Mode for Landing */
+.dark {
+  --background:#f8f3ed;
+  --foreground: #f8f8f8;
+  --primary-dark: #9da0dc;
+  --primary-medium: #7670d6;
+  --primary-light: #4c4875;
+  --primary-lightest: #2d2c3d;
+}
+
+/* Brand Utility Classes */
+.bg-primary-dark { background-color: var(--primary-dark); }
+.bg-primary-medium { background-color: var(--primary-medium); }
+.bg-primary-light { background-color: var(--primary-light); }
+.bg-primary-lightest { background-color: var(--primary-lightest); }
+
+.text-primary-dark { color: var(--primary-dark); }
+.text-primary-medium { color: var(--primary-medium); }
+.text-primary-light { color: var(--primary-light); }
+
+.border-primary-dark { border-color: var(--primary-dark); }
+.border-primary-medium { border-color: var(--primary-medium); }
+
+/* Smooth hover states */
+.hover\:bg-primary-medium:hover { background-color: var(--primary-medium); color: #fff; }
+.hover\:text-primary-dark:hover { color: var(--primary-dark); }
+
+/* Simple section fade-in animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeInUp { animation: fadeInUp 0.7s ease forwards; }
