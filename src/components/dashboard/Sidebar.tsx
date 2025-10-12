@@ -81,7 +81,11 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
     default:
       return [
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
-        { name: "My Profile", href: "/dashboard/candidate-profile", icon: User },
+        {
+          name: "My Profile",
+          href: "/dashboard/candidate-profile",
+          icon: User,
+        },
         {
           name: "Jobs Applied",
           href: "/dashboard/jobs-applied",
@@ -117,17 +121,10 @@ export default function Sidebar() {
   const handleLogout = () => {
     logout();
   };
-  if (loading) {
-    <div className="h-[50vh] w-full flex items-center justify-center">
-      <Loader size={40} className="animate-spin"></Loader>
-    </div>;
-  }
 
-  if (!user) {
-    return null;
-  }
+  if (loading) return;
 
-  const navigation = getNavigationByRole(user.role);
+  const navigation = getNavigationByRole(user?.role);
 
   return (
     <>
@@ -202,19 +199,22 @@ export default function Sidebar() {
             <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               {/* User Photo */}
               <div className="w-12 h-12 bg-primary-dark rounded-full flex items-center justify-center flex-shrink-0">
-                {user.profile || <User className="w-6 h-6 text-white" />}
+                {user?.profile || <User className="w-6 h-6 text-white" />}
               </div>
 
               {/* User Details */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-                  {user.firstName + " " + user.lastName}
+                  {user?.name}
                 </p>
                 <p className="text-xs capitalize text-primary-dark dark:text-primary-medium font-medium">
-                  {user.role}
+                  {user?.role}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {user.email}
+                <p
+                  className="text-xs text-gray-500 dark:text-gray-400 truncate"
+                  title={user?.email}
+                >
+                  {user?.email}
                 </p>
               </div>
             </div>

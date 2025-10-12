@@ -23,7 +23,7 @@ const LoginPage = () => {
   };
 
   return (
-    <section className="px-4  py-40">
+    <section className="px-4 pt-20 pb-10">
       <div className="max-w-lg mx-auto bg-primary-dark rounded-lg shadow-lg p-4">
         {/* title */}
         <h1 className="text-xl text-black font-bold mb-2">Welcome Back</h1>
