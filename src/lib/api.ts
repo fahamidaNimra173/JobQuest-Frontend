@@ -1,4 +1,6 @@
 // API configuration for backend communication
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/';
 
 interface ApiResponse<T> {
@@ -9,68 +11,69 @@ interface ApiResponse<T> {
 }
 
 class ApiClient {
-  private baseURL: string;
+  private axiosInstance: AxiosInstance;
 
   constructor(baseURL: string = API_BASE_URL) {
-    this.baseURL = baseURL;
+    this.axiosInstance = axios.create({
+      baseURL: baseURL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Add authentication token to requests
+    this.axiosInstance.interceptors.request.use(
+      (config) => {
+        if (typeof window !== 'undefined') {
+          const token = localStorage.getItem('authToken');
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+
+    // Handle response errors
+    this.axiosInstance.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        console.error('API Request failed:', error);
+        if (!error.response) {
+          // Network error
+          throw new Error('Unable to connect to the server. Please check your internet connection and try again.');
+        }
+        return Promise.reject(error);
+      }
+    );
   }
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: AxiosRequestConfig = {}
   ): Promise<ApiResponse<T>> {
-    const url = `${this.baseURL}${endpoint}`;
-    
-    const defaultHeaders: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    // Add authentication token if available
-    const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
-    if (token) {
-      defaultHeaders['Authorization'] = `Bearer ${token}`;
-    }
-
-    const config: RequestInit = {
-      ...options,
-      headers: {
-        ...defaultHeaders,
-        ...options.headers,
-      },
-    };
-
     try {
-      const response = await fetch(url, config);
+      const response: AxiosResponse<ApiResponse<T>> = await this.axiosInstance({
+        url: endpoint,
+        ...options,
+      });
       
-      // Check if response is JSON before parsing
-      const contentType = response.headers.get('content-type');
-      const isJson = contentType && contentType.includes('application/json');
-      
-      let data;
-      if (isJson) {
-        data = await response.json();
-      } else {
-        // If not JSON, likely an error page (HTML)
-        const textContent = await response.text();
-        if (!response.ok) {
-          throw new Error(`Server error (${response.status}): ${response.statusText}`);
-        }
-        // Fallback for non-JSON success responses
-        data = { success: true, data: textContent, message: 'Success' };
-      }
-
-      if (!response.ok) {
-        throw new Error(data.message || `Server error (${response.status}): ${response.statusText}`);
-      }
-
-      return data;
-    } catch (error) {
-      console.error('API Request failed:', error);
-      // Provide more specific error messages
-      if (error instanceof TypeError && error.message.includes('fetch')) {
+      return response.data;
+    } catch (error: any) {
+      // Handle axios errors
+      if (error.response) {
+        // Server responded with error status
+        throw new Error(error.response.data.message || `Server error (${error.response.status}): ${error.response.statusText}`);
+      } else if (error.request) {
+        // Request was made but no response received
         throw new Error('Unable to connect to the server. Please check your internet connection and try again.');
+      } else {
+        // Something else happened
+        throw new Error(error.message || 'An unexpected error occurred');
       }
-      throw error;
     }
   }
 
@@ -78,14 +81,14 @@ class ApiClient {
   async login(email: string, password: string) {
     return this.request('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      data: { email, password },
     });
   }
 
   async register(userData: Record<string, unknown>) {
     return this.request('/auth/register', {
       method: 'POST',
-      body: JSON.stringify(userData),
+      data: userData,
     });
   }
 
@@ -97,76 +100,152 @@ class ApiClient {
 
   // User profile endpoints
   async getProfile() {
-    return this.request('/user/profile');
+    return this.request('/user/profile', {
+      method: 'GET',
+    });
   }
 
   async updateProfile(profileData: Record<string, unknown>) {
     return this.request('/user/profile', {
       method: 'PUT',
-      body: JSON.stringify(profileData),
+      data: profileData,
+    });
+  }
+
+  // Candidate endpoints
+  async getCandidateProfile() {
+    return this.request('/candidates/profile', {
+      method: 'GET',
+    });
+  }
+
+  async updateCandidateProfile(profileData: Record<string, unknown>) {
+    return this.request('/candidates/profile', {
+      method: 'PUT',
+      data: profileData,
+    });
+  }
+
+  async getCandidateApplications() {
+    return this.request('/candidates/applications', {
+      method: 'GET',
+    });
+  }
+
+  async getCandidateSavedJobs() {
+    return this.request('/candidates/saved-jobs', {
+      method: 'GET',
+    });
+  }
+
+  async saveJobForCandidate(jobId: string) {
+    return this.request(`/candidates/saved-jobs/${jobId}`, {
+      method: 'POST',
+    });
+  }
+
+  async unsaveJobForCandidate(jobId: string) {
+    return this.request(`/candidates/saved-jobs/${jobId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async applyToJobAsCandidate(jobId: string, applicationData: Record<string, unknown>) {
+    return this.request(`/candidates/applications/${jobId}`, {
+      method: 'POST',
+      data: applicationData,
+    });
+  }
+
+  async getCandidateApplicationStatus(applicationId: string) {
+    return this.request(`/candidates/applications/${applicationId}`, {
+      method: 'GET',
+    });
+  }
+
+  async getCandidateJobStatus(jobId: string) {
+    return this.request(`/candidates/by-job/${jobId}`, {
+      method: 'GET',
+    });
+  }
+
+  async getCandidateResumes() {
+    return this.request('/candidates/resumes', {
+      method: 'GET',
+    });
+  }
+
+  async uploadCandidateResume(file: File) {
+    const formData = new FormData();
+    formData.append('resume', file);
+
+    return this.request('/candidates/resumes', {
+      method: 'POST',
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  }
+
+  async deleteCandidateResume(resumeId: string) {
+    return this.request(`/candidates/resumes/${resumeId}`, {
+      method: 'DELETE',
     });
   }
 
   async changePassword(passwordData: Record<string, unknown>) {
     return this.request('/user/change-password', {
       method: 'POST',
-      body: JSON.stringify(passwordData),
+      data: passwordData,
     });
   }
 
   // Job endpoints
   async searchJobs(params: Record<string, string>) {
-    const queryString = new URLSearchParams(params).toString();
-    return this.request(`/jobs/search?${queryString}`);
+    return this.request(`/jobs/search`, {
+      method: 'GET',
+      params: params,
+    });
   }
 
   async getJob(jobId: string) {
-    return this.request(`/jobs/${jobId}`);
-  }
-
-  async applyToJob(jobId: string, applicationData: Record<string, unknown>) {
-    return this.request(`/jobs/${jobId}/apply`, {
-      method: 'POST',
-      body: JSON.stringify(applicationData),
+    return this.request(`/jobs/${jobId}`, {
+      method: 'GET',
     });
   }
 
-  async saveJob(jobId: string) {
-    return this.request(`/jobs/${jobId}/save`, {
-      method: 'POST',
-    });
-  }
-
-  async unsaveJob(jobId: string) {
-    return this.request(`/jobs/${jobId}/unsave`, {
-      method: 'DELETE',
-    });
-  }
-
-  // Applications endpoints
+  // Applications endpoints (deprecated - use candidate-specific endpoints)
   async getApplications() {
-    return this.request('/applications');
+    return this.request('/applications', {
+      method: 'GET',
+    });
   }
 
   async getApplicationStatus(applicationId: string) {
-    return this.request(`/applications/${applicationId}`);
+    return this.request(`/applications/${applicationId}`, {
+      method: 'GET',
+    });
   }
 
-  // Saved jobs endpoints
+  // Saved jobs endpoints (deprecated - use candidate-specific endpoints)
   async getSavedJobs() {
-    return this.request('/user/saved-jobs');
+    return this.request('/user/saved-jobs', {
+      method: 'GET',
+    });
   }
 
-  // Resume file upload endpoints (only used endpoints kept)
-
+  // Resume file upload endpoints (deprecated - use candidate-specific endpoints)
   async uploadResumeFile(file: File) {
     const formData = new FormData();
     formData.append('resume', file);
 
     return this.request('/user/resume/upload', {
       method: 'POST',
-      body: formData,
-      headers: {}, // Let browser set content-type for FormData
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
   }
 
@@ -177,7 +256,9 @@ class ApiClient {
   }
 
   async getUploadedResumes() {
-    return this.request('/user/resume/files');
+    return this.request('/user/resume/files', {
+      method: 'GET',
+    });
   }
 }
 

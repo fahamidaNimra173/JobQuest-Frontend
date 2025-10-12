@@ -1,5 +1,10 @@
-// Create a separate file: lib/selectStyles.ts
-export const selectTheme = (theme: any) => ({
+// lib/selectStyles.ts
+import { StylesConfig, GroupBase, Theme as RSTheme, CSSObjectWithLabel, ControlProps, OptionProps } from 'react-select';
+
+// -------------------------
+// Theme functions
+// -------------------------
+export const selectTheme = (theme: RSTheme): RSTheme => ({
   ...theme,
   colors: {
     ...theme.colors,
@@ -23,7 +28,7 @@ export const selectTheme = (theme: any) => ({
   },
 });
 
-export const darkSelectTheme = (theme: any) => ({
+export const darkSelectTheme = (theme: RSTheme): RSTheme => ({
   ...theme,
   colors: {
     ...theme.colors,
@@ -47,8 +52,19 @@ export const darkSelectTheme = (theme: any) => ({
   },
 });
 
-export const selectStylesOverride = {
-  control: (base: any, state: any) => ({
+// -------------------------
+// Option type
+// -------------------------
+interface OptionType {
+  label: string;
+  value: string;
+}
+
+// -------------------------
+// Light theme styles
+// -------------------------
+export const selectStylesOverride: StylesConfig<OptionType, false, GroupBase<OptionType>> = {
+  control: (base: CSSObjectWithLabel, state: ControlProps<OptionType, false>) => ({
     ...base,
     minHeight: '40px',
     height: '40px',
@@ -63,28 +79,28 @@ export const selectStylesOverride = {
     },
   }),
 
-  singleValue: (base: any, state: any) => ({
+  singleValue: (base: CSSObjectWithLabel) => ({
     ...base,
     color: '#171717',
     fontSize: '14px',
-    margin: '0px',
-    padding: '0px',
+    margin: 0,
+    padding: 0,
   }),
 
-  input: (base: any) => ({
+  input: (base: CSSObjectWithLabel) => ({
     ...base,
     color: '#171717',
-    padding: '0px',
-    margin: '0px',
+    margin: 0,
+    padding: 0,
   }),
 
-  placeholder: (base: any) => ({
+  placeholder: (base: CSSObjectWithLabel) => ({
     ...base,
     color: '#6b7280',
     opacity: 1,
   }),
 
-  menu: (base: any) => ({
+  menu: (base: CSSObjectWithLabel) => ({
     ...base,
     backgroundColor: '#ffffff',
     borderColor: '#e5e7eb',
@@ -92,13 +108,13 @@ export const selectStylesOverride = {
     zIndex: 9999,
   }),
 
-  menuList: (base: any) => ({
+  menuList: (base: CSSObjectWithLabel) => ({
     ...base,
     padding: '4px 0',
     backgroundColor: '#ffffff',
   }),
 
-  option: (base: any, state: any) => ({
+  option: (base: CSSObjectWithLabel, state: OptionProps<OptionType, false>) => ({
     ...base,
     backgroundColor: state.isSelected
       ? '#7670D6'
@@ -114,21 +130,24 @@ export const selectStylesOverride = {
     },
   }),
 
-  noOptionsMessage: (base: any) => ({
+  noOptionsMessage: (base: CSSObjectWithLabel) => ({
     ...base,
     color: '#6b7280',
     backgroundColor: '#ffffff',
   }),
 
-  loadingMessage: (base: any) => ({
+  loadingMessage: (base: CSSObjectWithLabel) => ({
     ...base,
     color: '#6b7280',
     backgroundColor: '#ffffff',
   }),
 };
 
-export const darkSelectStylesOverride = {
-  control: (base: any, state: any) => ({
+// -------------------------
+// Dark theme styles
+// -------------------------
+export const darkSelectStylesOverride: StylesConfig<OptionType, false, GroupBase<OptionType>> = {
+  control: (base: CSSObjectWithLabel, state: ControlProps<OptionType, false>) => ({
     ...base,
     minHeight: '40px',
     height: '40px',
@@ -143,28 +162,28 @@ export const darkSelectStylesOverride = {
     },
   }),
 
-  singleValue: (base: any, state: any) => ({
+  singleValue: (base: CSSObjectWithLabel) => ({
     ...base,
     color: '#ffffff',
     fontSize: '14px',
-    margin: '0px',
-    padding: '0px',
+    margin: 0,
+    padding: 0,
   }),
 
-  input: (base: any) => ({
+  input: (base: CSSObjectWithLabel) => ({
     ...base,
     color: '#ffffff',
-    padding: '0px',
-    margin: '0px',
+    margin: 0,
+    padding: 0,
   }),
 
-  placeholder: (base: any) => ({
+  placeholder: (base: CSSObjectWithLabel) => ({
     ...base,
     color: '#6b7280',
     opacity: 1,
   }),
 
-  menu: (base: any) => ({
+  menu: (base: CSSObjectWithLabel) => ({
     ...base,
     backgroundColor: '#1f2937',
     borderColor: '#374151',
@@ -172,13 +191,13 @@ export const darkSelectStylesOverride = {
     zIndex: 9999,
   }),
 
-  menuList: (base: any) => ({
+  menuList: (base: CSSObjectWithLabel) => ({
     ...base,
     padding: '4px 0',
     backgroundColor: '#1f2937',
   }),
 
-  option: (base: any, state: any) => ({
+  option: (base: CSSObjectWithLabel, state: OptionProps<OptionType, false>) => ({
     ...base,
     backgroundColor: state.isSelected
       ? '#7670D6'
@@ -194,13 +213,13 @@ export const darkSelectStylesOverride = {
     },
   }),
 
-  noOptionsMessage: (base: any) => ({
+  noOptionsMessage: (base: CSSObjectWithLabel) => ({
     ...base,
     color: '#9ca3af',
     backgroundColor: '#1f2937',
   }),
 
-  loadingMessage: (base: any) => ({
+  loadingMessage: (base: CSSObjectWithLabel) => ({
     ...base,
     color: '#9ca3af',
     backgroundColor: '#1f2937',

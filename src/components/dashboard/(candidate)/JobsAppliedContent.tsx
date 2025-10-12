@@ -43,19 +43,20 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
     { name: 'Jobs Applied', href: '/dashboard/jobs-applied', current: true }
   ];
 
-  const statusOptions = ['All', 'Applied', 'Under Review', 'Interview Scheduled', 'Rejected', 'Offer'];
+  // Updated status options as per user request
+  const statusOptions = ['All', 'applied', 'shortlisted', 'interviewed', 'rejected', 'hired'];
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'Applied':
+    switch (status.toLowerCase()) {
+      case 'applied':
         return <Clock className="w-4 h-4 text-blue-500" />;
-      case 'Under Review':
+      case 'shortlisted':
         return <AlertCircle className="w-4 h-4 text-yellow-500" />;
-      case 'Interview Scheduled':
+      case 'interviewed':
         return <Calendar className="w-4 h-4 text-green-500" />;
-      case 'Rejected':
+      case 'rejected':
         return <XCircle className="w-4 h-4 text-red-500" />;
-      case 'Offer':
+      case 'hired':
         return <CheckCircle className="w-4 h-4 text-green-600" />;
       default:
         return <Clock className="w-4 h-4 text-gray-500" />;
@@ -63,16 +64,16 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
   };
 
   const getStatusBadgeColor = (status: string) => {
-    switch (status) {
-      case 'Applied':
+    switch (status.toLowerCase()) {
+      case 'applied':
         return 'bg-blue-100 text-blue-800';
-      case 'Under Review':
+      case 'shortlisted':
         return 'bg-yellow-100 text-yellow-800';
-      case 'Interview Scheduled':
+      case 'interviewed':
         return 'bg-green-100 text-green-800';
-      case 'Rejected':
+      case 'rejected':
         return 'bg-red-100 text-red-800';
-      case 'Offer':
+      case 'hired':
         return 'bg-green-100 text-green-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -82,12 +83,13 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
   const filteredJobs = appliedJobs.filter(job => {
     const matchesSearch = job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          job.position.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'All' || job.status === statusFilter;
+    const matchesStatus = statusFilter === 'All' || job.status.toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   });
 
   const statusCounts = appliedJobs.reduce((acc, job) => {
-    acc[job.status] = (acc[job.status] || 0) + 1;
+    const statusKey = job.status.toLowerCase();
+    acc[statusKey] = (acc[statusKey] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
@@ -103,7 +105,7 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <div className="bg-white rounded-lg p-4 border">
           <div className="flex items-center justify-between">
             <div>
@@ -118,9 +120,20 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
         <div className="bg-white rounded-lg p-4 border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Under Review</p>
+              <p className="text-sm font-medium text-gray-600">Applied</p>
               <p className="text-2xl font-bold text-gray-900">
-                {statusCounts["Under Review"] || 0}
+                {statusCounts["applied"] || 0}
+              </p>
+            </div>
+            <Clock className="w-8 h-8 text-blue-500" />
+          </div>
+        </div>
+        <div className="bg-white rounded-lg p-4 border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Shortlisted</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {statusCounts["shortlisted"] || 0}
               </p>
             </div>
             <AlertCircle className="w-8 h-8 text-yellow-500" />
@@ -129,9 +142,9 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
         <div className="bg-white rounded-lg p-4 border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Interviews</p>
+              <p className="text-sm font-medium text-gray-600">Interviewed</p>
               <p className="text-2xl font-bold text-gray-900">
-                {statusCounts["Interview Scheduled"] || 0}
+                {statusCounts["interviewed"] || 0}
               </p>
             </div>
             <Calendar className="w-8 h-8 text-green-500" />
@@ -140,9 +153,9 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
         <div className="bg-white rounded-lg p-4 border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Offers</p>
+              <p className="text-sm font-medium text-gray-600">Hired</p>
               <p className="text-2xl font-bold text-gray-900">
-                {statusCounts["Offer"] || 0}
+                {statusCounts["hired"] || 0}
               </p>
             </div>
             <CheckCircle className="w-8 h-8 text-green-600" />
@@ -176,7 +189,7 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
             >
               {statusOptions.map((status) => (
                 <option key={status} value={status}>
-                  {status}
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
                 </option>
               ))}
             </select>
@@ -241,7 +254,7 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
                               )}`}
                             >
                               {getStatusIcon(job.status)}
-                              <span className="ml-1">{job.status}</span>
+                              <span className="ml-1">{job.status.charAt(0).toUpperCase() + job.status.slice(1)}</span>
                             </div>
                             <button
                               onClick={() => setSelectedJob(job)}
@@ -301,7 +314,7 @@ export default function JobsAppliedContent({ appliedJobs }: JobsAppliedContentPr
                     )}`}
                   >
                     {getStatusIcon(selectedJob.status)}
-                    <span className="ml-1">{selectedJob.status}</span>
+                    <span className="ml-1">{selectedJob.status.charAt(0).toUpperCase() + selectedJob.status.slice(1)}</span>
                   </div>
                 </div>
 
