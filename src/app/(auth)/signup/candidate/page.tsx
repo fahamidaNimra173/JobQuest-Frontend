@@ -1,14 +1,12 @@
 "use client";
-import GoogleLogin from "@/components/GoogleLogin";
-import axios from "axios";
+// import GoogleLogin from "@/components/GoogleLogin";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { PhoneNumberUtil } from "google-libphonenumber";
-import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/Toast";
+import { useAuth } from "@/providers/AuthProvider";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -20,8 +18,7 @@ const isPhoneValid = (phone: string) => {
   }
 };
 const CandidateSignUp = () => {
-  const {showToast}= useToast()
-  const router = useRouter();
+  const { register } = useAuth();
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
     useState<boolean>(false);
@@ -63,28 +60,7 @@ const CandidateSignUp = () => {
 
     setIsPasswordMatch(true);
 
-    // create user in db
-    try {
-      const res = await axios.post(
-        "https://job-portal-backend-xshy.onrender.com/api/candidates",
-        {
-          name: `${firstName} ${lastName}`,
-          email,
-          phone,
-          password,
-          role: "candidate",
-          provider: "Email/Password",
-        }
-      );
-
-      localStorage.setItem("authToken", JSON.stringify(res.data.token));
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      console.log(res.data);
-      router.push("/dashboard/profile");
-      showToast("success", "You registered successfully");
-    } catch (error) {
-      console.log(error);
-    }
+    register(firstName, lastName, phone, email, password, "candidate");
   };
 
   return (
@@ -253,14 +229,14 @@ const CandidateSignUp = () => {
         </p>
 
         {/* divider */}
-        <div className="flex items-center gap-2 my-6">
+        {/* <div className="flex items-center gap-2 my-6">
           <div className="flex-1 border-t-2 border-black/60"></div>
           <span className="text-black text-sm font-medium">OR</span>
           <div className="flex-1 border-t-2 border-black/60"></div>
-        </div>
+        </div> */}
 
         {/* google login */}
-        <GoogleLogin role="candidate" from="signup" />
+        {/* <GoogleLogin role="candidate" from="signup" /> */}
       </div>
     </section>
   );

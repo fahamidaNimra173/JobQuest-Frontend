@@ -366,7 +366,7 @@ export default function ChangePasswordContent() {
 
           {/* Password Requirements */}
           {formData.newPassword && (
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-gray-100 rounded-lg p-4">
               <h4 className="text-sm font-medium text-gray-900 mb-3">
                 Password Requirements
               </h4>
@@ -424,7 +424,7 @@ export default function ChangePasswordContent() {
                 });
                 setErrors({});
               }}
-              className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+              className="px-6 py-2 bg-gray-300 text-white rounded-lg hover:bg-gray-400 transition-colors dark:bg-gray-500"
             >
               Cancel
             </button>

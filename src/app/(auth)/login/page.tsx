@@ -1,16 +1,13 @@
 "use client";
-import GoogleLogin from "@/components/GoogleLogin";
-import { useToast } from "@/components/ui/Toast";
-import axios from "axios";
+// import GoogleLogin from "@/components/GoogleLogin";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import '../../landing.css'
+import "../../landing.css";
+import { useAuth } from "@/providers/AuthProvider";
 
 const LoginPage = () => {
-  const { showToast } = useToast();
-  const router = useRouter();
+  const { login } = useAuth();
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -22,24 +19,7 @@ const LoginPage = () => {
     const password = (form.elements.namedItem("password") as HTMLInputElement)
       .value;
 
-    try {
-      const res = await axios.post(
-        "https://job-portal-backend-xshy.onrender.com/auth/login",
-        { email, password }
-      );
-
-      localStorage.setItem("authToken", JSON.stringify(res.data.token));
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      console.log(res.data);
-      router.push("/dashboard");
-      showToast("success", "You logged in successfully");
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-        showToast("error", error.message);
-      }
-
-    }
+    login(email, password);
   };
 
   return (
@@ -80,13 +60,13 @@ const LoginPage = () => {
               {isShowPassword ? (
                 <FaEyeSlash
                   onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer z-10 text-black dark:text-white"
+                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
                   size={17}
                 />
               ) : (
                 <FaEye
                   onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer z-10 text-black dark:text-white"
+                  className="absolute top-3 right-3 cursor-pointer z-10 text-black"
                   size={17}
                 />
               )}
@@ -124,14 +104,14 @@ const LoginPage = () => {
         </p>
 
         {/* divider */}
-        <div className="flex items-center gap-2 my-6">
+        {/* <div className="flex items-center gap-2 my-6">
           <div className="flex-1 border-t-2 border-black/60"></div>
           <span className="text-black text-sm font-medium">OR</span>
           <div className="flex-1 border-t-2 border-black/60"></div>
-        </div>
+        </div> */}
 
         {/* google login */}
-        <GoogleLogin from="login" />
+        {/* <GoogleLogin from="login" /> */}
       </div>
     </section>
   );

@@ -13,16 +13,19 @@ import {
   Briefcase,
   BarChart3,
   Users,
-  MessageSquare,
+  // MessageSquare,
   ClipboardList,
   LucideIcon,
+  Loader,
 } from "lucide-react";
 import clsx from "clsx";
-import { useToast } from "@/components/ui/Toast";
-import ThemeToggle from "@/components/ui/ThemeToggle";
+// import { useToast } from "@/components/ui/Toast";
+// import ThemeToggle from "@/components/ui/ThemeToggle";
+import { useAuth } from "@/providers/AuthProvider";
+import Image from "next/image";
 
 // Define navigation based on user role
-type UserRole = "Admin" | "Candidate" | "Employer";
+type UserRole = "admin" | "candidate" | "employer";
 
 interface NavigationItem {
   name: string;
@@ -32,7 +35,7 @@ interface NavigationItem {
 
 const getNavigationByRole = (role: UserRole): NavigationItem[] => {
   switch (role) {
-    case "Admin":
+    case "admin":
       return [
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
         { name: "Statistics", href: "/dashboard/statistics", icon: BarChart3 },
@@ -43,16 +46,16 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
           icon: ClipboardList,
         },
         { name: "Manage Users", href: "/dashboard/manage-users", icon: Users },
-        {
-          name: "Manage Reviews",
-          href: "/dashboard/manage-reviews",
-          icon: MessageSquare,
-        },
-        {
-          name: "Manage Community Posts",
-          href: "/dashboard/manage-community-posts",
-          icon: MessageSquare,
-        },
+        // {
+        //   name: "Manage Reviews",
+        //   href: "/dashboard/manage-reviews",
+        //   icon: MessageSquare,
+        // },
+        // {
+        //   name: "Manage Community Posts",
+        //   href: "/dashboard/manage-community-posts",
+        //   icon: MessageSquare,
+        // },
         { name: "My Profile", href: "/dashboard/profile", icon: User },
         {
           name: "Change Password",
@@ -61,7 +64,7 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
         },
       ];
 
-    case "Employer":
+    case "employer":
       return [
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
         { name: "Job Posts", href: "/dashboard/job-posts", icon: Briefcase },
@@ -74,7 +77,7 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
         },
       ];
 
-    case "Candidate":
+    case "candidate":
     default:
       return [
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
@@ -97,43 +100,34 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
 
 export default function Sidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [userRole, setUserRole] = useState<UserRole>("Candidate"); // For demo purposes
+  // const [userRole, setUserRole] = useState<UserRole>("Candidate"); // For demo purposes
+  const { user, loading, logout } = useAuth();
   const pathname = usePathname();
-  const { showToast } = useToast();
-
-  const navigation = getNavigationByRole(userRole);
+  // const { showToast } = useToast();
 
   // Demo function to switch roles - in real app this would come from auth context
-  const switchRole = () => {
-    const roles: UserRole[] = ["Candidate", "Employer", "Admin"];
-    const currentIndex = roles.indexOf(userRole);
-    const nextRole = roles[(currentIndex + 1) % roles.length];
-    setUserRole(nextRole);
-    showToast("info", "Role Changed", `Switched to ${nextRole} view`);
-  };
+  // const switchRole = () => {
+  //   const roles: UserRole[] = ["Candidate", "Employer", "Admin"];
+  //   const currentIndex = roles.indexOf(userRole);
+  //   const nextRole = roles[(currentIndex + 1) % roles.length];
+  //   setUserRole(nextRole);
+  //   showToast("info", "Role Changed", `Switched to ${nextRole} view`);
+  // };
 
   const handleLogout = () => {
-    console.log("Logout clicked");
-
-    // Clear any stored authentication data
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("jobquest-theme"); // Optional: preserve theme
-      sessionStorage.clear();
-    }
-
-    // Show success toast
-    showToast(
-      "success",
-      "Logged out successfully",
-      "You have been logged out of your account."
-    );
-
-    // Redirect to home page after a brief delay
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 1000);
+    logout();
   };
+  if (loading) {
+    <div className="h-[50vh] w-full flex items-center justify-center">
+      <Loader size={40} className="animate-spin"></Loader>
+    </div>;
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  const navigation = getNavigationByRole(user.role);
 
   return (
     <>
@@ -150,7 +144,7 @@ export default function Sidebar() {
       {/* Sidebar */}
       <div
         className={clsx(
-          "fixed inset-y-0 left-0 z-40 w-68 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transform transition-all duration-200 ease-in-out lg:translate-x-0 overflow-y-auto hide-scrollbar",
+          "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transform transition-all duration-200 ease-in-out lg:translate-x-0 overflow-y-auto hide-scrollbar",
           {
             "translate-x-0": isMobileMenuOpen,
             "-translate-x-full": !isMobileMenuOpen,
@@ -161,16 +155,18 @@ export default function Sidebar() {
         <div className="flex flex-col min-h-screen">
           {/* Logo */}
           <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
-            <Link
-              href="/"
-              className="text-2xl font-bold text-primary-dark dark:text-primary-medium transition-colors duration-200"
-            >
-              JobQuest
+            <Link href="/" className="flex justify-center w-full">
+              <Image
+                src="/logo1.png"
+                height={80}
+                width={120}
+                alt="job quest logo"
+              />
             </Link>
             {/* Theme toggle in sidebar for mobile */}
-            <div className="lg:hidden">
+            {/* <div className="lg:hidden">
               <ThemeToggle className="" showTooltip={false} />
-            </div>
+            </div> */}
           </div>
 
           {/* Navigation */}
@@ -194,8 +190,8 @@ export default function Sidebar() {
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <item.icon className="w-5 h-5 mr-3" />
-                  {item.name}
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  <span className="ml-3">{item.name}</span>
                 </Link>
               );
             })}
@@ -206,30 +202,30 @@ export default function Sidebar() {
             <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               {/* User Photo */}
               <div className="w-12 h-12 bg-primary-dark rounded-full flex items-center justify-center flex-shrink-0">
-                <User className="w-6 h-6 text-white" />
+                {user.profile || <User className="w-6 h-6 text-white" />}
               </div>
 
               {/* User Details */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-                  John Doe
+                  {user.firstName + " " + user.lastName}
                 </p>
-                <p className="text-xs text-primary-dark dark:text-primary-medium font-medium">
-                  {userRole}
+                <p className="text-xs capitalize text-primary-dark dark:text-primary-medium font-medium">
+                  {user.role}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  john.doe@example.com
+                  {user.email}
                 </p>
               </div>
             </div>
 
             {/* Demo Role Switcher - Remove in production */}
-            <button
+            {/* <button
               onClick={switchRole}
               className="w-full mt-2 px-3 py-2 text-xs bg-primary-dark text-white rounded-lg hover:opacity-90 transition-colors"
             >
               Switch Role (Demo)
-            </button>
+            </button> */}
           </div>
 
           {/* Logout */}
@@ -239,8 +235,8 @@ export default function Sidebar() {
               type="button"
               className="flex items-center w-full px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
             >
-              <LogOut className="w-5 h-5 mr-3" />
-              Logout
+              <LogOut className="w-5 h-5 flex-shrink-0" />
+              <span className="ml-3">Logout</span>
             </button>
           </div>
         </div>

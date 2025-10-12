@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import Swal from "sweetalert2";
 import CommunityPostsTable from "@/components/dashboard/(admin)/CommunityPostsTable";
 import { useToast } from "@/components/ui/Toast";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 
 // ✅ Shared table style generator
 const getTableStyles = (isDark: boolean) => ({
@@ -174,8 +175,21 @@ const ManageCommunityPosts = () => {
     page * rowsPerPage + rowsPerPage
   );
 
+  const breadcrumbItems = [
+    {
+      name: "Manage Community Posts",
+      href: "/dashboard/manage-community-posts",
+      current: true,
+    },
+  ];
+
   return (
     <div className="px-4">
+      {/* Breadcrumb */}
+      <div className="mb-6">
+        <Breadcrumb items={breadcrumbItems} />
+      </div>
+
       <h2 className="text-3xl font-bold mb-4 text-center text-[#7670D6]">
         Manage Community Posts
       </h2>
