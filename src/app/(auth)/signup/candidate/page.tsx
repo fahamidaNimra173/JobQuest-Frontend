@@ -60,7 +60,8 @@ const CandidateSignUp = () => {
 
     setIsPasswordMatch(true);
 
-    register(firstName, lastName, phone, email, password, "candidate");
+    const name = `${firstName} ${lastName}`;
+    register(name, phone, email, password, "candidate");
   };
 
   return (

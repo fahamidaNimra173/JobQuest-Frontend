@@ -47,13 +47,12 @@ interface TableStyles {
 
 interface UsersTableProps {
   tableStyles: TableStyles;
-  paginatedUsers: User[];
-  filteredUsers: User[];
+  users: User[];
   page: number;
   rowsPerPage: number;
+  total: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   setRowsPerPage: React.Dispatch<React.SetStateAction<number>>;
-  handleBan: (id: string) => void;
   handleDelete: (id: string) => void;
 }
 
@@ -62,13 +61,12 @@ interface UsersTableProps {
 // -------------------------------------------------------------
 const UsersTable: React.FC<UsersTableProps> = ({
   tableStyles,
-  paginatedUsers,
-  filteredUsers,
+  users,
   page,
   rowsPerPage,
+  total,
   setPage,
   setRowsPerPage,
-  handleBan,
   handleDelete,
 }) => {
   return (
@@ -99,7 +97,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
         </TableHead>
 
         <TableBody>
-          {paginatedUsers.map((u, i) => (
+          {users.map((u, i) => (
             <TableRow
               key={u._id}
               sx={{
@@ -117,7 +115,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 sx={{ py: 0.5, ...tableStyles.tableBodyCell }}
                 align="center"
               >
-                {u.name}
+                {u.firstName + ' ' + u.lastName}
               </TableCell>
               <TableCell
                 sx={{ py: 0.5, ...tableStyles.tableBodyCell }}
@@ -145,15 +143,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
               >
                 <div className="flex items-center justify-center gap-2">
                   <Button
-                    onClick={() => handleBan(u._id)}
-                    variant="contained"
-                    sx={{ fontSize: "12px", padding: "6px" }}
-                    size="small"
-                    color="error"
-                  >
-                    Ban
-                  </Button>
-                  <Button
                     onClick={() => handleDelete(u._id)}
                     variant="contained"
                     sx={{ fontSize: "12px", padding: "6px" }}
@@ -169,11 +158,13 @@ const UsersTable: React.FC<UsersTableProps> = ({
         </TableBody>
 
         <TableFooter>
-          <TableRow sx={{ backgroundColor: tableStyles.tableHead.backgroundColor }}>
+          <TableRow
+            sx={{ backgroundColor: tableStyles.tableHead.backgroundColor }}
+          >
             <TablePagination
               rowsPerPageOptions={[5, 10, 20, 30]}
               colSpan={6}
-              count={filteredUsers.length}
+              count={total}
               rowsPerPage={rowsPerPage}
               page={page}
               SelectProps={{

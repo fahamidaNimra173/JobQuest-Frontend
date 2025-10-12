@@ -69,7 +69,7 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
         { name: "Job Posts", href: "/dashboard/job-posts", icon: Briefcase },
         { name: "My Jobs", href: "/dashboard/my-jobs", icon: ClipboardList },
-        { name: "My Profile", href: "/dashboard/profile", icon: User },
+        { name: "My Profile", href: "/dashboard/employer-profile", icon: User },
         {
           name: "Change Password",
           href: "/dashboard/change-password",
@@ -81,7 +81,11 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
     default:
       return [
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
-        { name: "My Profile", href: "/dashboard/profile", icon: User },
+        {
+          name: "My Profile",
+          href: "/dashboard/candidate-profile",
+          icon: User,
+        },
         {
           name: "Jobs Applied",
           href: "/dashboard/jobs-applied",
@@ -117,10 +121,13 @@ export default function Sidebar() {
   const handleLogout = () => {
     logout();
   };
+
   if (loading) {
-    <div className="h-[50vh] w-full flex items-center justify-center">
-      <Loader size={40} className="animate-spin"></Loader>
-    </div>;
+    return (
+      <div className="h-[50vh] w-full flex items-center justify-center">
+        <Loader size={40} className="animate-spin"></Loader>
+      </div>
+    );
   }
 
   if (!user) {
@@ -208,12 +215,15 @@ export default function Sidebar() {
               {/* User Details */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-                  {user.firstName + " " + user.lastName}
+                  {user.name}
                 </p>
                 <p className="text-xs capitalize text-primary-dark dark:text-primary-medium font-medium">
                   {user.role}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                <p
+                  className="text-xs text-gray-500 dark:text-gray-400 truncate"
+                  title={user.email}
+                >
                   {user.email}
                 </p>
               </div>
