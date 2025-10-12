@@ -29,19 +29,33 @@ export default function DashboardPage() {
   const { showToast } = useToast();
 
   useEffect(() => {
+    console.log('Dashboard useEffect running');
+    console.log('Auth loading:', authLoading);
+    console.log('User:', user);
+    
+    // Wait for auth context to load before making decisions
+    if (authLoading) {
+      console.log('Still loading auth context, waiting...');
+      return;
+    }
+    
     // Redirect based on user role
-    if (!authLoading && user) {
+    if (user) {
+      console.log('User is authenticated, checking role...');
       if (user.role === 'employer') {
+        console.log('Redirecting employer to employer profile');
         router.push('/dashboard/employer-profile');
         return;
       }
       
       if (user.role === 'admin') {
+        console.log('Redirecting admin to statistics');
         router.push('/dashboard/statistics');
         return;
       }
       
       // For candidates, fetch dashboard data
+      console.log('Fetching dashboard data for candidate');
       const fetchDashboardData = async () => {
         try {
           setLoading(true);
@@ -50,6 +64,8 @@ export default function DashboardPage() {
             apiClient.getCandidateApplications(),
             apiClient.getCandidateSavedJobs()
           ]);
+          console.log('Applications response:', applicationsResponse);
+          console.log('Saved jobs response:', savedJobsResponse);
 
           if (applicationsResponse.success && savedJobsResponse.success) {
             // Process applications data
@@ -79,11 +95,14 @@ export default function DashboardPage() {
       };
 
       fetchDashboardData();
-    } else if (!authLoading && !user) {
+    } else {
+      // Only redirect if we're sure there's no user and auth context has loaded
+      console.log('No user found and auth context loaded, redirecting to login');
       router.push('/login');
     }
   }, [user, authLoading, router, showToast]);
 
+  // Show loading spinner while either auth context or dashboard data is loading
   if (authLoading || loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -93,7 +112,7 @@ export default function DashboardPage() {
   }
 
   // For employers and admins, we redirect above, so this only shows for candidates
-  if (!dashboardData) {
+  if (!dashboardData && user) {
     return (
       <div className="bg-white rounded-lg shadow-sm border p-6">
         <p className="text-center text-gray-500">No dashboard data available</p>
@@ -101,5 +120,15 @@ export default function DashboardPage() {
     );
   }
 
-  return <DashboardOverview data={dashboardData} />;
+  // If we have dashboard data, show it
+  if (dashboardData) {
+    return <DashboardOverview data={dashboardData} />;
+  }
+
+  // Fallback (shouldn't reach here in normal circumstances)
+  return (
+    <div className="bg-white rounded-lg shadow-sm border p-6">
+      <p className="text-center text-gray-500">Loading dashboard...</p>
+    </div>
+  );
 }

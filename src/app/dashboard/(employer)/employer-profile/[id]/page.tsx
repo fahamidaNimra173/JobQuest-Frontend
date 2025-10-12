@@ -63,7 +63,7 @@ export default function EmployerProfilePage() {
 
   const handleUpdate = async () => {
     try {
-      const res = await fetch(`https://job-portal-backend-xshy.onrender.com/api/employers/${id}`, {
+      const res = await fetch(`http://localhost:5000/api/employers/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

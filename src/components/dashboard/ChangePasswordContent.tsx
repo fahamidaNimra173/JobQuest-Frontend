@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import apiClient from "@/lib/api";
 
 export default function ChangePasswordContent() {
   const { showToast } = useToast();
@@ -130,32 +131,49 @@ export default function ChangePasswordContent() {
     setIsSubmitting(true);
 
     try {
-      // Make API call to change password
+      // Make API call to change password using the correct endpoint
       console.log("Changing password...", {
         currentPassword: "***",
         newPassword: "***",
       });
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
-
-      // Reset form
-      setFormData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
+      
+      const response = await apiClient.updatePassword({
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
       });
 
-      showToast(
-        "success",
-        "Password changed successfully!",
-        "Your password has been updated."
-      );
-    } catch {
+      if (response.success) {
+        // Reset form
+        setFormData({
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+
+        showToast(
+          "success",
+          "Password changed successfully!",
+          "Your password has been updated."
+        );
+      } else {
+        throw new Error(response.message || "Failed to change password");
+      }
+    } catch (error: any) {
+      console.error("Password change error:", error);
+      const errorMessage = error.message || "Failed to change password. Please try again.";
+      
       showToast(
         "error",
         "Failed to change password",
-        "Please try again or contact support."
+        errorMessage
       );
-      setErrors({ submit: "Failed to change password. Please try again." });
+      
+      // If it's a validation error from the server, show it specifically
+      if (error.message && error.message.toLowerCase().includes("current password")) {
+        setErrors({ currentPassword: error.message });
+      } else {
+        setErrors({ submit: errorMessage });
+      }
     } finally {
       setIsSubmitting(false);
     }

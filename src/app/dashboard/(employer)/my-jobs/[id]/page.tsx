@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { FaMapMarkerAlt, FaBriefcase, FaClock, FaTrash, FaEdit, FaPodcast } from 'react-icons/fa';
-import JobDetailSkeleton from '../../components/JobDetailSkeleton';
+import JobDetailSkeleton from '@/components/dashboard/(employer)/JobDetailSkeleton';
 
 interface Job {
     _id: string;
@@ -71,9 +71,12 @@ export default function JobDetailsPage() {
             console.error('Error deleting job:', error);
         }
     };
+    
     const handleSeeApplicants = () => {
-  router.push(`/dashboard/applicants?jobId=${job._id}`);
-};
+        if (job) {
+            router.push(`/dashboard/applicants?jobId=${job._id}`);
+        }
+    };
 
 
     if (loading) return <JobDetailSkeleton />;
