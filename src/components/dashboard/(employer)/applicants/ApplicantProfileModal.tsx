@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import ResumeViewer from "@/components/dashboard/(employer)/applicants/ResumeViewer";
-import { FaTimes } from "react-icons/fa";
-import { Candidate } from "@/types";
+import React, { useState } from 'react';
+import ResumeViewer from './ResumeViewer';
+import { FaTimes } from 'react-icons/fa';
+import { Candidate } from '@/types';
 
 export default function ApplicantProfileModal({
   candidate,
@@ -12,8 +12,8 @@ export default function ApplicantProfileModal({
   onClose: () => void;
   onSaveNotes: (id: string, notes: string) => Promise<void>;
 }) {
-  const [notes, setNotes] = useState("");
-  console.log("profile modal", candidate);
+  const [notes, setNotes] = useState('');
+  console.log('profile modal',candidate)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-full max-w-4xl bg-white dark:bg-[#111827] rounded-2xl p-6 relative">
@@ -26,21 +26,17 @@ export default function ApplicantProfileModal({
 
         <div className="flex gap-4">
           <img
-            src={candidate.profileImage || "/default-avatar.png"}
+            src={candidate.profileImage || '/default-avatar.png'}
             alt={candidate.name}
             className="h-28 w-28 rounded-full object-cover"
           />
           <div>
-            <h2 className="text-2xl font-bold text-primary-dark">
-              {candidate.name}
-            </h2>
-            <p className="text-sm text-primary-medium">
-              {candidate.bio || candidate.role}
-            </p>
+            <h2 className="text-2xl font-bold text-primary-dark">{candidate.name}</h2>
+            <p className="text-sm text-primary-medium">{candidate.bio || candidate.role}</p>
             <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Email: {candidate.email}
               <br />
-              Phone: {candidate.phone || "N/A"}
+              Phone: {candidate.phone || 'N/A'}
             </div>
             <div className="mt-2">
               {candidate.skills.map((s) => (
@@ -62,22 +58,13 @@ export default function ApplicantProfileModal({
               <ul className="text-sm list-disc ml-4 dark:text-gray-100 ">
                 {candidate.experience.map((exp, i) => (
                   <li key={i}>
-                    {exp.position} @ {exp.company} (
-                    {exp.startDate
-                      ? new Date(exp.startDate).getFullYear()
-                      : "?"}{" "}
-                    -{" "}
-                    {exp.endDate
-                      ? new Date(exp.endDate).getFullYear()
-                      : "Present"}
-                    )
+                    {exp.position} @ {exp.company} ({exp.startDate ? new Date(exp.startDate).getFullYear() : '?'} -{' '}
+                    {exp.endDate ? new Date(exp.endDate).getFullYear() : 'Present'})
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-100 ">
-                No experience provided.
-              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-100 ">No experience provided.</p>
             )}
 
             <h3 className="font-semibold mt-4 text-primary-dark ">Education</h3>
@@ -85,23 +72,18 @@ export default function ApplicantProfileModal({
               <ul className="text-sm list-disc ml-4 dark:text-gray-100 ">
                 {candidate.education.map((edu, i) => (
                   <li key={i}>
-                    {edu.degree} @ {edu.institution} (
-                    {edu.startDate
-                      ? new Date(edu.startDate).getFullYear()
-                      : "?"}{" "}
-                    - {edu.endDate ? new Date(edu.endDate).getFullYear() : "?"})
+                    {edu.degree} @ {edu.institution} ({edu.startDate ? new Date(edu.startDate).getFullYear() : '?'} -{' '}
+                    {edu.endDate ? new Date(edu.endDate).getFullYear() : '?'})
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-100 ">
-                No education info.
-              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-100 ">No education info.</p>
             )}
 
             <h3 className="font-semibold mt-4 text-primary-dark">Bio</h3>
             <div className="mt-2 p-3 border border-primary-light rounded-md bg-transparent text-sm whitespace-pre-wrap dark:text-gray-100 ">
-              {candidate.bio || "No bio provided."}
+              {candidate.bio || 'No bio provided.'}
             </div>
           </div>
 
@@ -111,15 +93,11 @@ export default function ApplicantProfileModal({
               {candidate.resume ? (
                 <ResumeViewer url={candidate.resume} />
               ) : (
-                <div className="text-sm text-gray-500">
-                  Resume not uploaded.
-                </div>
+                <div className="text-sm text-gray-500">Resume not uploaded.</div>
               )}
             </div>
 
-            <h3 className="font-semibold mt-4 text-primary-dark">
-              Employer Notes
-            </h3>
+            <h3 className="font-semibold mt-4 text-primary-dark">Employer Notes</h3>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}

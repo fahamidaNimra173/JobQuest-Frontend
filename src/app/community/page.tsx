@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Heart, Send, Smile, Laugh } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axios";
 import { useAuth } from "@/providers/AuthProvider";
+import axios from "axios";
 
 interface Post {
   _id: string;
@@ -66,6 +67,14 @@ const getAvatar = (username: string): string => {
     avatars.length;
   return avatars[index];
 };
+
+// Create axios instance
+const axiosInstanceTwo = axios.create({
+  baseURL: "https://job-portal-backend-xshy.onrender.com/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 export default function CommunityPage() {
   const { user } = useAuth();
