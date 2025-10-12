@@ -1,3 +1,4 @@
+'use client';
 import Select, { StylesConfig, ThemeConfig } from "react-select";
 import { TextField } from "@mui/material";
 

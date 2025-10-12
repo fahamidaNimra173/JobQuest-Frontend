@@ -1,16 +1,18 @@
+// app/jobs/[id]/page.tsx
 import Link from 'next/link';
-import { 
-  MapPin, 
-  Briefcase, 
-  DollarSign, 
-  Calendar, 
-  Clock, 
-  Building, 
+import {
+  MapPin,
+  Briefcase,
+  DollarSign,
+  Calendar,
+  Clock,
+  Building,
   Users,
   ArrowLeft,
-  Share2,
-  Bookmark
+  Share2
 } from 'lucide-react';
+import JobDetailsClient from '../../component/jobs/JobDetailsClient';
+import axiosInstance from '@/lib/axios';
 
 interface Job {
   _id: string;
@@ -25,6 +27,8 @@ interface Job {
   jobStartDate: string;
   salary?: {
     fixed?: number;
+    min?: number;
+    max?: number;
     currency?: string;
   };
   benefits?: string[];
@@ -42,12 +46,13 @@ interface Job {
   totalApplicants: number;
   applicationDeadline: string;
   postedAt: string;
+  primaryEnquiries?: string[];
 }
 
 async function getJobDetails(id: string): Promise<Job | null> {
   try {
     const res = await fetch(`https://job-portal-backend-xshy.onrender.com/api/jobs/${id}`, {
-      cache: 'no-store',
+      next: { revalidate: 60 }
     });
 
     if (!res.ok) {
@@ -56,14 +61,19 @@ async function getJobDetails(id: string): Promise<Job | null> {
 
     const data = await res.json();
     return data;
-  } catch (error) {
+  } catch (error:unknown) {
+    
     console.error('Error fetching job details:', error);
     return null;
   }
 }
 
-export default async function JobDetailsPage({ params }: { params: { id: string } }) {
-  const{id}= await params
+interface Params {
+  id: string;
+}
+
+export default async function JobDetailsPage({ params }: { params: Promise<Params> }) {
+  const { id } = await params;
   const job = await getJobDetails(id);
 
   if (!job) {
@@ -89,7 +99,7 @@ export default async function JobDetailsPage({ params }: { params: { id: string 
     const now = new Date();
     const diffInMs = now.getTime() - date.getTime();
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    
+
     if (diffInDays === 0) return 'Today';
     if (diffInDays === 1) return 'Yesterday';
     if (diffInDays < 7) return `${diffInDays} days ago`;
@@ -98,11 +108,11 @@ export default async function JobDetailsPage({ params }: { params: { id: string 
   };
 
   return (
-    <div className="min-h-screen  py-40">
-      <div className=" px-6 lg:px-[120px]">
+    <div className="min-h-screen py-40">
+      <div className="px-6 lg:px-[120px]">
         {/* Back Button */}
-        <Link 
-          href="/jobs" 
+        <Link
+          href="/jobs"
           className="inline-flex items-center gap-2 text-gray-600 hover:text-[#7670d6] mb-6 transition-colors"
         >
           <ArrowLeft size={20} />
@@ -123,9 +133,8 @@ export default async function JobDetailsPage({ params }: { params: { id: string 
                   <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
                     <Share2 size={20} className="text-gray-600" />
                   </button>
-                  <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                    <Bookmark size={20} className="text-gray-600" />
-                  </button>
+                  {/* Bookmark button from client component */}
+                  {/* <JobDetailsClient jobId={job._id} primaryEnquiries={job.primaryEnquiries} /> */}
                 </div>
               </div>
 
@@ -148,10 +157,17 @@ export default async function JobDetailsPage({ params }: { params: { id: string 
                 </div>
               </div>
 
-              {job.salary && job.salary.fixed && (
+              {job.salary && (
                 <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-4">
                   <DollarSign size={20} className="text-gray-600" />
-                  <span>{job.salary.currency} {job.salary.fixed.toLocaleString()} / year</span>
+                  <span>
+                    {job.salary.currency}{' '}
+                    {job.salary.fixed
+                      ? job.salary.fixed.toLocaleString()
+                      : `${job.salary.min?.toLocaleString()} - ${job.salary.max?.toLocaleString()}`
+                    }{' '}
+                    / year
+                  </span>
                 </div>
               )}
 
@@ -240,20 +256,16 @@ export default async function JobDetailsPage({ params }: { params: { id: string 
                 </div>
               </div>
             )}
+
+            {/* Application Form - Will appear here when Apply is clicked */}
+            {/* <JobDetailsClient jobId={job._id} primaryEnquiries={job.primaryEnquiries} /> */}
           </div>
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-20 space-y-6">
-              {/* Apply Card */}
-              <div className="bg-white rounded-xl shadow-md p-6">
-                <button className="w-full bg-[#7670d6] text-white py-3 rounded-lg font-semibold hover:bg-[#6660c6] transition-colors mb-4">
-                  Apply Now
-                </button>
-                <button className="w-full border-2 border-[#7670d6] text-[#7670d6] py-3 rounded-lg font-semibold hover:bg-[#f8f3ed] transition-colors">
-                  Save Job
-                </button>
-              </div>
+              {/* Apply Card - Client Component */}
+              <JobDetailsClient jobId={job._id} primaryEnquiries={job.primaryEnquiries} />
 
               {/* Company Info */}
               <div className="bg-white rounded-xl shadow-md p-6">

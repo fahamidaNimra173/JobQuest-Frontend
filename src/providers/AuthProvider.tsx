@@ -8,9 +8,9 @@ interface User {
   id?: string;
   firstName?: string;
   lastName?: string;
-  email?: string;
+  email?: string|null;
   role?: string;
-  [key: string]: any;
+  [key: string]:unknown;
 }
 
 interface AuthContextType {
@@ -57,7 +57,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const googleUser: User = {
         firstName: session.user.name?.split(" ")[0],
         lastName: session.user.name?.split(" ")[1] || "",
-        email: session.user.email,
+        email: session.user.email??undefined,
         role: Cookies.get("auth_role") || "candidate", // default role
       };
 

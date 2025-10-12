@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
+// import axios, { AxiosError } from "axios";
 import { useTheme } from "next-themes";
 import Swal from "sweetalert2";
 import CommunityPostsTable from "@/components/dashboard/(admin)/CommunityPostsTable";
@@ -84,11 +85,20 @@ const ManageCommunityPosts = () => {
           `${window.location.origin}/api/communityPosts/${id}`
         );
         showToast("success", "Post rejected");
-      } catch (err: any) {
-        showToast(
-          "error",
-          err.response?.data?.message || err.message || "Reject failed"
-        );
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          // ✅ safely access Axios error fields
+          showToast(
+            "error",
+            err.response?.data?.message || err.message || "Reject failed"
+          );
+        } else if (err instanceof Error) {
+          // ✅ standard JS error
+          showToast("error", err.message || "Reject failed");
+        } else {
+          // ✅ fallback for unexpected cases
+          showToast("error", "Reject failed");
+        }
       }
     }
   };
@@ -105,15 +115,24 @@ const ManageCommunityPosts = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`${window.location.origin}/api/users/${id}`);
-        showToast("success", "Post deleted");
-      } catch (err: any) {
-        showToast(
-          "error",
-          err.response?.data?.message || err.message || "Delete failed"
-        );
+        await axios.delete(`${window.location.origin}/api/communityPosts/${id}`);
+        showToast("success", "Post rejected");
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          showToast(
+            "error",
+            err.response?.data?.message || err.message || "Reject failed"
+          );
+        } else if (err instanceof Error) {
+          showToast("error", err.message || "Reject failed");
+        } else {
+          showToast("error", "Reject failed");
+        }
       }
     }
+
+
+
   };
 
   const handleApprove = async (id: string) => {
@@ -128,18 +147,25 @@ const ManageCommunityPosts = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.patch(
-          `${window.location.origin}/api/communityPosts/${id}`,
-          { status: "approved" }
-        );
+        await axios.patch(`${window.location.origin}/api/communityPosts/${id}`, {
+          status: "approved",
+        });
         showToast("success", "Post approved");
-      } catch (err: any) {
-        showToast(
-          "error",
-          err.response?.data?.message || err.message || "Approve failed"
-        );
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          showToast(
+            "error",
+            err.response?.data?.message || err.message || "Approve failed"
+          );
+        } else if (err instanceof Error) {
+          showToast("error", err.message || "Approve failed");
+        } else {
+          showToast("error", "Approve failed");
+        }
       }
     }
+
+
   };
 
   // ✅ Paginated Data

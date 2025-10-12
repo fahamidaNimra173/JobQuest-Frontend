@@ -22,20 +22,23 @@ const LoginPage = () => {
     const password = (form.elements.namedItem("password") as HTMLInputElement)
       .value;
 
-      try {
-        const res = await axios.post(
+    try {
+      const res = await axios.post(
         "https://job-portal-backend-xshy.onrender.com/auth/login",
         { email, password }
       );
-      
+
       localStorage.setItem("authToken", JSON.stringify(res.data.token));
       localStorage.setItem("user", JSON.stringify(res.data.user));
       console.log(res.data);
       router.push("/dashboard");
       showToast("success", "You logged in successfully");
-    } catch (error) {
-      console.log(error);
-      showToast("error", error.message);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+        showToast("error", error.message);
+      }
+
     }
   };
 

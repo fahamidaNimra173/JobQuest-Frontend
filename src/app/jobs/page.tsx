@@ -3,28 +3,7 @@
 
 import { Search, MapPin, Briefcase, Calendar, Tag, Filter } from 'lucide-react';
 import AllJobs from '../component/AllJobs';
-// import { job } from '../types/job';
 
-
-
-// async function getAllJobs(): Promise<job[]> {
-//   try {
-//     const res = await fetch('https://job-portal-backend-xshy.onrender.com/api/jobs', {
-//       cache: 'no-store',
-//     });
-
-//     if (!res.ok) {
-//       throw new Error('Failed to fetch jobs');
-//     }
-
-//     const data = await res.json();
-//     const jobs = Array.isArray(data) ? data : data.jobs;
-//     return jobs;
-//   } catch (error) {
-//     console.error('Error fetching jobs:', error);
-//     return [];
-//   }
-// }
 
 export default async function BrowseJobsPage() {
   // const jobs = await getAllJobs();
