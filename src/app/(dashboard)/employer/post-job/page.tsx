@@ -108,15 +108,23 @@ export default function PostJobPage() {
                         </select>
                     </div>
                     <div>
-                        <label className="label dark:text-white text-gray-800">Application Deadline</label>
-                        <input
-                            type="date"
-                            name="applicationDeadline"
-                            value={formData.applicationDeadline}
+                        <label className="label dark:text-white text-gray-800">Seniority Level</label>
+                        <select
+                            name="seniorityLevel"
+                            value={formData.seniorityLevel}
                             onChange={handleChange}
                             className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        />
+                        >
+                            <option>Internship</option>
+                            <option>Entry</option>
+                            <option>Associate</option>
+                            <option>Mid-Senior</option>
+                            <option>Senior</option>
+                            <option>Director</option>
+                            <option>Executive</option>
+                        </select>
                     </div>
+                    
 
                 </div>
 
@@ -306,7 +314,24 @@ export default function PostJobPage() {
                 </div>
 
                 {/* Experience */}
+                {/* Education & Experience */}
                 <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                        <label className="label dark:text-white text-gray-800">Education Requirement</label>
+                        <select
+                            name="educationRequirements"
+                            value={formData.educationRequirements}
+                            onChange={handleChange}
+                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
+                        >
+                            <option>High School</option>
+                            <option>Associate</option>
+                            <option>Bachelor</option>
+                            <option>Master</option>
+                            <option>Doctorate</option>
+                            <option>Not Applicable</option>
+                        </select>
+                    </div>
                     <div>
                         <label className="label dark:text-white text-gray-800">Experience Level</label>
                         <select
@@ -318,8 +343,14 @@ export default function PostJobPage() {
                             <option>Entry</option>
                             <option>Mid</option>
                             <option>Senior</option>
+                            <option>Director</option>
+                            <option>Executive</option>
+                            <option>Internship</option>
                         </select>
                     </div>
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+
 
                     <div>
                         <label className="label dark:text-white text-gray-800">Years of Experience</label>
@@ -332,12 +363,22 @@ export default function PostJobPage() {
                             className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
                         />
                     </div>
+                    <div>
+                        <label className="label dark:text-white text-gray-800">Application Deadline</label>
+                        <input
+                            type="date"
+                            name="applicationDeadline"
+                            value={formData.applicationDeadline}
+                            onChange={handleChange}
+                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
+                        />
+                    </div>
                 </div>
 
                 {/* Submit */}
                 <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-500 dark:to-purple-500 text-white font-semibold py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 dark:hover:from-indigo-600 dark:hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transform transition-all duration-200 hover:scale-[1.01] shadow-lg"
+                    className="flex items-center px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90 transition-colors w-full justify-center"
                 >
                     Post Job
                 </button>

@@ -1,18 +1,39 @@
 "use client";
 
 import { Briefcase } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Job {
-    id: number;
-    title: string;
-    company: string;
-    postingDate: string;
-    deadline: string;
-    applicants: number;
+    _id: string;
+    jobTitle: string;
+    companyName: string;
+    companyDescription: string;
+    companyGoals: string;
+    location: string;
+    jobDescription: string;
+    jobType: string;
+    workArrangement: string;
+    jobStartDate: string;
+    salary: { fixed: number; currency: string };
+    benefits: string[];
+    keyResponsibilities: string[];
+    requirements: string[];
+    otherRequirements: string;
+    skills: string[];
+    educationRequirements: string;
+    industry: string;
+    tags: string[];
+    seniorityLevel: string;
+    experienceLevel: { level: string; years: number };
+    totalApplicants: number;
+    applicationDeadline: string;
+    postedAt: string;
     status: string;
 }
 
 export default function JobCard({ job }: { job: Job }) {
+    const routeTo = `/employer/my-jobs/${job._id}`;
+    const router = useRouter();
     return (
         <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:shadow-md transition-all duration-200 flex flex-col justify-between">
             <div className="flex items-center mb-3">
@@ -21,23 +42,23 @@ export default function JobCard({ job }: { job: Job }) {
                 </div>
                 <div>
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                        {job.title}
+                        {job.jobTitle}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {job.company}
+                        {job.companyName}
                     </p>
                 </div>
             </div>
 
             <div className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
                 <p>
-                    <span className="font-medium">Posted:</span> {job.postingDate}
+                    <span className="font-medium">Posted:</span> {job.postedAt}
                 </p>
                 <p>
-                    <span className="font-medium">Deadline:</span> {job.deadline}
+                    <span className="font-medium">Deadline:</span> {job.applicationDeadline}
                 </p>
                 <p>
-                    <span className="font-medium">Applicants:</span> {job.applicants}
+                    <span className="font-medium">Applicants:</span> {job.totalApplicants}
                 </p>
                 <p>
                     <span className="font-medium">Status:</span>{" "}
@@ -51,12 +72,12 @@ export default function JobCard({ job }: { job: Job }) {
                                     : "bg-purple-100 text-purple-700 dark:bg-purple-800 dark:text-purple-100"
                             }`}
                     >
-                        {job.status}
+                        {job.status || "Unknown"}
                     </span>
                 </p>
             </div>
 
-            <button className="mt-4 px-4 py-2 bg-primary border-1 border-violet-300 hover:border-0 text-white rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
+            <button onClick={() => router.push(routeTo)} className="mt-4 px-4 py-2 bg-primary border-1 border-violet-300 hover:border-0 text-white rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors">
                 View Details
             </button>
         </div>
