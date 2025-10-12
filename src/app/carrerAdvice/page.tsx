@@ -37,8 +37,14 @@ interface CategoryCard {
   articles: Article[];
 }
 
+interface ExpertInsight {
+  quote: string;
+  author: string;
+  role: string;
+}
+
 export default function CareerAdvicePage() {
-  const [selectedCategory, setSelectedCategory] = useState<ModalContent | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryCard | null>(null);
 
   const adviceCategories: CategoryCard[] = [
     {
@@ -205,7 +211,7 @@ export default function CareerAdvicePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-white to-primary-lightest py-20">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20">
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-6 lg:px-12 mb-16">
         <div className="text-center mb-12">
@@ -398,7 +404,7 @@ export default function CareerAdvicePage() {
 
       {/* Modal */}
       {selectedCategory && (
-        <div className="fixed pt-50 inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl max-w-4xl w-full my-8 max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -411,7 +417,7 @@ export default function CareerAdvicePage() {
               </div>
               <button
                 onClick={closeModal}
-                className="p-2 hover:bg-gray-100 text-black transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 <X className="w-6 h-6" />
               </button>
