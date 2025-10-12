@@ -55,7 +55,7 @@ export default function JobDetailsPage() {
     }, [id]);
 
     const handleUpdate = () => {
-        router.push(`/employer/update-job/${id}`);
+        router.push(`/dashboard/update-job/${id}`);
     };
 
     const handleDelete = async () => {
@@ -72,7 +72,7 @@ export default function JobDetailsPage() {
         }
     };
     const handleSeeApplicants = () => {
-  router.push(`/employer/applicants?jobId=${job._id}`);
+  router.push(`/dashboard/applicants?jobId=${job._id}`);
 };
 
 

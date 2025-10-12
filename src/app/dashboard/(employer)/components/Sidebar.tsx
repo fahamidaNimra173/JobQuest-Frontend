@@ -19,11 +19,11 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   const links: SidebarLink[] = [
-    { name: "Dashboard", href: "/employer", icon: <Briefcase size={20} /> },
-    { name: "My Jobs", href: "/employer/my-jobs", icon: <ClipboardList size={20} /> },
-    { name: "Post New Job", href: "/employer/post-job", icon: <PlusSquare size={20} /> },
-    //{ name: "Applicants", href: "/employer/applicants", icon: <Users size={20} /> },
-    { name: "Profile", href: "/employer/profile", icon: <User size={20} /> },
+    { name: "Dashboard", href: "/dashboard", icon: <Briefcase size={20} /> },
+    { name: "My Jobs", href: "/dashboard/my-jobs", icon: <ClipboardList size={20} /> },
+    { name: "Post New Job", href: "/dashboard/post-job", icon: <PlusSquare size={20} /> },
+    //{ name: "Applicants", href: "/dashboard/applicants", icon: <Users size={20} /> },
+    { name: "Profile", href: "/dashboard/profile", icon: <User size={20} /> },
   ];
 
   return (

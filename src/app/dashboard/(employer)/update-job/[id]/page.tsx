@@ -60,7 +60,7 @@ export default function UpdateJobPage() {
 
       if (res.ok) {
         alert('Job updated successfully!');
-        router.push(`/employer/my-jobs/${id}`);
+        router.push(`/dashboard/my-jobs/${id}`);
       }
     } catch (error) {
       console.error('Error updating job:', error);

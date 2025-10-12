@@ -53,7 +53,7 @@ export default function PostJobPage() {
         e.preventDefault();
         console.log("Job Posted:", formData);
         alert("Job posted successfully (mock)!");
-        router.push("/employer/my-jobs");
+        router.push("/dashboard/my-jobs");
     };
 
     return (

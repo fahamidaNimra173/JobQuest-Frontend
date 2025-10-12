@@ -32,7 +32,7 @@ interface Job {
 }
 
 export default function JobCard({ job }: { job: Job }) {
-    const routeTo = `/employer/my-jobs/${job._id}`;
+    const routeTo = `/dashboard/my-jobs/${job._id}`;
     const router = useRouter();
     return (
         <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:shadow-md transition-all duration-200 flex flex-col justify-between">
