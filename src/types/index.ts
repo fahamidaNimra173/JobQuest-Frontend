@@ -13,6 +13,53 @@ export interface User {
   updatedAt: string;
 }
 
+// Candidate types (matching backend structure)
+export interface SocialLinks {
+  linkedin?: string;
+  github?: string;
+  portfolio?: string;
+}
+
+export interface Education {
+  _id?: string;
+  institution: string;
+  degree: string;
+  fieldOfStudy?: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface Experience {
+  _id?: string;
+  company: string;
+  position: string;
+  startDate: string;
+  endDate?: string;
+  isCurrentlyWorking?: boolean;
+  responsibilities?: string;
+}
+
+export interface Candidate {
+  _id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  profileImage?: string;
+  address?: string;
+  bio?: string;
+  role: string;
+  authProvider: string;
+  socialLinks?: SocialLinks;
+  education: Education[];
+  experience: Experience[];
+  skills: string[];
+  resume?: string;
+  appliedJobs: string[];
+  savedJobs: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Job types
 export interface Job {
   id: string;
@@ -74,7 +121,7 @@ export interface WorkExperience {
   achievements?: string[];
 }
 
-export interface Education {
+export interface EducationItem {
   id: string;
   institution: string;
   degree: string;
@@ -111,7 +158,7 @@ export interface Resume {
   };
   summary?: string;
   experience: WorkExperience[];
-  education: Education[];
+  education: EducationItem[];
   skills: {
     technical: string[];
     frameworks: string[];

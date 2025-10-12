@@ -144,7 +144,7 @@ export default function Sidebar() {
       {/* Sidebar */}
       <div
         className={clsx(
-          "fixed inset-y-0 left-0 z-40 w-68 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transform transition-all duration-200 ease-in-out lg:translate-x-0 overflow-y-auto hide-scrollbar",
+          "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transform transition-all duration-200 ease-in-out lg:translate-x-0 overflow-y-auto hide-scrollbar",
           {
             "translate-x-0": isMobileMenuOpen,
             "-translate-x-full": !isMobileMenuOpen,
@@ -190,8 +190,8 @@ export default function Sidebar() {
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <item.icon className="w-5 h-5 mr-3" />
-                  {item.name}
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  <span className="ml-3">{item.name}</span>
                 </Link>
               );
             })}
@@ -235,8 +235,8 @@ export default function Sidebar() {
               type="button"
               className="flex items-center w-full px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
             >
-              <LogOut className="w-5 h-5 mr-3" />
-              Logout
+              <LogOut className="w-5 h-5 flex-shrink-0" />
+              <span className="ml-3">Logout</span>
             </button>
           </div>
         </div>

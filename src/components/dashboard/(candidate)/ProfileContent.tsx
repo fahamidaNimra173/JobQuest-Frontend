@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   User,
   Mail,
@@ -14,79 +14,162 @@ import {
   Plus,
   Calendar,
   Award,
+  Linkedin,
+  Github,
+  Link as LinkIcon,
 } from "lucide-react";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { useToast } from "@/components/ui/Toast";
+import apiClient from "@/lib/api";
+import { Candidate, SocialLinks, Education, Experience } from "@/types";
 
-interface UserData {
-  personalInfo: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    location: string;
-    title: string;
-    bio: string;
-  };
-  experience: Array<{
-    id: number;
-    company: string;
-    position: string;
-    startDate: string;
-    endDate: string | null;
-    current: boolean;
-    description: string;
-  }>;
-  education: Array<{
-    id: number;
-    institution: string;
-    degree: string;
-    startDate: string;
-    endDate: string;
-    gpa?: string;
-  }>;
-  skills: string[];
+interface ProfileFormData {
+  name: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  bio?: string;
+  socialLinks?: SocialLinks;
 }
 
-interface ProfileContentProps {
-  userData: UserData;
-}
-
-export default function ProfileContent({ userData }: ProfileContentProps) {
+export default function ProfileContent() {
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(userData.personalInfo);
+  const [isLoading, setIsLoading] = useState(true);
+  const [candidateData, setCandidateData] = useState<Candidate | null>(null);
+  const [formData, setFormData] = useState<ProfileFormData>({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    bio: "",
+    socialLinks: {
+      linkedin: "",
+      github: "",
+      portfolio: ""
+    }
+  });
   const { showToast } = useToast();
+
+  // Fetch candidate profile data
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setIsLoading(true);
+        const response = await apiClient.getCandidateProfile();
+        if (response.success) {
+          const candidate = response.data as Candidate;
+          setCandidateData(candidate);
+          
+          // Parse name into first and last name for form
+          const nameParts = candidate.name.split(" ");
+          const firstName = nameParts[0] || "";
+          const lastName = nameParts.slice(1).join(" ") || "";
+          
+          setFormData({
+            name: candidate.name,
+            email: candidate.email,
+            phone: candidate.phone || "",
+            address: candidate.address || "",
+            bio: candidate.bio || "",
+            socialLinks: candidate.socialLinks || {
+              linkedin: "",
+              github: "",
+              portfolio: ""
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        showToast("error", "Error", "Failed to load profile data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   // Breadcrumb items for profile page
   const breadcrumbItems = [
     { name: "My Profile", href: "/dashboard/profile", current: true },
   ];
 
-  const handleSave = () => {
-    // Send the data to the backend API
-    console.log("Saving profile data:", formData);
-    showToast(
-      "success",
-      "Profile Saved",
-      "Your profile has been updated successfully!"
-    );
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      // Convert formData to a plain object that can be sent to the API
+      const profileData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        bio: formData.bio,
+        socialLinks: formData.socialLinks
+      };
+      
+      const response = await apiClient.updateCandidateProfile(profileData);
+      if (response.success) {
+        const updatedCandidate = response.data as Candidate;
+        setCandidateData(updatedCandidate);
+        showToast(
+          "success",
+          "Profile Saved",
+          "Your profile has been updated successfully!"
+        );
+        setIsEditing(false);
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      showToast("error", "Error", "Failed to save profile data");
+    }
   };
 
   const handleCancel = () => {
-    console.log("Cancelling edit");
-    setFormData(userData.personalInfo);
+    // Reset form data to original values
+    if (candidateData) {
+      setFormData({
+        name: candidateData.name,
+        email: candidateData.email,
+        phone: candidateData.phone || "",
+        address: candidateData.address || "",
+        bio: candidateData.bio || "",
+        socialLinks: candidateData.socialLinks || {
+          linkedin: "",
+          github: "",
+          portfolio: ""
+        }
+      });
+    }
     setIsEditing(false);
   };
 
   const handleEditToggle = () => {
-    console.log("Edit toggle clicked, current state:", isEditing);
     if (isEditing) {
       handleCancel();
     } else {
       setIsEditing(true);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-dark"></div>
+      </div>
+    );
+  }
+
+  if (!candidateData) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border p-6">
+        <p className="text-center text-gray-500">No profile data available</p>
+      </div>
+    );
+  }
+
+  // Parse name for display
+  const nameParts = formData.name.split(" ");
+  const firstName = nameParts[0] || "";
+  const lastName = nameParts.slice(1).join(" ") || "";
 
   return (
     <div className="space-y-6">
@@ -127,32 +210,17 @@ export default function ProfileContent({ userData }: ProfileContentProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    First Name
+                    Full Name
                   </label>
                   <input
                     type="text"
-                    value={formData.firstName}
+                    value={formData.name}
                     onChange={(e) =>
-                      setFormData({ ...formData, firstName: e.target.value })
+                      setFormData({ ...formData, name: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.lastName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, lastName: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Email
@@ -166,43 +234,30 @@ export default function ProfileContent({ userData }: ProfileContentProps) {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Phone
                   </label>
                   <input
                     type="tel"
-                    value={formData.phone}
+                    value={formData.phone || ""}
                     onChange={(e) =>
                       setFormData({ ...formData, phone: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Location
                   </label>
                   <input
                     type="text"
-                    value={formData.location}
+                    value={formData.address || ""}
                     onChange={(e) =>
-                      setFormData({ ...formData, location: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Job Title
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.title}
-                    onChange={(e) =>
-                      setFormData({ ...formData, title: e.target.value })
+                      setFormData({ ...formData, address: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
@@ -213,13 +268,75 @@ export default function ProfileContent({ userData }: ProfileContentProps) {
                   Bio
                 </label>
                 <textarea
-                  value={formData.bio}
+                  value={formData.bio || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, bio: e.target.value })
                   }
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    LinkedIn
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.socialLinks?.linkedin || ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        socialLinks: {
+                          ...formData.socialLinks,
+                          linkedin: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://linkedin.com/in/username"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    GitHub
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.socialLinks?.github || ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        socialLinks: {
+                          ...formData.socialLinks,
+                          github: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://github.com/username"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Portfolio
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.socialLinks?.portfolio || ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        socialLinks: {
+                          ...formData.socialLinks,
+                          portfolio: e.target.value
+                        }
+                      })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://yourportfolio.com"
+                  />
+                </div>
               </div>
               <div className="flex space-x-3">
                 <button
@@ -241,52 +358,96 @@ export default function ProfileContent({ userData }: ProfileContentProps) {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <User className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-600">Full Name</p>
-                    <p className="font-medium">
-                      {formData.firstName} {formData.lastName}
-                    </p>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <User className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm text-gray-600">Full Name</p>
+                      <p className="font-medium">{formData.name}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Mail className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm text-gray-600">Email</p>
+                      <p className="font-medium">{formData.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Phone className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm text-gray-600">Phone</p>
+                      <p className="font-medium">{formData.phone || "Not provided"}</p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Mail className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-600">Email</p>
-                    <p className="font-medium">{formData.email}</p>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <MapPin className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm text-gray-600">Location</p>
+                      <p className="font-medium">{formData.address || "Not provided"}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-5 h-5 text-gray-400 flex items-center justify-center">
+                      <Briefcase className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Role</p>
+                      <p className="font-medium capitalize">{candidateData.role}</p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Phone className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-600">Phone</p>
-                    <p className="font-medium">{formData.phone}</p>
-                  </div>
+                <div className="md:col-span-2">
+                  <p className="text-sm text-gray-600 mb-2">Bio</p>
+                  <p className="text-gray-900">{formData.bio || "No bio provided"}</p>
                 </div>
               </div>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <MapPin className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-600">Location</p>
-                    <p className="font-medium">{formData.location}</p>
+              
+              {/* Social Links */}
+              {(formData.socialLinks?.linkedin || formData.socialLinks?.github || formData.socialLinks?.portfolio) && (
+                <div className="border-t pt-4">
+                  <h3 className="text-lg font-medium text-gray-900 mb-3">Social Links</h3>
+                  <div className="flex flex-wrap gap-4">
+                    {formData.socialLinks?.linkedin && (
+                      <a 
+                        href={formData.socialLinks.linkedin} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center text-primary-dark hover:underline"
+                      >
+                        <Linkedin className="w-4 h-4 mr-1" />
+                        LinkedIn
+                      </a>
+                    )}
+                    {formData.socialLinks?.github && (
+                      <a 
+                        href={formData.socialLinks.github} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center text-primary-dark hover:underline"
+                      >
+                        <Github className="w-4 h-4 mr-1" />
+                        GitHub
+                      </a>
+                    )}
+                    {formData.socialLinks?.portfolio && (
+                      <a 
+                        href={formData.socialLinks.portfolio} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center text-primary-dark hover:underline"
+                      >
+                        <LinkIcon className="w-4 h-4 mr-1" />
+                        Portfolio
+                      </a>
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <Briefcase className="w-5 h-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-600">Current Title</p>
-                    <p className="font-medium">{formData.title}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="md:col-span-2">
-                <p className="text-sm text-gray-600 mb-2">Bio</p>
-                <p className="text-gray-900">{formData.bio}</p>
-              </div>
+              )}
             </div>
           )}
         </div>
@@ -305,26 +466,36 @@ export default function ProfileContent({ userData }: ProfileContentProps) {
           </button>
         </div>
         <div className="p-6 space-y-6">
-          {userData.experience.map((exp) => (
-            <div key={exp.id} className="border-l-4 border-blue-500 pl-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-semibold text-gray-900">
-                    {exp.position}
-                  </h3>
-                  <p className="text-primary-dark font-medium">{exp.company}</p>
-                  <p className="text-sm text-gray-600 flex items-center mt-1">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    {exp.startDate} - {exp.current ? "Present" : exp.endDate}
-                  </p>
-                  <p className="text-gray-700 mt-2">{exp.description}</p>
+          {candidateData.experience && candidateData.experience.length > 0 ? (
+            candidateData.experience.map((exp) => (
+              <div key={exp._id} className="border-l-4 border-blue-500 pl-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-semibold text-gray-900">
+                      {exp.position}
+                    </h3>
+                    <p className="text-primary-dark font-medium">{exp.company}</p>
+                    <p className="text-sm text-gray-600 flex items-center mt-1">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      {new Date(exp.startDate).toLocaleDateString()} - {exp.isCurrentlyWorking ? "Present" : exp.endDate ? new Date(exp.endDate).toLocaleDateString() : ""}
+                    </p>
+                    {exp.responsibilities && (
+                      <p className="text-gray-700 mt-2">{exp.responsibilities}</p>
+                    )}
+                  </div>
+                  {isEditing && (
+                    <button className="text-gray-400 hover:text-gray-600">
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
-                <button className="text-gray-400 hover:text-gray-600">
-                  <Edit3 className="w-4 h-4" />
-                </button>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-gray-500 italic">
+              {isEditing ? "Add your work experience" : "No work experience added yet"}
+            </p>
+          )}
         </div>
       </div>
 
@@ -341,31 +512,39 @@ export default function ProfileContent({ userData }: ProfileContentProps) {
           </button>
         </div>
         <div className="p-6 space-y-6">
-          {userData.education.map((edu) => (
-            <div key={edu.id} className="border-l-4 border-green-500 pl-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-semibold text-gray-900">{edu.degree}</h3>
-                  <p className="text-primary-medium font-medium">
-                    {edu.institution}
-                  </p>
-                  <p className="text-sm text-gray-600 flex items-center mt-1">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    {edu.startDate} - {edu.endDate}
-                  </p>
-                  {edu.gpa && (
-                    <p className="text-sm text-gray-600 flex items-center mt-1">
-                      <Award className="w-4 h-4 mr-1" />
-                      GPA: {edu.gpa}
+          {candidateData.education && candidateData.education.length > 0 ? (
+            candidateData.education.map((edu) => (
+              <div key={edu._id} className="border-l-4 border-green-500 pl-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{edu.degree}</h3>
+                    <p className="text-primary-medium font-medium">
+                      {edu.institution}
                     </p>
+                    <p className="text-sm text-gray-600 flex items-center mt-1">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      {new Date(edu.startDate).toLocaleDateString()} - {edu.endDate ? new Date(edu.endDate).toLocaleDateString() : ""}
+                    </p>
+                    {edu.fieldOfStudy && (
+                      <p className="text-sm text-gray-600 flex items-center mt-1">
+                        <Award className="w-4 h-4 mr-1" />
+                        {edu.fieldOfStudy}
+                      </p>
+                    )}
+                  </div>
+                  {isEditing && (
+                    <button className="text-gray-400 hover:text-gray-600">
+                      <Edit3 className="w-4 h-4" />
+                    </button>
                   )}
                 </div>
-                <button className="text-gray-400 hover:text-gray-600">
-                  <Edit3 className="w-4 h-4" />
-                </button>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-gray-500 italic">
+              {isEditing ? "Add your education details" : "No education details added yet"}
+            </p>
+          )}
         </div>
       </div>
 
@@ -379,16 +558,22 @@ export default function ProfileContent({ userData }: ProfileContentProps) {
           </button>
         </div>
         <div className="p-6">
-          <div className="flex flex-wrap gap-2">
-            {userData.skills.map((skill, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-primary-light text-primary-dark text-sm font-medium rounded-full"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
+          {candidateData.skills && candidateData.skills.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {candidateData.skills.map((skill, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-primary-light text-primary-dark text-sm font-medium rounded-full"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 italic">
+              {isEditing ? "Add your skills" : "No skills added yet"}
+            </p>
+          )}
         </div>
       </div>
     </div>
