@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Heart, Send, Smile, Laugh } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axiosInstance from '@/lib/axios';
+import axios from 'axios';
 
 interface Post {
     _id: string;
@@ -59,6 +60,14 @@ const getAvatar = (username: string): string => {
     return avatars[index];
 };
 
+// Create axios instance
+const axiosInstanceTwo = axios.create({
+  baseURL: "https://job-portal-backend-xshy.onrender.com/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
 export default function CommunityPage() {
     const [newPostTitle, setNewPostTitle] = useState('');
     const [newPost, setNewPost] = useState('');
@@ -68,7 +77,7 @@ export default function CommunityPage() {
     const { data: posts = [], isLoading } = useQuery<Post[]>({
         queryKey: ['posts'],
         queryFn: async () => {
-            const response = await axiosInstance.get('/community');
+            const response = await axiosInstanceTwo.get('/community');
             return response.data;
         },
     });
@@ -76,7 +85,7 @@ export default function CommunityPage() {
     // Create post mutation
     const createPostMutation = useMutation({
         mutationFn: async (postData: CreatePostData) => {
-            const response = await axiosInstance.post('/community', postData);
+            const response = await axiosInstanceTwo.post('/community', postData);
             return response.data;
         },
         onSuccess: () => {
@@ -89,7 +98,7 @@ export default function CommunityPage() {
     // React to post mutation
     const reactToPostMutation = useMutation({
         mutationFn: async (reactionData: ReactionData) => {
-            const response = await axiosInstance.post(`/community/${reactionData.postId}/react`, {
+            const response = await axiosInstanceTwo.post(`/community/${reactionData.postId}/react`, {
                 reactionType: reactionData.reactionType,
             });
             return response.data;

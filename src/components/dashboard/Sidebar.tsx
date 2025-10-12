@@ -69,7 +69,7 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
         { name: "Job Posts", href: "/dashboard/job-posts", icon: Briefcase },
         { name: "My Jobs", href: "/dashboard/my-jobs", icon: ClipboardList },
-        { name: "My Profile", href: "/dashboard/profile", icon: User },
+        { name: "My Profile", href: "/dashboard/employer-profile", icon: User },
         {
           name: "Change Password",
           href: "/dashboard/change-password",
@@ -81,7 +81,7 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
     default:
       return [
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
-        { name: "My Profile", href: "/dashboard/profile", icon: User },
+        { name: "My Profile", href: "/dashboard/candidate-profile", icon: User },
         {
           name: "Jobs Applied",
           href: "/dashboard/jobs-applied",
