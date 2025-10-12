@@ -138,6 +138,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const res = await axiosInstance.post(`/auth/logout`);
       if (res.status === 200) {
+        router.push('/login')
         setUser(null);
         showToast("success", "Logged out successfully");
       }
