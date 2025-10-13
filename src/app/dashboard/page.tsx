@@ -1,134 +1,24 @@
-'use client';
+"use client";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import EmployerDashboard from "@/components/dashboard/EmployerDashboard";
+import CandidateDashboard from "@/components/dashboard/CandidateDashboard";
+import AdminDashboard from "@/components/dashboard/AdminDashboard";
+import { useAuth } from "@/providers/AuthProvider";
 
-import React, { useState, useEffect } from 'react';
-import DashboardOverview from '@/components/dashboard/DashboardOverview';
-import apiClient from '@/lib/api';
-import { useToast } from '@/components/ui/Toast';
-import { useAuth } from '@/providers/AuthProvider';
-import { useRouter } from 'next/navigation';
-
-interface DashboardData {
-  stats: {
-    appliedJobs: number;
-    savedJobs: number;
-  };
-  recentApplications: Array<{
-    id: number;
-    company: string;
-    position: string;
-    appliedDate: string;
-    status: string;
-  }>;
-}
-
-export default function DashboardPage() {
-  const { user, loading: authLoading } = useAuth();
+const Dashboard = () => {
+  const { loading, user } = useAuth();
   const router = useRouter();
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { showToast } = useToast();
 
-  useEffect(() => {
-    console.log('Dashboard useEffect running');
-    console.log('Auth loading:', authLoading);
-    console.log('User:', user);
-    
-    // Wait for auth context to load before making decisions
-    if (authLoading) {
-      console.log('Still loading auth context, waiting...');
-      return;
-    }
-    
-    // Redirect based on user role
-    if (user) {
-      console.log('User is authenticated, checking role...');
-      if (user.role === 'employer') {
-        console.log('Redirecting employer to employer profile');
-        router.push('/dashboard/employer-profile');
-        return;
-      }
-      
-      if (user.role === 'admin') {
-        console.log('Redirecting admin to statistics');
-        router.push('/dashboard/statistics');
-        return;
-      }
-      
-      // For candidates, fetch dashboard data
-      console.log('Fetching dashboard data for candidate');
-      const fetchDashboardData = async () => {
-        try {
-          setLoading(true);
-          // Fetch applications and saved jobs in parallel using candidate-specific endpoints
-          const [applicationsResponse, savedJobsResponse] = await Promise.all([
-            apiClient.getCandidateApplications(),
-            apiClient.getCandidateSavedJobs()
-          ]);
-          console.log('Applications response:', applicationsResponse);
-          console.log('Saved jobs response:', savedJobsResponse);
-
-          if (applicationsResponse.success && savedJobsResponse.success) {
-            // Process applications data
-            const recentApplications = (applicationsResponse.data as any[]).slice(0, 5).map((app: any, index: number) => ({
-              id: index + 1,
-              company: app.job?.company || 'Unknown Company',
-              position: app.job?.title || 'Unknown Position',
-              appliedDate: app.appliedDate,
-              status: app.status
-            }));
-
-            // Set dashboard data
-            setDashboardData({
-              stats: {
-                appliedJobs: (applicationsResponse.data as any[]).length,
-                savedJobs: (savedJobsResponse.data as any[]).length
-              },
-              recentApplications
-            });
-          }
-        } catch (error) {
-          console.error('Error fetching dashboard data:', error);
-          showToast('error', 'Error', 'Failed to load dashboard data');
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchDashboardData();
-    } else {
-      // Only redirect if we're sure there's no user and auth context has loaded
-      console.log('No user found and auth context loaded, redirecting to login');
-      router.push('/login');
-    }
-  }, [user, authLoading, router, showToast]);
-
-  // Show loading spinner while either auth context or dashboard data is loading
-  if (authLoading || loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-dark"></div>
-      </div>
-    );
+  if (user?.role === "admin") {
+    return <AdminDashboard />;
+  } else if (user?.role === "candidate") {
+    return <CandidateDashboard />;
+  } else if (user?.role === "employer") {
+    return <EmployerDashboard />;
+  } else {
+    return router.push("/forbidden");
   }
+};
 
-  // For employers and admins, we redirect above, so this only shows for candidates
-  if (!dashboardData && user) {
-    return (
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <p className="text-center text-gray-500">No dashboard data available</p>
-      </div>
-    );
-  }
-
-  // If we have dashboard data, show it
-  if (dashboardData) {
-    return <DashboardOverview data={dashboardData} />;
-  }
-
-  // Fallback (shouldn't reach here in normal circumstances)
-  return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
-      <p className="text-center text-gray-500">Loading dashboard...</p>
-    </div>
-  );
-}
+export default Dashboard;
