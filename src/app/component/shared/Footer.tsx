@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Facebook, Twitter, Linkedin, Instagram, Mail } from "lucide-react";
 import axiosInstance from "@/lib/axios";
+import toast from "react-hot-toast";
 
 
 
@@ -54,7 +55,7 @@ export default function Footer() {
       console.log("Sending data:", subscriptionData);
       const response = await axiosInstance.post("/subscribe", subscriptionData);
       console.log("Subscribed successfully:", response.data);
-      alert("Subscribed successfully!");
+      toast.success("Subscribed successfully!");
     } catch (error: unknown) {
       console.error("Subscription failed:", error);
 
@@ -66,7 +67,7 @@ export default function Footer() {
         console.log("Error status:", axiosError.response?.status);
       }
 
-      alert("Subscription failed. Try again!");
+      toast.error("Subscription failed. Try again!");
     }
   };
 

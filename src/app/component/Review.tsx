@@ -39,7 +39,7 @@ export function ReviewSection() {
     return response.data;
   };
 
-  // ✅ useMutation hook
+  //  useMutation hook
   const { mutateAsync } = useMutation({
     mutationFn: postReview,
     onSuccess: () => {
@@ -75,7 +75,7 @@ export function ReviewSection() {
       // userImage: user?.photoURL || defaultUserImage,
       email:  defaultUserEmail,
       image:  defaultUserImage,
-      rating:4,
+      rating:5,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

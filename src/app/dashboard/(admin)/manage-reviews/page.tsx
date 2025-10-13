@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useTheme } from "next-themes";
 import Swal from "sweetalert2";
@@ -48,11 +48,18 @@ interface Reviews {
 const ManageReviews = () => {
   const { showToast } = useToast();
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
-  const tableStyles = getTableStyles(isDark);
+  const [mounted, setMounted] = useState(false);
 
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+
+  // ✅ Ensure component is mounted before accessing theme
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && resolvedTheme === "dark";
+  const tableStyles = getTableStyles(isDark);
 
   // ✅ Mock Data
   const reviews: Reviews[] = Array.from({ length: 30 }).map((_, i) => ({
@@ -89,7 +96,7 @@ const ManageReviews = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`${window.location.origin}/api/reviews/${id}`);
+        await axios.delete(`https://job-portal-backend-xshy.onrender.com/api/reviews/${id}`);
         showToast("success", "Review rejected");
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
@@ -98,7 +105,6 @@ const ManageReviews = () => {
             err.response?.data?.message || err.message || "Reject failed"
           );
         }
-
       }
     }
   };
@@ -115,7 +121,7 @@ const ManageReviews = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`${window.location.origin}/api/reviews/${id}`);
+        await axios.delete(`https://job-portal-backend-xshy.onrender.com/api/reviews/${id}`);
         showToast("success", "Review deleted");
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
@@ -124,7 +130,6 @@ const ManageReviews = () => {
             err.response?.data?.message || err.message || "Delete failed"
           );
         }
-
       }
     }
   };
@@ -141,7 +146,7 @@ const ManageReviews = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.patch(`${window.location.origin}/api/reviews/${id}`, {
+        await axios.patch(`https://job-portal-backend-xshy.onrender.com/api/reviews/${id}`, {
           status: "approved",
         });
         showToast("success", "Review approved");
@@ -151,9 +156,7 @@ const ManageReviews = () => {
             "error",
             err.response?.data?.message || err.message || "Approve failed"
           );
-
         }
-
       }
     }
   };
@@ -171,6 +174,11 @@ const ManageReviews = () => {
       current: true,
     },
   ];
+
+  // ✅ Don't render until mounted on client
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="px-4">
@@ -200,7 +208,7 @@ const ManageReviews = () => {
           handleApprove={handleApprove}
           handleReject={handleReject}
           handleDelete={handleDelete}
-        ></ReviewsTable>
+        />
       )}
     </div>
   );
