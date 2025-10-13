@@ -23,10 +23,10 @@ body {
 .dark {
   --background:#f8f3ed;
   --foreground: #f8f8f8;
-  --primary-dark: #9da0dc;
-  --primary-medium: #7670d6;
-  --primary-light: #4c4875;
-  --primary-lightest: #2d2c3d;
+  --primary-dark:  #7670d6;
+  --primary-medium: #9da0dc;
+  --primary-light: #d3d2ea;
+  --primary-lightest: #f8f3ed;
 }
 
 /* Brand Utility Classes */

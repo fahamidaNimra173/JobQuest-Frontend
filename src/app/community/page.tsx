@@ -9,22 +9,25 @@ import axios from "axios";
 
 interface Post {
   _id: string;
-  name: string;
+  username: string;
   email: string;
   postTitle: string;
   post: string;
   totalLikes: number;
   totalHaha: number;
   totalLove: number;
-  createdAt: string;
+  postDate: string;
   userReaction?: "like" | "love" | "haha" | null;
 }
 
 interface CreatePostData {
-  name: string;
+  username: string;
   email: string;
   postTitle: string;
   post: string;
+  // totalLikes:number ,
+  // totalHaha:number,
+  // totalLove:number,
 }
 
 interface ReactionData {
@@ -37,13 +40,21 @@ const getTimeAgo = (timestamp: string): string => {
   const now = new Date();
   const postTime = new Date(timestamp);
   const diffInMs = now.getTime() - postTime.getTime();
+
   const diffInSeconds = Math.floor(diffInMs / 1000);
+
   const diffInMinutes = Math.floor(diffInSeconds / 60);
+
   const diffInHours = Math.floor(diffInMinutes / 60);
+
   const diffInDays = Math.floor(diffInHours / 24);
+
   const diffInWeeks = Math.floor(diffInDays / 7);
+
   const diffInMonths = Math.floor(diffInDays / 30);
+
   const diffInYears = Math.floor(diffInDays / 365);
+
 
   if (diffInSeconds < 60) return "Just now";
   if (diffInMinutes < 60)
@@ -60,8 +71,9 @@ const getTimeAgo = (timestamp: string): string => {
 };
 
 // Avatar generator based on username
-const getAvatar = (username: string): string => {
+const getAvatar = (username?: string): string => {
   const avatars = ["👤", "👨", "👩", "🧑", "👨‍💼", "👩‍💼", "🧑‍💼", "👨‍💻", "👩‍💻", "🧑‍💻"];
+  if (!username) return avatars[0]
   const index =
     username.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
     avatars.length;
@@ -125,10 +137,14 @@ export default function CommunityPage() {
     if (!newPost.trim() || !newPostTitle.trim()) return;
 
     createPostMutation.mutate({
-      name: user?.name,
+      username: user?.name,
       email: user?.email,
       postTitle: newPostTitle,
-      post: newPost,
+      post: newPost
+      // totalLikes: 0,
+      // totalHaha: 0,
+      // totalLove: 0,
+
     });
   };
 
@@ -266,6 +282,11 @@ export default function CommunityPage() {
             boxShadow: "0 2px 12px rgba(118, 112, 214, 0.08)",
           }}
         >
+          {!user && (
+            <p style={{ color: "red", marginBottom: "12px", fontSize: "14px" }}>
+              You must be logged in to post.
+            </p>
+          )}
           <form
             onSubmit={handleSubmit}
             style={{ display: "flex", flexDirection: "column", gap: "12px" }}
@@ -277,6 +298,7 @@ export default function CommunityPage() {
               placeholder="Post Title"
               disabled={createPostMutation.isPending}
               style={{
+                color: 'black',
                 width: "100%",
                 border: "2px solid #d3d2ea",
                 borderRadius: "12px",
@@ -295,8 +317,9 @@ export default function CommunityPage() {
               value={newPost}
               onChange={(e) => setNewPost(e.target.value)}
               placeholder="What's on your mind?"
-              disabled={createPostMutation.isPending}
+              disabled={!user||createPostMutation.isPending}
               style={{
+                color: 'black',
                 width: "100%",
                 minHeight: "100px",
                 border: "2px solid #d3d2ea",
@@ -327,15 +350,15 @@ export default function CommunityPage() {
               <button
                 type="submit"
                 disabled={
-                  !newPost.trim() ||
+                  !user || !newPost.trim() ||
                   !newPostTitle.trim() ||
                   createPostMutation.isPending
                 }
                 style={{
                   background:
                     newPost.trim() &&
-                    newPostTitle.trim() &&
-                    !createPostMutation.isPending
+                      newPostTitle.trim() &&
+                      !createPostMutation.isPending
                       ? "#7670d6"
                       : "#d3d2ea",
                   color: "white",
@@ -346,8 +369,8 @@ export default function CommunityPage() {
                   fontWeight: "600",
                   cursor:
                     newPost.trim() &&
-                    newPostTitle.trim() &&
-                    !createPostMutation.isPending
+                      newPostTitle.trim() &&
+                      !createPostMutation.isPending
                       ? "pointer"
                       : "not-allowed",
                   display: "flex",
@@ -483,7 +506,7 @@ export default function CommunityPage() {
                       borderRadius: "50%",
                     }}
                   >
-                    {getAvatar(post.name)}
+                    {getAvatar(post.username)}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div
@@ -493,10 +516,10 @@ export default function CommunityPage() {
                         fontSize: "15px",
                       }}
                     >
-                      {post.name}
+                      {post.username}
                     </div>
                     <div style={{ fontSize: "13px", color: "#9da0dc" }}>
-                      {getTimeAgo(post.createdAt)}
+                      {getTimeAgo(post.postDate)}
                     </div>
                   </div>
                 </div>
