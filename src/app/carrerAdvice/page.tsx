@@ -392,7 +392,7 @@ export default function CareerAdvicePage() {
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
-              href="/signup"
+              href="/signup/candidate"
               className="bg-yellow-500 text-gray-900 px-8 py-4 rounded-lg font-bold font-sans hover:bg-yellow-400 transition-colors inline-flex items-center justify-center gap-2"
             >
               Create Free Account

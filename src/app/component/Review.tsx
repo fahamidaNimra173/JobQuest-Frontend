@@ -5,22 +5,20 @@ import { X } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
-
+import { useAuth } from "@/providers/AuthProvider";
 
 interface ReviewData {
   userName: string;
   designation?: string;
   review: string;
-  email:string;
-  rating:number;
-  createdAt:string | Date; 
-  updatedAt:string | Date; 
-  image:string|number
+  email: string;
+  createdAt: string | Date;
+  status: string;
+  image: string | number;
 }
 
 export function ReviewSection() {
-  // const { user } = useAuth();
-
+  const { user } = useAuth();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -28,9 +26,7 @@ export function ReviewSection() {
     designation: "",
     review: "",
   });
-  const defaultUserImage =
-    "https://i.ibb.co/ZVFsg37/default-avatar.png";
-  const defaultUserEmail = "anonymous@example.com";
+  const defaultUserImage = "https://i.ibb.co/ZVFsg37/default-avatar.png";
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ✅ Mutation function to POST review
@@ -54,7 +50,9 @@ export function ReviewSection() {
     },
   });
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -73,11 +71,11 @@ export function ReviewSection() {
       ...formData,
       // userEmail: user?.email || defaultUserEmail,
       // userImage: user?.photoURL || defaultUserImage,
-      email:  defaultUserEmail,
-      image:  defaultUserImage,
-      rating:4,
+      email: user?.email,
+      image: user?.profile || defaultUserImage,
+      designation: formData.designation,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      status: 'pending',
     };
 
     await mutateAsync(reviewData);

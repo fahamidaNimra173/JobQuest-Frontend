@@ -3,14 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
-
-// Create axios instance
-const axiosInstanceTwo = axios.create({
-  baseURL: "https://job-portal-backend-xshy.onrender.com/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+import axiosInstance from "@/lib/axios";
 
 interface ReviewData {
   _id?: string;
@@ -29,7 +22,7 @@ export function AnimatedTestimonialsDemo() {
     queryKey: ["reviews"],
     queryFn: async (): Promise<ReviewData[]> => {
       try {
-        const response = await axiosInstanceTwo.get<ReviewData[]>("/reviews");
+        const response = await axiosInstance.get<ReviewData[]>("/reviews");
         console.log("API Response:", response.data); // Debug response
         if (!response.data) {
           throw new Error("No data returned from API");
