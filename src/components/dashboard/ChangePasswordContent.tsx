@@ -13,6 +13,7 @@ import {
 import { useToast } from "@/components/ui/Toast";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import apiClient from "@/lib/api";
+import axiosInstance from "@/lib/axios";
 
 export default function ChangePasswordContent() {
   const { showToast } = useToast();
@@ -136,13 +137,13 @@ export default function ChangePasswordContent() {
         currentPassword: "***",
         newPassword: "***",
       });
-      
-      const response = await apiClient.updatePassword({
+
+      const response = await axiosInstance.patch("/auth/update-password", {
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword,
       });
 
-      if (response.success) {
+      if (response.status >= 200 && response.status < 300) {
         // Reset form
         setFormData({
           currentPassword: "",
@@ -156,20 +157,20 @@ export default function ChangePasswordContent() {
           "Your password has been updated."
         );
       } else {
-        throw new Error(response.message || "Failed to change password");
+        throw new Error(response.data?.message || "Failed to change password");
       }
     } catch (error: any) {
       console.error("Password change error:", error);
-      const errorMessage = error.message || "Failed to change password. Please try again.";
-      
-      showToast(
-        "error",
-        "Failed to change password",
-        errorMessage
-      );
-      
+      const errorMessage =
+        error.message || "Failed to change password. Please try again.";
+
+      showToast("error", "Failed to change password", errorMessage);
+
       // If it's a validation error from the server, show it specifically
-      if (error.message && error.message.toLowerCase().includes("current password")) {
+      if (
+        error.message &&
+        error.message.toLowerCase().includes("current password")
+      ) {
         setErrors({ currentPassword: error.message });
       } else {
         setErrors({ submit: errorMessage });
