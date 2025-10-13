@@ -1,14 +1,18 @@
 "use client";
-import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import EmployerDashboard from "@/components/dashboard/EmployerDashboard";
-import CandidateDashboard from "@/components/dashboard/CandidateDashboard";
-import AdminDashboard from "@/components/dashboard/AdminDashboard";
 import { useAuth } from "@/providers/AuthProvider";
+import AdminDashboard from "@/components/dashboard/AdminDashboard";
+import CandidateDashboard from "@/components/dashboard/CandidateDashboard";
+import EmployerDashboard from "@/components/dashboard/EmployerDashboard";
 
 const Dashboard = () => {
   const { loading, user } = useAuth();
   const router = useRouter();
+
+  if (loading) {
+    return null;
+  }
+};
 
   if (user?.role === "admin") {
     return <AdminDashboard />;

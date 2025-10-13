@@ -3,7 +3,7 @@ import React from 'react';
 const EmployerDashboard = () => {
     return (
         <div>
-            This is the EmployerDashboard Page
+            This is employer dashboard
         </div>
     );
 };
