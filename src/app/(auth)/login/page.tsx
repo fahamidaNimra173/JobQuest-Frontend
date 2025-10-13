@@ -124,7 +124,7 @@ const LoginPage = () => {
             Login as Candidate
           </Button>
           <Button
-            onClick={() => login("sarfaraz.akram275@gmail.com", "Sarfaraz123")}
+            onClick={() => login("sarfaraz.akram275@gmail.com", "Sarfaraz@23")}
             variant="contained"
             className="w-full"
           >

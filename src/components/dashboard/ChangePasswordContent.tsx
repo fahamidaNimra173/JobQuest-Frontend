@@ -123,58 +123,56 @@ export default function ChangePasswordContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Password change form submitted");
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
 
     try {
-      // Make API call to change password using the correct endpoint
-      console.log("Changing password...", {
-        currentPassword: "***",
-        newPassword: "***",
-      });
-
       const response = await axiosInstance.patch("/auth/update-password", {
         currentPassword: formData.currentPassword,
         newPassword: formData.newPassword,
       });
 
-      if (response.status >= 200 && response.status < 300) {
-        // Reset form
+      // Handle wrong password (no success flag)
+      if (response.data?.message === "Wrong Password") {
+        setErrors({ currentPassword: "Incorrect current password" });
+        showToast(
+          "error",
+          "Wrong Password",
+          "Your current password is incorrect."
+        );
+        return;
+      }
+
+      // Handle success
+      if (response.data?.success) {
         setFormData({
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
         });
-
+        setErrors({});
         showToast(
           "success",
-          "Password changed successfully!",
-          "Your password has been updated."
+          "Password Updated!",
+          "Your password has been changed successfully."
         );
-      } else {
-        throw new Error(response.data?.message || "Failed to change password");
+        return;
       }
+
+      // Handle unexpected responses
+      throw new Error("Unexpected server response. Please try again.");
     } catch (error: any) {
       console.error("Password change error:", error);
-      const errorMessage =
-        error.message || "Failed to change password. Please try again.";
 
-      showToast("error", "Failed to change password", errorMessage);
+      const serverMsg =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to change password. Please try again.";
 
-      // If it's a validation error from the server, show it specifically
-      if (
-        error.message &&
-        error.message.toLowerCase().includes("current password")
-      ) {
-        setErrors({ currentPassword: error.message });
-      } else {
-        setErrors({ submit: errorMessage });
-      }
+      showToast("error", "Failed to change password", serverMsg);
+      setErrors({ submit: serverMsg });
     } finally {
       setIsSubmitting(false);
     }
