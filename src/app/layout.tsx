@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-
 import {
   Major_Mono_Display,
   Sedan_SC,
@@ -17,29 +16,30 @@ import { ThemeProvider } from "@/components/theme-provider";
 import LayoutClientWrapper from "./component/shared/LayoutClientWrapper";
 import { AuthProvider } from "@/providers/AuthProvider";
 
-export const majorMono = Major_Mono_Display({
+const majorMono = Major_Mono_Display({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-heading",
 });
 
-export const sen = Sedan_SC({
+const sen = Sedan_SC({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-body",
 });
 
-export const junge = Junge({
+const junge = Junge({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-accent",
 });
-export const geistSans = Geist({
+
+const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-export const geistMono = Geist_Mono({
+const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
@@ -48,9 +48,6 @@ export const metadata: Metadata = {
   title: "JobQuest - Find Your Dream Job",
   description:
     "Discover thousands of job opportunities with JobQuest. Manage all your job search activities from one dashboard.",
-  icons: {
-    icon: "/logo.png",
-  },
 };
 
 export default function RootLayout({
@@ -93,7 +90,6 @@ export default function RootLayout({
                 strategy="beforeInteractive"
                 type="module"
               />
-
               <Provider>
                 <LayoutClientWrapper>
                   <div className="landing-layout min-h-screen">{children}</div>

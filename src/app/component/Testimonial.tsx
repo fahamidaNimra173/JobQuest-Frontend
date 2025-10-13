@@ -1,20 +1,12 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
-
-// Create axios instance
-const axiosInstanceTwo = axios.create({
-  baseURL: "https://job-portal-backend-xshy.onrender.com/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+import axiosInstance from "@/lib/axios";
 
 interface ReviewData {
   _id?: string;
-  userName: string;
+  name: string;
   designation?: string;
   review: string;
   email: string;
@@ -29,7 +21,7 @@ export function AnimatedTestimonialsDemo() {
     queryKey: ["reviews"],
     queryFn: async (): Promise<ReviewData[]> => {
       try {
-        const response = await axiosInstanceTwo.get<ReviewData[]>("/reviews");
+        const response = await axiosInstance.get<ReviewData[]>("/reviews");
         console.log("API Response:", response.data); // Debug response
         if (!response.data) {
           throw new Error("No data returned from API");
@@ -55,7 +47,7 @@ export function AnimatedTestimonialsDemo() {
   const testimonials =
     data?.map((review) => ({
       quote: review.review,
-      name: review.userName || "Anonymous User",
+      name: review.name || "Anonymous User",
       designation: review.designation || "JobQuest Member",
       src:
         review.image || "https://i.ibb.co.com/d06hvC97/icons-1294545-1280.png",

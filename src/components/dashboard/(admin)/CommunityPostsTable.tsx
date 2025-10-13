@@ -17,6 +17,7 @@ import TablePaginationActions from "@/lib/pagination";
 
 interface CommunityPost {
   _id: string;
+  postTitle: string;
   post: string;
   name: string;
   email: string;
@@ -42,9 +43,9 @@ interface TableStyles {
 
 interface CommunityPostsTableProps {
   tableStyles: TableStyles;
-  paginatedPosts: CommunityPost[];
   page: number;
   rowsPerPage: number;
+  total: number;
   handleApprove: (id: string) => Promise<void>;
   handleReject: (id: string) => Promise<void>;
   handleDelete: (id: string) => Promise<void>;
@@ -55,9 +56,9 @@ interface CommunityPostsTableProps {
 
 const CommunityPostsTable = ({
   tableStyles,
-  paginatedPosts,
   page,
   rowsPerPage,
+  total,
   handleApprove,
   handleReject,
   handleDelete,
@@ -79,7 +80,7 @@ const CommunityPostsTable = ({
           sx={{ backgroundColor: tableStyles.tableHead.backgroundColor }}
         >
           <TableRow>
-            {["#", "Name", "Email", "Post", "Status", "Actions"].map(
+            {["#", "Name", "Email", "Post Title", "Post", "Status", "Actions"].map(
               (header) => (
                 <TableCell
                   key={header}
@@ -95,7 +96,7 @@ const CommunityPostsTable = ({
 
         {/* ✅ Table Body */}
         <TableBody>
-          {paginatedPosts.map((p, i) => (
+          {communityPosts.map((p, i) => (
             <TableRow
               key={p._id}
               sx={{
@@ -120,6 +121,14 @@ const CommunityPostsTable = ({
                 align="left"
               >
                 {p.email}
+              </TableCell>
+              <TableCell
+                sx={{ py: 0.5, ...tableStyles.tableBodyCell }}
+                align="left"
+                className="truncate max-w-24"
+                title={p.postTitle}
+              >
+                {p.post}
               </TableCell>
               <TableCell
                 sx={{ py: 0.5, ...tableStyles.tableBodyCell }}
@@ -203,8 +212,8 @@ const CommunityPostsTable = ({
           >
             <TablePagination
               rowsPerPageOptions={[5, 10, 20, 30]}
-              colSpan={6}
-              count={communityPosts.length}
+              colSpan={7}
+              count={total}
               rowsPerPage={rowsPerPage}
               page={page}
               SelectProps={{
