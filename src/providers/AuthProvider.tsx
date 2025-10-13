@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           errorMessage = "Invalid registration data";
         } else if (error.response?.status === 409) {
           errorMessage = "Email already in use";
-        } else if (error.response?.status >= 500) {
+        } else if (error.response?.status && error.response.status >= 500) {
           errorMessage = "Server error. Please try again later.";
         }
         console.log("Axios error details:", {
@@ -180,7 +180,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           errorMessage = "Invalid credentials";
         } else if (err.response?.status === 401) {
           errorMessage = "Invalid email or password";
-        } else if (err.response?.status >= 500) {
+        } else if (err.response?.status && err.response.status >= 500) {
           errorMessage = "Server error. Please try again later.";
         }
         console.log("Axios error details:", {

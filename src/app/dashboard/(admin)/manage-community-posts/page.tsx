@@ -6,6 +6,9 @@ import Swal from "sweetalert2";
 import CommunityPostsTable from "@/components/dashboard/(admin)/CommunityPostsTable";
 import { useToast } from "@/components/ui/Toast";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import AdminRoutes from "@/routes/AdminRoutes";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "@/lib/axios";
 
 // ✅ Shared table style generator
 const getTableStyles = (isDark: boolean) => ({
@@ -34,15 +37,6 @@ const getTableStyles = (isDark: boolean) => ({
   },
 });
 
-interface CommunityPost {
-  _id: string;
-  post: string;
-  name: string;
-  email: string;
-  status: "pending" | "approved" | "rejected";
-  createdAt: string;
-}
-
 const ManageCommunityPosts = () => {
   const { showToast } = useToast();
   const { resolvedTheme } = useTheme();
@@ -59,22 +53,27 @@ const ManageCommunityPosts = () => {
   const isDark = mounted && resolvedTheme === "dark";
   const tableStyles = getTableStyles(isDark);
 
-  const communityPosts: CommunityPost[] = Array.from({ length: 30 }).map(
-    (_, i) => ({
-      _id: (i + 1).toString(),
-      post: [
-        "How to Write a Winning Resume",
-        "Best Interview Tips for Fresh Graduates",
-        "Is Remote Work Still the Future?",
-        "Top Skills Employers Look for in 2025",
-        "Building a Strong LinkedIn Profile",
-      ][i % 5],
-      name: `User ${i + 1}`,
-      email: `user${i + 1}@example.com`,
-      status: (["pending", "approved", "rejected"] as const)[i % 3],
-      createdAt: new Date(Date.now() - i * 86400000).toLocaleDateString(),
-    })
-  );
+  const { data, isPending, refetch } = useQuery({
+    queryKey: ["communityPosts", page, rowsPerPage],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/community/all`, {
+        params: {
+          page,
+          limit: rowsPerPage,
+        },
+      });
+      return res.data;
+    },
+
+    placeholderData: (previousData) => previousData,
+  });
+
+  const communityPosts = data?.allCommunityPosts || [];
+  const total = data?.total || 0;
+
+  useEffect(() => {
+    refetch();
+  }, [rowsPerPage, page, refetch]);
 
   const handleReject = async (id: string) => {
     const result = await Swal.fire({
@@ -88,10 +87,9 @@ const ManageCommunityPosts = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(
-          `https://job-portal-backend-xshy.onrender.com/api/communityPosts/${id}`
-        );
+        await axiosInstance.delete(`/community/${id}`);
         showToast("success", "Post rejected");
+        refetch();
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
           showToast(
@@ -119,10 +117,9 @@ const ManageCommunityPosts = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(
-          `https://job-portal-backend-xshy.onrender.com/api/communityPosts/${id}`
-        );
+        await axiosInstance.delete(`/community/${id}`);
         showToast("success", "Post deleted");
+        refetch();
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
           showToast(
@@ -150,13 +147,9 @@ const ManageCommunityPosts = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.patch(
-          `https://job-portal-backend-xshy.onrender.com/api/communityPosts/${id}`,
-          {
-            status: "approved",
-          }
-        );
+        await axiosInstance.patch(`/community/${id}/status`);
         showToast("success", "Post approved");
+        refetch();
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
           showToast(
@@ -172,12 +165,6 @@ const ManageCommunityPosts = () => {
     }
   };
 
-  // ✅ Paginated Data
-  const paginatedPosts = communityPosts.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
-
   const breadcrumbItems = [
     {
       name: "Manage Community Posts",
@@ -192,36 +179,42 @@ const ManageCommunityPosts = () => {
   }
 
   return (
-    <div className="px-4">
-      {/* Breadcrumb */}
-      <div className="mb-6">
-        <Breadcrumb items={breadcrumbItems} />
+    <AdminRoutes>
+      <div className="px-4">
+        {/* Breadcrumb */}
+        <div className="mb-6">
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
+
+        <h2 className="text-3xl font-bold mb-4 text-center text-[#7670D6]">
+          Manage Community Posts
+        </h2>
+
+        {/* Table */}
+        {isPending ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-dark"></div>
+          </div>
+        ) : communityPosts.length === 0 ? (
+          <p className="text-center mt-10 text-gray-600 text-lg font-medium">
+            No Community Posts found.
+          </p>
+        ) : (
+          <CommunityPostsTable
+            tableStyles={tableStyles}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            total={total}
+            handleApprove={handleApprove}
+            handleReject={handleReject}
+            handleDelete={handleDelete}
+            communityPosts={communityPosts}
+            setRowsPerPage={setRowsPerPage}
+            setPage={setPage}
+          />
+        )}
       </div>
-
-      <h2 className="text-3xl font-bold mb-4 text-center text-[#7670D6]">
-        Manage Community Posts
-      </h2>
-
-      {/* Table */}
-      {paginatedPosts.length === 0 ? (
-        <p className="text-center mt-10 text-gray-600 text-lg font-medium">
-          No Community Posts found.
-        </p>
-      ) : (
-        <CommunityPostsTable
-          tableStyles={tableStyles}
-          paginatedPosts={paginatedPosts}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          handleApprove={handleApprove}
-          handleReject={handleReject}
-          handleDelete={handleDelete}
-          communityPosts={communityPosts}
-          setRowsPerPage={setRowsPerPage}
-          setPage={setPage}
-        />
-      )}
-    </div>
+    </AdminRoutes>
   );
 };
 

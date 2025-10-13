@@ -1,13 +1,12 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import axiosInstance from "@/lib/axios";
 
 interface ReviewData {
   _id?: string;
-  userName: string;
+  name: string;
   designation?: string;
   review: string;
   email: string;
@@ -48,7 +47,7 @@ export function AnimatedTestimonialsDemo() {
   const testimonials =
     data?.map((review) => ({
       quote: review.review,
-      name: review.userName || "Anonymous User",
+      name: review.name || "Anonymous User",
       designation: review.designation || "JobQuest Member",
       src:
         review.image || "https://cdn-icons-png.flaticon.com/512/149/149071.png",

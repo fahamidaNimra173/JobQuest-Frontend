@@ -15,9 +15,7 @@ import UsersFilter from "@/components/dashboard/(admin)/UsersFilter";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axios";
-import { useAuth } from "@/providers/AuthProvider";
-import { Loader } from "lucide-react";
-import { useRouter } from "next/navigation";
+import AdminRoutes from "@/routes/AdminRoutes";
 
 // ---------------------- Filters ----------------------
 interface OptionType {
@@ -66,7 +64,6 @@ const getTableStyles = (isDark: boolean) => ({
 
 // ---------------------- Main Component ----------------------
 const ManageUsers = () => {
-  const { loading, user } = useAuth();
   const { showToast } = useToast();
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -75,19 +72,11 @@ const ManageUsers = () => {
   const [roleFilter, setRoleFilter] = useState<OptionType>(roleOptions[0]);
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-  const router = useRouter();
 
   // ✅ Ensure component is mounted before accessing theme
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (!loading) {
-      if (!user) router.push("/login");
-      else if (user.role !== "admin") router.push("/forbidden");
-    }
-  }, [user, loading, router]);
 
   const isDark = mounted && resolvedTheme === "dark";
   const currentSelectStyles = isDark
@@ -118,7 +107,7 @@ const ManageUsers = () => {
       return res.data;
     },
 
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData,
   });
 
   const users = data?.allUsers || [];
@@ -171,62 +160,56 @@ const ManageUsers = () => {
     return null;
   }
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-dark"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="px-4">
-      {/* Breadcrumb */}
-      <div className="mb-6">
-        <Breadcrumb items={breadcrumbItems} />
-      </div>
-
-      <h2 className="text-3xl font-bold mb-4 text-center text-[#7670D6]">
-        Manage Users
-      </h2>
-
-      {/* Filters */}
-      <UsersFilter
-        searchOptions={searchOptions}
-        searchType={searchType}
-        setSearchTerm={setSearchTerm}
-        setPage={setPage}
-        setSearchType={setSearchType}
-        currentSelectStyles={currentSelectStyles}
-        currentSelectTheme={currentSelectTheme}
-        searchTerm={searchTerm}
-        roleOptions={roleOptions}
-        roleFilter={roleFilter}
-        setRoleFilter={setRoleFilter}
-      />
-
-      {/* Table */}
-      {isPending ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-dark"></div>
+    <AdminRoutes>
+      <div className="px-4">
+        {/* Breadcrumb */}
+        <div className="mb-6">
+          <Breadcrumb items={breadcrumbItems} />
         </div>
-      ) : users.length === 0 ? (
-        <p className="text-center mt-10 text-gray-600 text-lg font-medium">
-          No users found.
-        </p>
-      ) : (
-        <UsersTable
-          tableStyles={tableStyles}
-          users={users}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          total={total}
+
+        <h2 className="text-3xl font-bold mb-4 text-center text-[#7670D6]">
+          Manage Users
+        </h2>
+
+        {/* Filters */}
+        <UsersFilter
+          searchOptions={searchOptions}
+          searchType={searchType}
+          setSearchTerm={setSearchTerm}
           setPage={setPage}
-          setRowsPerPage={setRowsPerPage}
-          handleDelete={handleDelete}
+          setSearchType={setSearchType}
+          currentSelectStyles={currentSelectStyles}
+          currentSelectTheme={currentSelectTheme}
+          searchTerm={searchTerm}
+          roleOptions={roleOptions}
+          roleFilter={roleFilter}
+          setRoleFilter={setRoleFilter}
         />
-      )}
-    </div>
+
+        {/* Table */}
+        {isPending ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-dark"></div>
+          </div>
+        ) : users.length === 0 ? (
+          <p className="text-center mt-10 text-gray-600 text-lg font-medium">
+            No users found.
+          </p>
+        ) : (
+          <UsersTable
+            tableStyles={tableStyles}
+            users={users}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            total={total}
+            setPage={setPage}
+            setRowsPerPage={setRowsPerPage}
+            handleDelete={handleDelete}
+          />
+        )}
+      </div>
+    </AdminRoutes>
   );
 };
 

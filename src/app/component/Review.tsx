@@ -8,7 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/providers/AuthProvider";
 
 interface ReviewData {
-  userName: string;
+  name: string;
   designation?: string;
   review: string;
   email: string;
@@ -22,7 +22,7 @@ export function ReviewSection() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    userName: "",
+    name: "",
     designation: "",
     review: "",
   });
@@ -40,7 +40,7 @@ export function ReviewSection() {
     mutationFn: postReview,
     onSuccess: () => {
       toast.success("Review submitted successfully!");
-      setFormData({ userName: "", designation: "", review: "" });
+      setFormData({ name: "", designation: "", review: "" });
       setIsModalOpen(false);
       setIsSubmitting(false);
     },
@@ -60,7 +60,7 @@ export function ReviewSection() {
   const handleSubmit = async (e: FormEvent<HTMLElement>) => {
     e.preventDefault();
 
-    if (!formData.userName || !formData.review) {
+    if (!formData.name || !formData.review) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -75,7 +75,7 @@ export function ReviewSection() {
       image: user?.profile || defaultUserImage,
       designation: formData.designation,
       createdAt: new Date().toISOString(),
-      status: 'pending',
+      status: "pending",
     };
 
     await mutateAsync(reviewData);
@@ -140,8 +140,8 @@ export function ReviewSection() {
                 <input
                   type="text"
                   id="name"
-                  name="userName"
-                  value={formData.userName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleInputChange}
                   className="w-full rounded-lg border border-gray-300 bg-primary-medium px-4 py-3 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                   placeholder="Enter your name"
