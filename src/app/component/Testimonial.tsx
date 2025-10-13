@@ -50,7 +50,7 @@ export function AnimatedTestimonialsDemo() {
       name: review.name || "Anonymous User",
       designation: review.designation || "JobQuest Member",
       src:
-        review.image || "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+        review.image || "https://i.ibb.co.com/d06hvC97/icons-1294545-1280.png",
     })) || defaultTestimonials;
 
   if (isLoading) {

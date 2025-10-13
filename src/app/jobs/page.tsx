@@ -83,7 +83,7 @@ export default async function BrowseJobsPage() {
                     <label key={type} className="flex items-center cursor-pointer">
                       <input
                         type="checkbox"
-                        className="w-4 h-4 text-[#7670d6] border-gray-300 rounded focus:ring-[#7670d6]"
+                        className="w-4 h-4 bg-white text-[#7670d6] border-gray-300 rounded focus:ring-[#7670d6]"
                       />
                       <span className="ml-2 text-sm text-gray-700">{type}</span>
                     </label>
@@ -102,7 +102,7 @@ export default async function BrowseJobsPage() {
                     <label key={type} className="flex items-center cursor-pointer">
                       <input
                         type="checkbox"
-                        className="w-4 h-4 text-[#7670d6] border-gray-300 rounded focus:ring-[#7670d6]"
+                        className="w-4 h-4 bg-white dark:bg-white text-[#7670d6] border-gray-100 rounded focus:ring-[#7670d6]"
                       />
                       <span className="ml-2 text-sm text-gray-700">{type}</span>
                     </label>
