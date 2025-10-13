@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+/* Prevent flash of unstyled content */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary-dark: #7670d6;
+  --primary-medium: #9da0dc;
+  --primary-light: #d3d2ea;
+  --primary-lightest: #f8f3ed;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-medium: var(--primary-medium);
+  --color-primary-light: var(--primary-light);
+  --color-primary-lightest: var(--primary-lightest);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+.dark {
+  --background: #111827;
+  --foreground: #f9fafb;
+  --primary-dark: #9da0dc;
+  --primary-medium: #7670d6;
+  --primary-light: #4c4875;
+  --primary-lightest: #2d2c3d;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Ensure root element theme transitions */
+html {
+  background-color: var(--background);
+  transition: background-color 0.3s ease;
+}
+
+/* Force theme application on all major container elements */
+#__next,
+[data-nextjs-page] {
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Ensure theme transitions are smooth */
+html {
+  transition: background-color 0.2s ease;
+}
+
+html.dark {
+  background-color: #111827;
+}
+
+html:not(.dark) {
+  background-color: #ffffff;
+}
+
+/* Custom utility classes for our color scheme */
+.bg-primary-dark { background-color: var(--primary-dark) !important; }
+.bg-primary-medium { background-color: var(--primary-medium) !important; }
+.bg-primary-light { background-color: var(--primary-light) !important; }
+.bg-primary-lightest { background-color: var(--primary-lightest) !important; }
+
+.text-primary-dark { color: var(--primary-dark) !important; }
+.text-primary-medium { color: var(--primary-medium) !important; }
+.text-primary-light { color: var(--primary-light) !important; }
+.text-primary-lightest { color: var(--primary-lightest) !important; }
+
+.border-primary-dark { border-color: var(--primary-dark) !important; }
+.border-primary-medium { border-color: var(--primary-medium) !important; }
+.border-primary-light { border-color: var(--primary-light) !important; }
+.border-primary-lightest { border-color: var(--primary-lightest) !important; }
+
+.hover\:bg-primary-dark:hover { background-color: var(--primary-dark) !important; }
+.hover\:bg-primary-medium:hover { background-color: var(--primary-medium) !important; }
+.hover\:bg-primary-light:hover { background-color: var(--primary-light) !important; }
+
+/* Input text visibility */
+input, textarea, select {
+  color: var(--foreground) !important;
+  transition: all 0.2s ease;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #f9fafb !important;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  background-color: #111827 !important;
+  border-color: var(--primary-dark) !important;
+}
+
+/* Theme toggle specific styles */
+[data-theme-toggle] {
+  transition: all 0.2s ease-in-out;
+}
+
+[data-theme-toggle]:hover {
+  transform: scale(1.05);
+}
+
+/* Placeholder visibility */
+.placeholder\:text-gray-500::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+.placeholder\:text-gray-400::placeholder {
+  color: #9ca3af !important;
+  opacity: 1 !important;
+}
+
+.dark .placeholder\:text-gray-500::placeholder {
+  color: #9ca3af !important;
+}
+
+.dark .placeholder\:text-gray-400::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Dark mode card backgrounds */
+.dark .bg-white {
+  background-color: #1f2937 !important;
+}
+
+.dark .border {
+  border-color: #374151 !important;
+}
+
+.dark .border-gray-200 {
+  border-color: #374151 !important;
+}
+
+.dark .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+.dark .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+.dark .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+.dark .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #374151 !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #4b5563 !important;
+}
+
+/* Custom toast styles */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.toast {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--primary-dark);
+  padding: 16px;
+  margin-bottom: 12px;
+  min-width: 300px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.dark .toast {
+  background: #1f2937;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  color: #f9fafb;
+}
+
+.toast.success {
+  border-left-color: #10b981;
+}
+
+.toast.error {
+  border-left-color: #ef4444;
+}
+
+.toast.warning {
+  border-left-color: #f59e0b;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
