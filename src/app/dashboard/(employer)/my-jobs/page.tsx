@@ -45,15 +45,17 @@ export default function MyJobsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const baseUrl = process.env.NEXT_PUBLIC_JOB_URL;
 
   useEffect(() => {
     async function fetchJobs() {
       setLoading(true);
       try {
-        const res = await fetch(`${baseUrl}?page=${currentPage}&limit=12`, {
-          cache: "no-store",
-        });
+        const res = await fetch(
+          `https://job-portal-backend-xshy.onrender.com/api?page=${currentPage}&limit=12`,
+          {
+            cache: "no-store",
+          }
+        );
         const data: ApiResponse = await res.json();
 
         setJobs(data.jobs || []);
@@ -66,7 +68,7 @@ export default function MyJobsPage() {
     }
 
     fetchJobs();
-  }, [currentPage, baseUrl]);
+  }, [currentPage]);
 
   return (
     <section className="p-6">
