@@ -13,7 +13,7 @@ import {
   Briefcase,
   BarChart3,
   Users,
-  // MessageSquare,
+  MessageSquare,
   ClipboardList,
   LucideIcon,
   Loader,
@@ -46,16 +46,16 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
           icon: ClipboardList,
         },
         { name: "Manage Users", href: "/dashboard/manage-users", icon: Users },
-        // {
-        //   name: "Manage Reviews",
-        //   href: "/dashboard/manage-reviews",
-        //   icon: MessageSquare,
-        // },
-        // {
-        //   name: "Manage Community Posts",
-        //   href: "/dashboard/manage-community-posts",
-        //   icon: MessageSquare,
-        // },
+        {
+          name: "Manage Reviews",
+          href: "/dashboard/manage-reviews",
+          icon: MessageSquare,
+        },
+        {
+          name: "Manage Community Posts",
+          href: "/dashboard/manage-community-posts",
+          icon: MessageSquare,
+        },
         { name: "My Profile", href: "/dashboard/profile", icon: User },
         {
           name: "Change Password",
@@ -141,7 +141,7 @@ export default function Sidebar() {
       {/* Sidebar */}
       <div
         className={clsx(
-          "fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transform transition-all duration-200 ease-in-out lg:translate-x-0 overflow-y-auto hide-scrollbar",
+          "fixed inset-y-0 left-0 z-40 w-66 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transform transition-all duration-200 ease-in-out lg:translate-x-0 overflow-y-auto hide-scrollbar",
           {
             "translate-x-0": isMobileMenuOpen,
             "-translate-x-full": !isMobileMenuOpen,

@@ -5,32 +5,28 @@ import { X } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
-
+import { useAuth } from "@/providers/AuthProvider";
 
 interface ReviewData {
-  userName: string;
+  name: string;
   designation?: string;
   review: string;
-  email:string;
-  rating:number;
-  createdAt:string | Date; 
-  updatedAt:string | Date; 
-  image:string|number
+  email: string;
+  createdAt: string | Date;
+  status: string;
+  image: string | number;
 }
 
 export function ReviewSection() {
-  // const { user } = useAuth();
-
+  const { user } = useAuth();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    userName: "",
+    name: "",
     designation: "",
     review: "",
   });
-  const defaultUserImage =
-    "https://i.ibb.co/ZVFsg37/default-avatar.png";
-  const defaultUserEmail = "anonymous@example.com";
+  const defaultUserImage = "https://i.ibb.co/ZVFsg37/default-avatar.png";
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ✅ Mutation function to POST review
@@ -44,7 +40,7 @@ export function ReviewSection() {
     mutationFn: postReview,
     onSuccess: () => {
       toast.success("Review submitted successfully!");
-      setFormData({ userName: "", designation: "", review: "" });
+      setFormData({ name: "", designation: "", review: "" });
       setIsModalOpen(false);
       setIsSubmitting(false);
     },
@@ -54,7 +50,9 @@ export function ReviewSection() {
     },
   });
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -62,7 +60,7 @@ export function ReviewSection() {
   const handleSubmit = async (e: FormEvent<HTMLElement>) => {
     e.preventDefault();
 
-    if (!formData.userName || !formData.review) {
+    if (!formData.name || !formData.review) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -73,11 +71,11 @@ export function ReviewSection() {
       ...formData,
       // userEmail: user?.email || defaultUserEmail,
       // userImage: user?.photoURL || defaultUserImage,
-      email:  defaultUserEmail,
-      image:  defaultUserImage,
-      rating:4,
+      email: user?.email,
+      image: user?.profile || defaultUserImage,
+      designation: formData.designation,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      status: "pending",
     };
 
     await mutateAsync(reviewData);
@@ -142,8 +140,8 @@ export function ReviewSection() {
                 <input
                   type="text"
                   id="name"
-                  name="userName"
-                  value={formData.userName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleInputChange}
                   className="w-full rounded-lg border border-gray-300 bg-primary-medium px-4 py-3 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                   placeholder="Enter your name"
