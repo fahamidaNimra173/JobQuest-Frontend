@@ -6,6 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Facebook, Twitter, Linkedin, Instagram, Mail } from "lucide-react";
 import axiosInstance from "@/lib/axios";
+import toast from "react-hot-toast";
+import { useAuth } from "@/providers/AuthProvider";
 
 
 
@@ -21,7 +23,7 @@ interface SubscriptionData {
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-
+  const {user}=useAuth()
   const quickLinks = [
     { name: "About Us", href: "/about" },
     { name: "Career Advice", href: "/advice" },
@@ -46,15 +48,15 @@ export default function Footer() {
   const handleSubs = async () => {
     try {
       const subscriptionData: SubscriptionData = {
-        email: "default@example.com",
-        userName: "Default User",
+        email: user?.email || "default@example.com",
+        userName: user?.name ||'default user',
         subscribedAt: new Date().toISOString(),
       };
 
       console.log("Sending data:", subscriptionData);
       const response = await axiosInstance.post("/subscribe", subscriptionData);
       console.log("Subscribed successfully:", response.data);
-      alert("Subscribed successfully!");
+      toast.success("Subscribed successfully!");
     } catch (error: unknown) {
       console.error("Subscription failed:", error);
 
@@ -66,7 +68,7 @@ export default function Footer() {
         console.log("Error status:", axiosError.response?.status);
       }
 
-      alert("Subscription failed. Try again!");
+      toast.error("Subscription failed. Try again!");
     }
   };
 
@@ -148,7 +150,9 @@ export default function Footer() {
             </p>
             <button
               onClick={handleSubs}
-              className="inline-flex items-center space-x-2 bg-white text-[#7670d6] px-6 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+              disabled={!user}
+              title={!user?'you need to be logged in for subscribe':''}
+              className={`inline-flex items-center space-x-2 bg-white text-[#7670d6] px-6 py-2 rounded-lg hover:bg-gray-100 transition-colors ${!user?'cursor-not-allowed':'cursor-pointer'}`}
             >
               <Mail size={20} />
               <span>Subscribe</span>

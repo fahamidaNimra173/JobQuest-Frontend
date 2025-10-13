@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "../../landing.css";
 import { useAuth } from "@/providers/AuthProvider";
+import { Button } from "@mui/material";
 
 const LoginPage = () => {
   const { login } = useAuth();
@@ -104,14 +105,39 @@ const LoginPage = () => {
         </p>
 
         {/* divider */}
-        {/* <div className="flex items-center gap-2 my-6">
+        <div className="flex items-center gap-2 my-6">
           <div className="flex-1 border-t-2 border-black/60"></div>
           <span className="text-black text-sm font-medium">OR</span>
           <div className="flex-1 border-t-2 border-black/60"></div>
-        </div> */}
+        </div>
 
         {/* google login */}
         {/* <GoogleLogin from="login" /> */}
+
+        {/* demo login for fast login */}
+        <div className="flex flex-col items-center justify-center gap-4">
+          <Button
+            onClick={() => login("sarfaraz.akram055@gmail.com", "Sarfaraz123")}
+            variant="contained"
+            className="w-full"
+          >
+            Login as Candidate
+          </Button>
+          <Button
+            onClick={() => login("sarfaraz.akram275@gmail.com", "Sarfaraz123")}
+            variant="contained"
+            className="w-full"
+          >
+            Login as Employer
+          </Button>
+          <Button
+            onClick={() => login("admin@testing.com", "Admin123")}
+            variant="contained"
+            className="w-full"
+          >
+            Login as Admin
+          </Button>
+        </div>
       </div>
     </section>
   );
