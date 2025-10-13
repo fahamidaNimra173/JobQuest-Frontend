@@ -4,10 +4,19 @@ import axiosInstance from '../../lib/axios'
 
 import JobCard from "./shared/Cards";
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
+// Create axios instance
+const axiosInstanceTwo = axios.create({
+  baseURL: "https://job-portal-backend-xshy.onrender.com/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 const fetchJobs = async ({ queryKey }) => {
     const [_key, page, limit] = queryKey
-    const response = await axiosInstance.get(`/jobs?page=${page}&limit=${limit}`);
+    const response = await axiosInstanceTwo.get(`/jobs?page=${page}&limit=${limit}`);
     return response.data;
 }
 

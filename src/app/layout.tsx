@@ -48,6 +48,9 @@ export const metadata: Metadata = {
   title: "JobQuest - Find Your Dream Job",
   description:
     "Discover thousands of job opportunities with JobQuest. Manage all your job search activities from one dashboard.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

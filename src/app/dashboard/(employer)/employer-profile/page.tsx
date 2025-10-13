@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import companyImage from '@/../public/placeholder-company.jpg'
+
 interface Address {
     street?: string;
     city?: string;
@@ -62,7 +63,7 @@ export default function EmployerProfilePage() {
 
   const handleUpdate = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/employers/${id}`, {
+      const res = await fetch(`https://job-portal-backend-xshy.onrender.com/api/employers/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -97,13 +98,23 @@ export default function EmployerProfilePage() {
             <div className="max-w-5xl mx-auto p-6">
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row items-center gap-6 mb-10">
-                    <img
-                        src={employer.companyLogo || companyImage}
-                        alt="Company Logo"
-                        width={100}
-                        height={100}
-                        className="rounded-xl shadow-lg object-cover"
-                    />
+                    {employer.companyLogo ? (
+                        <img
+                            src={employer.companyLogo}
+                            alt="Company Logo"
+                            width={100}
+                            height={100}
+                            className="rounded-xl shadow-lg object-cover"
+                        />
+                    ) : (
+                        <img
+                            src={companyImage.src}
+                            alt="Company Logo"
+                            width={100}
+                            height={100}
+                            className="rounded-xl shadow-lg object-cover"
+                        />
+                    )}
                     <div className="text-center md:text-left">
                         <h1 className="text-3xl font-semibold text-gray-800 dark:text-gray-100">
                             {employer.companyName || "Unknown Company"}
@@ -149,13 +160,19 @@ export default function EmployerProfilePage() {
 
                 {/* Profile Info */}
                 <div className="flex flex-col md:flex-row gap-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-                    <img
-                        src={employer.profileImage}
-                        alt="Employer Image"
-                        width={100}
-                        height={100}
-                        className="rounded-xl shadow-lg object-cover"
-                    />
+                    {employer.profileImage ? (
+                        <img
+                            src={employer.profileImage}
+                            alt="Employer Image"
+                            width={100}
+                            height={100}
+                            className="rounded-xl shadow-lg object-cover"
+                        />
+                    ) : (
+                        <div className="bg-gray-200 border-2 border-dashed rounded-xl w-24 h-24 flex items-center justify-center text-gray-500">
+                            No Image
+                        </div>
+                    )}
                     <div>
                         <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
                             Employer Details
