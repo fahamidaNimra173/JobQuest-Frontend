@@ -5,16 +5,17 @@ import { useState, useEffect } from 'react';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import JoinUsDropdown from '@/components/ui/JoinUsDropdown';
+import { useAuth } from '@/providers/AuthProvider';
 
 
 export default function Navbar() {
+    const { user, logout } = useAuth()
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const pathname = usePathname();
     // For demo purposes - set to true to see logged in state
-    const isLoggedIn = false;
-    const userName = "John Doe";
+
     const isHomePage = pathname === '/';
     useEffect(() => {
         const handleScroll = () => {
@@ -41,6 +42,10 @@ export default function Navbar() {
             return isScrolled ? 'bg-[#7670d6] shadow-lg' : 'bg-transparent';
         }
         return 'bg-[#7670d6] shadow-lg';
+    };
+
+    const handleLogout = () => {
+        logout();
     };
     return (
         <nav
@@ -75,13 +80,13 @@ export default function Navbar() {
                         ))}
 
                         {/* Conditional rendering based on login status */}
-                        {isLoggedIn ? (
+                        {user? (
                             <div className="relative">
                                 <button
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                     className={`flex items-center space-x-2 transition-colors hover:opacity-80 text-white`}
                                 >
-                                    <span>{userName}</span>
+                                    <span>{user?.name}</span>
                                     <ChevronDown size={16} />
                                 </button>
 
@@ -95,14 +100,14 @@ export default function Navbar() {
                                         >
                                             Dashboard
                                         </a>
+
                                         <button
-                                            onClick={() => {
-                                                // Sign out logic here
-                                                console.log('Sign out clicked');
-                                            }}
-                                            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                                            onClick={handleLogout}
+
+                                            className="block w-full text-left py-2 text-gray-700 hover:text-[#7670d6] transition-colors"
                                         >
-                                            Sign Out
+
+                                            <span className="ml-3">Logout</span>
                                         </button>
                                     </div>
                                 )}
@@ -138,16 +143,16 @@ export default function Navbar() {
                             </a>
                         ))}
 
-                        {isLoggedIn ? (
+                        {user? (
                             <div className="border-t pt-2 mt-2">
-                                <div className="py-2 text-gray-900 font-medium">{userName}</div>
+                                <div className="py-2 text-gray-900 font-medium">{user?.name}</div>
                                 <a
                                     href="#dashboard"
                                     className="block py-2 text-gray-700 hover:text-[#7670d6] transition-colors"
                                 >
                                     Dashboard
                                 </a>
-                                <button
+                                {/* <button
                                     onClick={() => {
                                         // Sign out logic here
                                         console.log('Sign out clicked');
@@ -155,11 +160,22 @@ export default function Navbar() {
                                     className="block w-full text-left py-2 text-gray-700 hover:text-[#7670d6] transition-colors"
                                 >
                                     Sign Out
+                                </button> */}
+
+
+                                <button
+                                    onClick={handleLogout}
+
+                                    className="block w-full text-left py-2 text-gray-700 hover:text-[#7670d6] transition-colors"
+                                >
+
+                                    <span className="ml-3">Logout</span>
                                 </button>
+
                             </div>
                         ) : (
                             <button className="w-full mt-2 px-6 py-2 bg-[#7670d6] text-white rounded-lg font-medium hover:bg-[#6660c6] transition-colors">
-                                Sign Up
+                                <JoinUsDropdown></JoinUsDropdown>
                             </button>
                         )}
                     </div>

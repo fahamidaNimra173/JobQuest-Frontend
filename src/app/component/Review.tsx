@@ -5,21 +5,23 @@ import { X } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
+import { useAuth } from "@/providers/AuthProvider";
+import { IconBarrierBlock, IconBlocks, IconForbidFilled } from "@tabler/icons-react";
 
 
 interface ReviewData {
   userName: string;
   designation?: string;
   review: string;
-  email:string;
-  rating:number;
-  createdAt:string | Date; 
-  updatedAt:string | Date; 
-  image:string|number
+  email: string;
+  rating: number;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  image: string | number
 }
 
 export function ReviewSection() {
-  // const { user } = useAuth();
+  const { user } = useAuth();
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,9 +75,9 @@ export function ReviewSection() {
       ...formData,
       // userEmail: user?.email || defaultUserEmail,
       // userImage: user?.photoURL || defaultUserImage,
-      email:  defaultUserEmail,
-      image:  defaultUserImage,
-      rating:5,
+      email: defaultUserEmail,
+      image: defaultUserImage,
+      rating: 5,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -108,9 +110,14 @@ export function ReviewSection() {
         <p className="mb-8 text-lg text-primary-dark">
           We would love to hear about your experience
         </p>
+        {
+          !user && <h1 className="text-2xl flex items-center justify-center gap-5 my-5 text-red-400 font mono">You must Logged in to give a review <IconBarrierBlock></IconBarrierBlock> </h1>
+
+        }
         <button
           onClick={() => setIsModalOpen(true)}
-          className="rounded-lg bg-yellow-500 px-8 py-3 font-semibold text-white transition-all hover:bg-yellow-700 hover:shadow-lg"
+          disabled={!user}
+          className={`rounded-lg bg-yellow-500 px-8 py-3 font-semibold text-white transition-all ${!user?'cursor-not-allowed':'cursor-pointer'} hover:bg-yellow-700 hover:shadow-lg `}
         >
           Give Review
         </button>
@@ -130,6 +137,7 @@ export function ReviewSection() {
             <h3 className="mb-6 text-3xl font-bold font-mono text-primary-dark">
               Share Your Review
             </h3>
+
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
