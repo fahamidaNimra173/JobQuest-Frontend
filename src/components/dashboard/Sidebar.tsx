@@ -39,7 +39,7 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
       return [
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
         { name: "Statistics", href: "/dashboard/statistics", icon: BarChart3 },
-        { name: "Job Posts", href: "/dashboard/job-posts", icon: Briefcase },
+        // { name: "Job Posts", href: "/dashboard/job-posts", icon: Briefcase },
         {
           name: "Job Applies",
           href: "/dashboard/job-applies",
@@ -56,7 +56,7 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
           href: "/dashboard/manage-community-posts",
           icon: MessageSquare,
         },
-        { name: "My Profile", href: "/dashboard/profile", icon: User },
+        { name: "My Profile", href: "/dashboard/admin-profile", icon: User },
         {
           name: "Change Password",
           href: "/dashboard/change-password",
@@ -67,7 +67,7 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
     case "employer":
       return [
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
-        { name: "Job Posts", href: "/dashboard/job-posts", icon: Briefcase },
+        { name: "Post Jobs", href: "/dashboard/post-job", icon: Briefcase },
         { name: "My Jobs", href: "/dashboard/my-jobs", icon: ClipboardList },
         { name: "My Profile", href: "/dashboard/employer-profile", icon: User },
         {
@@ -141,7 +141,7 @@ export default function Sidebar() {
       {/* Sidebar */}
       <div
         className={clsx(
-          "fixed inset-y-0 left-0 z-40 w-66 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transform transition-all duration-200 ease-in-out lg:translate-x-0 overflow-y-auto hide-scrollbar",
+          "fixed inset-y-0 left-0 z-40 w-68 bg-white dark:bg-gray-800 shadow-lg border-r border-gray-200 dark:border-gray-700 transform transition-all duration-200 ease-in-out lg:translate-x-0 overflow-y-auto hide-scrollbar",
           {
             "translate-x-0": isMobileMenuOpen,
             "-translate-x-full": !isMobileMenuOpen,
