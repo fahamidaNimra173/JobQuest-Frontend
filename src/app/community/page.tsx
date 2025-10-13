@@ -16,7 +16,7 @@ interface Post {
   totalLikes: number;
   totalHaha: number;
   totalLove: number;
-  postDate: string;
+  createdAt: string;
   userReaction?: "like" | "love" | "haha" | null;
 }
 
@@ -519,7 +519,7 @@ export default function CommunityPage() {
                       {post.name}
                     </div>
                     <div style={{ fontSize: "13px", color: "#9da0dc" }}>
-                      {getTimeAgo(post.postDate)}
+                      {getTimeAgo(post.createdAt)}
                     </div>
                   </div>
                 </div>
