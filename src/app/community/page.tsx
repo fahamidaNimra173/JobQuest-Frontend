@@ -9,7 +9,7 @@ import axios from "axios";
 
 interface Post {
   _id: string;
-  username: string;
+  name: string;
   email: string;
   postTitle: string;
   post: string;
@@ -21,7 +21,7 @@ interface Post {
 }
 
 interface CreatePostData {
-  username: string;
+  name: string;
   email: string;
   postTitle: string;
   post: string;
@@ -70,12 +70,12 @@ const getTimeAgo = (timestamp: string): string => {
   return `${diffInYears} ${diffInYears === 1 ? "year" : "years"} ago`;
 };
 
-// Avatar generator based on username
-const getAvatar = (username?: string): string => {
+// Avatar generator based on name
+const getAvatar = (name?: string): string => {
   const avatars = ["👤", "👨", "👩", "🧑", "👨‍💼", "👩‍💼", "🧑‍💼", "👨‍💻", "👩‍💻", "🧑‍💻"];
-  if (!username) return avatars[0]
+  if (!name) return avatars[0]
   const index =
-    username.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
+    name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
     avatars.length;
   return avatars[index];
 };
@@ -137,7 +137,7 @@ export default function CommunityPage() {
     if (!newPost.trim() || !newPostTitle.trim()) return;
 
     createPostMutation.mutate({
-      username: user?.name,
+      name: user?.name,
       email: user?.email,
       postTitle: newPostTitle,
       post: newPost
@@ -506,7 +506,7 @@ export default function CommunityPage() {
                       borderRadius: "50%",
                     }}
                   >
-                    {getAvatar(post.username)}
+                    {getAvatar(post.name)}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div
@@ -516,7 +516,7 @@ export default function CommunityPage() {
                         fontSize: "15px",
                       }}
                     >
-                      {post.username}
+                      {post.name}
                     </div>
                     <div style={{ fontSize: "13px", color: "#9da0dc" }}>
                       {getTimeAgo(post.postDate)}
