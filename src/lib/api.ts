@@ -85,7 +85,7 @@ class ApiClient {
 
   async updatePassword(passwordData: Record<string, unknown>) {
     return this.request('/auth/update-password', {
-      method: 'POST',
+      method: 'PATCH',
       data: passwordData,
     });
   }
