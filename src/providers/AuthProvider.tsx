@@ -1,5 +1,12 @@
 "use client";
-import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  ReactNode,
+} from "react";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import { useToast } from "@/components/ui/Toast";
@@ -99,16 +106,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (res.status === 201) {
         console.log("Registration successful, setting user data");
         setUser(res.data.user);
-        
-        // With HTTP-only cookies, we don't need to manually store the token
-        // The cookie is automatically handled by the browser and axios withCredentials
-        
-        console.log("Redirecting to dashboard");
-        // Small delay to ensure cookies are set before redirecting
-        setTimeout(() => {
-          router.push("/dashboard");
-        }, 100);
-        
+        router.push("/dashboard");
+
         showToast("success", "You registered successfully");
       } else {
         showToast("error", res.data.message || "Registration failed");
@@ -129,7 +128,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.log("Axios error details:", {
           status: error.response?.status,
           data: error.response?.data,
-          headers: error.response?.headers
+          headers: error.response?.headers,
         });
       } else if (error instanceof Error) {
         errorMessage = error.message;
@@ -144,9 +143,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string): Promise<void> => {
     setLoading(true);
     try {
-      console.log("Starting login process...");
-      console.log("Login credentials:", { email });
-      
       const res = await axiosInstance.post(`/auth/login`, {
         email,
         password,
@@ -156,16 +152,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (res.status === 200) {
         console.log("Login successful, setting user data");
         setUser(res.data.user);
-        
-        // With HTTP-only cookies, we don't need to manually store the token
-        // The cookie is automatically handled by the browser and axios withCredentials
-        
-        console.log("Redirecting to dashboard");
-        // Small delay to ensure cookies are set before redirecting
-        setTimeout(() => {
-          router.push("/dashboard");
-        }, 100);
-        
+
+        router.push("/dashboard");
+
         showToast("success", "Logged in successfully");
       } else {
         showToast("error", res.data.message || "Login failed");
@@ -186,7 +175,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.log("Axios error details:", {
           status: err.response?.status,
           data: err.response?.data,
-          headers: err.response?.headers
+          headers: err.response?.headers,
         });
       } else if (err instanceof Error) {
         errorMessage = err.message;
@@ -204,12 +193,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const res = await axiosInstance.post(`/auth/logout`);
       if (res.status === 200) {
         setUser(null);
-        
+
         // Small delay to ensure cookies are removed before redirecting
         setTimeout(() => {
-          router.push('/login');
+          router.push("/login");
         }, 100);
-        
+
         showToast("success", "Logged out successfully");
       }
     } catch (err) {
@@ -235,11 +224,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 // ✅ Custom hook with proper type checking
