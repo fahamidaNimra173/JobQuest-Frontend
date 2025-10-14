@@ -128,7 +128,7 @@ const CommunityPostsTable = ({
                 className="truncate max-w-24"
                 title={p.postTitle}
               >
-                {p.post}
+                {p.postTitle}
               </TableCell>
               <TableCell
                 sx={{ py: 0.5, ...tableStyles.tableBodyCell }}
