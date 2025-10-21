@@ -4,6 +4,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import AdminDashboard from "@/components/dashboard/AdminDashboard";
 import CandidateDashboard from "@/components/dashboard/CandidateDashboard";
 import EmployerDashboard from "@/components/dashboard/EmployerDashboard";
+//import { User } from "lucide-react";
 
 const Dashboard = () => {
   const { loading, user } = useAuth();
@@ -12,7 +13,8 @@ const Dashboard = () => {
   if (loading) {
     return null;
   }
-};
+
+  console.log('user from dashboard', user)
 
   if (user?.role === "admin") {
     return <AdminDashboard />;

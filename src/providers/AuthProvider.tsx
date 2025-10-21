@@ -144,13 +144,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setLoading(true);
     try {
       const res = await axiosInstance.post(`/api/auth/login`, { email, password });
-      console.log(res.data);
-      // assuming backend returns { user: {...}, token: '...' }
+      console.log('login successfull', res.data);
       setUser(res.data.user);
-      //localStorage.setItem("token", res.data.token); // optional
-
       router.push("/dashboard");
       showToast("success", "Logged in successfully");
+      //setLoading(false);
     } catch (err) {
       console.error(err);
       let errorMessage = "Login failed";
@@ -183,7 +181,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const logout = async (): Promise<void> => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(`/auth/logout`);
+      const res = await axiosInstance.post('/api/auth/logout');
+
       if (res.status === 200) {
         setUser(null);
 
@@ -208,7 +207,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // ✅ Create the context value with proper type
+  //  Create the context value with proper type
   const value: AuthContextType = {
     user,
     loading,
@@ -220,7 +219,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// ✅ Custom hook with proper type checking
+// Custom hook with proper type checking
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
