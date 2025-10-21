@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import JobCard from "@/app/dashboard/(employer)/components/JobCard";
-import SkeletonCard from "../components/SkeletonCard";
+import JobCard from "@/components/dashboard/(employer)/JobCard";
+import SkeletonCard from "@/components/dashboard/(employer)/SkeletonCard";
 
 interface Job {
   _id: string;
@@ -29,6 +29,7 @@ interface Job {
   totalApplicants: number;
   applicationDeadline: string;
   postedAt: string;
+  status: string;
 }
 
 interface ApiResponse {

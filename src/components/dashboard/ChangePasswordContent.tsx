@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import apiClient from "@/lib/api";
+import axiosInstance from "@/lib/axios";
 
 export default function ChangePasswordContent() {
   const { showToast } = useToast();
@@ -121,41 +123,56 @@ export default function ChangePasswordContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Password change form submitted");
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
 
     try {
-      // Make API call to change password
-      console.log("Changing password...", {
-        currentPassword: "***",
-        newPassword: "***",
-      });
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
-
-      // Reset form
-      setFormData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
+      const response = await axiosInstance.patch("/auth/update-password", {
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
       });
 
-      showToast(
-        "success",
-        "Password changed successfully!",
-        "Your password has been updated."
-      );
-    } catch {
-      showToast(
-        "error",
-        "Failed to change password",
-        "Please try again or contact support."
-      );
-      setErrors({ submit: "Failed to change password. Please try again." });
+      // Handle wrong password (no success flag)
+      if (response.data?.message === "Wrong Password") {
+        setErrors({ currentPassword: "Incorrect current password" });
+        showToast(
+          "error",
+          "Wrong Password",
+          "Your current password is incorrect."
+        );
+        return;
+      }
+
+      // Handle success
+      if (response.data?.success) {
+        setFormData({
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+        setErrors({});
+        showToast(
+          "success",
+          "Password Updated!",
+          "Your password has been changed successfully."
+        );
+        return;
+      }
+
+      // Handle unexpected responses
+      throw new Error("Unexpected server response. Please try again.");
+    } catch (error: any) {
+      console.error("Password change error:", error);
+
+      const serverMsg =
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to change password. Please try again.";
+
+      showToast("error", "Failed to change password", serverMsg);
+      setErrors({ submit: serverMsg });
     } finally {
       setIsSubmitting(false);
     }

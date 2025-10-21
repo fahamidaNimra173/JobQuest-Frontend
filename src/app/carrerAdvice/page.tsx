@@ -37,11 +37,11 @@ interface CategoryCard {
   articles: Article[];
 }
 
-interface ExpertInsight {
-  quote: string;
-  author: string;
-  role: string;
-}
+// interface ExpertInsight {
+//   quote: string;
+//   author: string;
+//   role: string;
+// }
 
 export default function CareerAdvicePage() {
   const [selectedCategory, setSelectedCategory] = useState<CategoryCard | null>(null);
@@ -211,7 +211,7 @@ export default function CareerAdvicePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-20">
+    <div className="min-h-screen bg-gradient-to-b from-white to-primary-lightest py-20">
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-6 lg:px-12 mb-16">
         <div className="text-center mb-12">
@@ -392,7 +392,7 @@ export default function CareerAdvicePage() {
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
-              href="/signup"
+              href="/signup/candidate"
               className="bg-yellow-500 text-gray-900 px-8 py-4 rounded-lg font-bold font-sans hover:bg-yellow-400 transition-colors inline-flex items-center justify-center gap-2"
             >
               Create Free Account
@@ -404,7 +404,11 @@ export default function CareerAdvicePage() {
 
       {/* Modal */}
       {selectedCategory && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 pt-24 overflow-y-auto"
+        onClick={(e)=>{if(e.target===e.currentTarget){
+          closeModal()
+        }}}
+        >
           <div className="bg-white rounded-2xl max-w-4xl w-full my-8 max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -419,7 +423,7 @@ export default function CareerAdvicePage() {
                 onClick={closeModal}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <X className="w-6 h-6" />
+                <X className="w-8  text-black h-8" />
               </button>
             </div>
             

@@ -19,23 +19,8 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      withCredentials: true, // This is crucial for HTTP-only cookies
     });
-
-    // Add authentication token to requests
-    this.axiosInstance.interceptors.request.use(
-      (config) => {
-        if (typeof window !== 'undefined') {
-          const token = localStorage.getItem('authToken');
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-          }
-        }
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
 
     // Handle response errors
     this.axiosInstance.interceptors.response.use(
@@ -95,6 +80,13 @@ class ApiClient {
   async logout() {
     return this.request('/auth/logout', {
       method: 'POST',
+    });
+  }
+
+  async updatePassword(passwordData: Record<string, unknown>) {
+    return this.request('/auth/update-password', {
+      method: 'PATCH',
+      data: passwordData,
     });
   }
 
@@ -191,13 +183,6 @@ class ApiClient {
   async deleteCandidateResume(resumeId: string) {
     return this.request(`/candidates/resumes/${resumeId}`, {
       method: 'DELETE',
-    });
-  }
-
-  async changePassword(passwordData: Record<string, unknown>) {
-    return this.request('/user/change-password', {
-      method: 'POST',
-      data: passwordData,
     });
   }
 

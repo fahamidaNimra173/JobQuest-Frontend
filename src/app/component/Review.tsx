@@ -5,32 +5,29 @@ import { X } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import axiosInstance from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
-
+import { useAuth } from "@/providers/AuthProvider";
+import { IconBarrierBlock } from "@tabler/icons-react";
 
 interface ReviewData {
-  userName: string;
+  name: string;
   designation?: string;
   review: string;
-  email:string;
-  rating:number;
-  createdAt:string | Date; 
-  updatedAt:string | Date; 
-  image:string|number
+  email: string;
+  createdAt: string | Date;
+  status: string;
+  image: string | number;
 }
 
 export function ReviewSection() {
-  // const { user } = useAuth();
-
+  const { user } = useAuth();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    userName: "",
+    name: "",
     designation: "",
     review: "",
   });
-  const defaultUserImage =
-    "https://i.ibb.co/ZVFsg37/default-avatar.png";
-  const defaultUserEmail = "anonymous@example.com";
+  const defaultUserImage = "https://i.ibb.co/ZVFsg37/default-avatar.png";
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ✅ Mutation function to POST review
@@ -39,12 +36,12 @@ export function ReviewSection() {
     return response.data;
   };
 
-  // ✅ useMutation hook
+  //  useMutation hook
   const { mutateAsync } = useMutation({
     mutationFn: postReview,
     onSuccess: () => {
       toast.success("Review submitted successfully!");
-      setFormData({ userName: "", designation: "", review: "" });
+      setFormData({ name: "", designation: "", review: "" });
       setIsModalOpen(false);
       setIsSubmitting(false);
     },
@@ -54,7 +51,9 @@ export function ReviewSection() {
     },
   });
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -62,7 +61,7 @@ export function ReviewSection() {
   const handleSubmit = async (e: FormEvent<HTMLElement>) => {
     e.preventDefault();
 
-    if (!formData.userName || !formData.review) {
+    if (!formData.name || !formData.review) {
       toast.error("Please fill in all required fields");
       return;
     }
@@ -73,11 +72,11 @@ export function ReviewSection() {
       ...formData,
       // userEmail: user?.email || defaultUserEmail,
       // userImage: user?.photoURL || defaultUserImage,
-      email:  defaultUserEmail,
-      image:  defaultUserImage,
-      rating:4,
+      email: user?.email,
+      image: user?.profile || defaultUserImage,
+      designation: formData.designation,
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      status: "pending",
     };
 
     await mutateAsync(reviewData);
@@ -108,9 +107,14 @@ export function ReviewSection() {
         <p className="mb-8 text-lg text-primary-dark">
           We would love to hear about your experience
         </p>
+        {
+          !user && <h1 className="text-2xl flex items-center justify-center gap-5 my-5 text-red-400 font mono">You must Logged in to give a review <IconBarrierBlock></IconBarrierBlock> </h1>
+
+        }
         <button
           onClick={() => setIsModalOpen(true)}
-          className="rounded-lg bg-yellow-500 px-8 py-3 font-semibold text-white transition-all hover:bg-yellow-700 hover:shadow-lg"
+          disabled={!user}
+          className={`rounded-lg bg-yellow-500 px-8 py-3 font-semibold text-white transition-all ${!user?'cursor-not-allowed':'cursor-pointer'} hover:bg-yellow-700 hover:shadow-lg `}
         >
           Give Review
         </button>
@@ -131,6 +135,7 @@ export function ReviewSection() {
               Share Your Review
             </h3>
 
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label
@@ -142,8 +147,8 @@ export function ReviewSection() {
                 <input
                   type="text"
                   id="name"
-                  name="userName"
-                  value={formData.userName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleInputChange}
                   className="w-full rounded-lg border border-gray-300 bg-primary-medium px-4 py-3 text-black focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                   placeholder="Enter your name"

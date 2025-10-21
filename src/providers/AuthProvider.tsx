@@ -1,5 +1,12 @@
 "use client";
-import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  ReactNode,
+} from "react";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import { useToast } from "@/components/ui/Toast";
@@ -108,8 +115,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } catch (error) {
       console.log(error);
       let errorMessage = "Registration failed";
-      if (axios.isAxiosError(error) && error.response?.data?.message) {
-        errorMessage = error.response.data.message;
+      if (axios.isAxiosError(error)) {
+        if (error.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        } else if (error.response?.status === 400) {
+          errorMessage = "Invalid registration data";
+        } else if (error.response?.status === 409) {
+          errorMessage = "Email already in use";
+        } else if (error.response?.status && error.response.status >= 500) {
+          errorMessage = "Server error. Please try again later.";
+        }
+        console.log("Axios error details:", {
+          status: error.response?.status,
+          data: error.response?.data,
+          headers: error.response?.headers,
+        });
       } else if (error instanceof Error) {
         errorMessage = error.message;
       }
@@ -128,14 +148,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // assuming backend returns { user: {...}, token: '...' }
       setUser(res.data.user);
       //localStorage.setItem("token", res.data.token); // optional
-      
+
       router.push("/dashboard");
       showToast("success", "Logged in successfully");
     } catch (err) {
       console.error(err);
       let errorMessage = "Login failed";
-      if (axios.isAxiosError(err) && err.response?.data?.message) {
-        errorMessage = err.response.data.message;
+      if (axios.isAxiosError(err)) {
+        if (err.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        } else if (err.response?.status === 400) {
+          errorMessage = "Invalid credentials";
+        } else if (err.response?.status === 401) {
+          errorMessage = "Invalid email or password";
+        } else if (err.response?.status && err.response.status >= 500) {
+          errorMessage = "Server error. Please try again later.";
+        }
+        console.log("Axios error details:", {
+          status: err.response?.status,
+          data: err.response?.data,
+          headers: err.response?.headers,
+        });
       } else if (err instanceof Error) {
         errorMessage = err.message;
       }
@@ -152,12 +185,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const res = await axiosInstance.post(`/auth/logout`);
       if (res.status === 200) {
-        router.push('/login')
         setUser(null);
+
+        // Small delay to ensure cookies are removed before redirecting
+        setTimeout(() => {
+          router.push("/login");
+        }, 100);
+
         showToast("success", "Logged out successfully");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Logout error:", err);
       let errorMessage = "Logout failed";
       if (axios.isAxiosError(err) && err.response?.data?.message) {
         errorMessage = err.response.data.message;
@@ -179,11 +217,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 // ✅ Custom hook with proper type checking

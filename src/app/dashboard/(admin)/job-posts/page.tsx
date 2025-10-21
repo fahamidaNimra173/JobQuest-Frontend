@@ -47,9 +47,9 @@ const JobPosts = () => {
 
       {/* Table */}
       {isPending ? (
-        <div className="h-[50vh] w-full flex items-center justify-center">
-          <Loader size={40} className="animate-spin"></Loader>
-        </div>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-dark"></div>
+      </div>
       ) : jobs.length === 0 ? (
         <p className="text-center mt-10 text-gray-600 text-lg font-medium">
           No reviews found.

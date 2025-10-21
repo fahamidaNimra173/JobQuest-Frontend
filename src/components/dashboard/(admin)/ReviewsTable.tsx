@@ -1,5 +1,5 @@
 // ✅ MUI imports
-'use client';
+"use client";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -52,9 +52,9 @@ interface TableStyles {
 interface ReviewsTableProps {
   reviews: Review[];
   tableStyles: TableStyles;
-  paginatedReviews: Review[];
   page: number;
   rowsPerPage: number;
+  total: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
   setRowsPerPage: React.Dispatch<React.SetStateAction<number>>;
   handleApprove: (id: string) => Promise<void>;
@@ -66,9 +66,9 @@ interface ReviewsTableProps {
 const ReviewsTable: React.FC<ReviewsTableProps> = ({
   reviews,
   tableStyles,
-  paginatedReviews,
   page,
   rowsPerPage,
+  total,
   setPage,
   setRowsPerPage,
   handleApprove,
@@ -109,7 +109,7 @@ const ReviewsTable: React.FC<ReviewsTableProps> = ({
         </TableHead>
 
         <TableBody>
-          {paginatedReviews.map((r, i) => (
+          {reviews.map((r, i) => (
             <TableRow
               key={r._id}
               sx={{
@@ -126,7 +126,10 @@ const ReviewsTable: React.FC<ReviewsTableProps> = ({
               <TableCell sx={{ py: 0.5, ...tableStyles.tableBodyCell }}>
                 {r.email}
               </TableCell>
-              <TableCell className="capitalize" sx={{ py: 0.5, ...tableStyles.tableBodyCell }}>
+              <TableCell
+                className="capitalize"
+                sx={{ py: 0.5, ...tableStyles.tableBodyCell }}
+              >
                 {r.designation}
               </TableCell>
               <TableCell
@@ -200,9 +203,9 @@ const ReviewsTable: React.FC<ReviewsTableProps> = ({
             sx={{ backgroundColor: tableStyles.tableHead.backgroundColor }}
           >
             <TablePagination
-              rowsPerPageOptions={[5, 10, 20, 30]}
+              rowsPerPageOptions={[1, 5, 10, 20, 30]}
               colSpan={7}
-              count={reviews.length}
+              count={total}
               rowsPerPage={rowsPerPage}
               page={page}
               SelectProps={{
