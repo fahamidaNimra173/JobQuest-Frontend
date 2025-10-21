@@ -12,6 +12,7 @@ const Dashboard = () => {
   if (loading) {
     return null;
   }
+};
 
   if (user?.role === "admin") {
     return <AdminDashboard />;
