@@ -5,7 +5,6 @@ import axiosInstance from "@/lib/axios";
 import { useToast } from "@/components/ui/Toast";
 import axios from "axios";
 
-// ✅ Define the type for the Auth Context
 interface AuthContextType {
   user: any | null;
   loading: boolean;
@@ -21,8 +20,18 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
+interface RegisterPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: string;
+  provider: string;
+  companyName?: string;
+}
 
-// ✅ Create context with proper type
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
@@ -42,7 +51,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const fetchUser = async () => {
       try {
-        const res = await axiosInstance.get(`/auth/check`);
+        const res = await axiosInstance.get(`/api/auth/check-user`);
         setUser(res.data.user || null);
       } catch (err) {
         setUser(null);
@@ -65,29 +74,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   ): Promise<void> => {
     setLoading(true);
     try {
-      const payload: any = {
+      const payload: RegisterPayload = {
         firstName,
         lastName,
         email,
         phone,
         password,
         role,
-        provider: "Email/Password",
+        provider: "email",
       };
 
       if (companyName) {
         payload.companyName = companyName;
       }
+      let res;
+      if (role === 'employer') {
+        res = await axiosInstance.post("/api/employers", payload);
+      } else if (role === 'candidate') {
+        res = await axiosInstance.post("/api/candidates", payload);
+      } else {
+        throw new Error("Invalid role provided");
+      }
+      console.log('response candidate signup: ', res.data);
 
-      const res = await axiosInstance.post("/auth/signup", payload);
-
-      if (res.status === 201) {
-        setUser(res.data.user);
+      if (res.status === 201 && res?.data) {
+        setUser(res.data);
         router.push("/dashboard/profile");
         showToast("success", "You registered successfully");
       } else {
-        showToast("error", res.data.message || "Registration failed");
+        showToast("error", res.data?.message || "Registration failed");
       }
+
     } catch (error) {
       console.log(error);
       let errorMessage = "Registration failed";
@@ -106,18 +123,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string): Promise<void> => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(`/auth/login`, {
-        email,
-        password,
-      });
-
-      if (res.status === 200) {
-        setUser(res.data.user);
-        router.push("/dashboard");
-        showToast("success", "Logged in successfully");
-      } else {
-        showToast("error", res.data.message || "Login failed");
-      }
+      const res = await axiosInstance.post(`/api/auth/login`, { email, password });
+      console.log(res.data);
+      // assuming backend returns { user: {...}, token: '...' }
+      setUser(res.data.user);
+      //localStorage.setItem("token", res.data.token); // optional
+      
+      router.push("/dashboard");
+      showToast("success", "Logged in successfully");
     } catch (err) {
       console.error(err);
       let errorMessage = "Login failed";
@@ -131,6 +144,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setLoading(false);
     }
   };
+
 
   // Logout function
   const logout = async (): Promise<void> => {
