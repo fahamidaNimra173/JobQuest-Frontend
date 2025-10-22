@@ -205,7 +205,7 @@ export default function Sidebar() {
               {/* User Details */}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-                  {user?.name}
+                  {`${user?.firstName} ${user?.lastName}`}
                 </p>
                 <p className="text-xs capitalize text-primary-dark dark:text-primary-medium font-medium">
                   {user?.role}

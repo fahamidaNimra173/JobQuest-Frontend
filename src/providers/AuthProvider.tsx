@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const fetchUser = async () => {
       try {
-        const res = await axiosInstance.get(`/api/auth/check-user`);
+        const res = await axiosInstance.get(`/auth/check-user`);
         setUser(res.data.user || null);
       } catch (err) {
         setUser(null);
@@ -96,9 +96,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
       let res;
       if (role === 'employer') {
-        res = await axiosInstance.post("/api/employers", payload);
+        res = await axiosInstance.post("/employers", payload);
       } else if (role === 'candidate') {
-        res = await axiosInstance.post("/api/candidates", payload);
+        res = await axiosInstance.post("/candidates", payload);
       } else {
         throw new Error("Invalid role provided");
       }
@@ -143,7 +143,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string): Promise<void> => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(`/api/auth/login`, { email, password });
+      const res = await axiosInstance.post(`/auth/login`, { email, password });
       console.log(res.data);
       // assuming backend returns { user: {...}, token: '...' }
       setUser(res.data.user);
