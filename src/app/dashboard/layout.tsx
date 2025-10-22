@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "@/components/dashboard/Sidebar";
-import "../dashboard.css";
+// import "../dashboard.css";
 import PrivateRoutes from "@/routes/PrivateRoutes";
 interface DashboardLayoutProps {
   children: React.ReactNode;
