@@ -12,12 +12,12 @@ import axiosInstance from "@/lib/axios";
 import { useToast } from "@/components/ui/Toast";
 import axios from "axios";
 
-// ✅ Define the type for the Auth Context
 interface AuthContextType {
   user: any | null;
   loading: boolean;
   register: (
-    name: string,
+    firstName: string,
+    lastName: string,
     phone: string,
     email: string,
     password: string,
@@ -27,8 +27,18 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
+interface RegisterPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: string;
+  provider: string;
+  companyName?: string;
+}
 
-// ✅ Create context with proper type
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
@@ -48,25 +58,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const fetchUser = async () => {
       try {
-        console.log("Initializing auth...");
-        const res = await axiosInstance.get(`/auth/check`);
-        console.log("User check response:", res);
-        if (res.status === 200 && res.data.success && res.data.user) {
-          console.log("User authenticated:", res.data.user);
-          setUser(res.data.user);
-        } else {
-          console.log("User not authenticated or invalid response");
-          setUser(null);
-        }
-      } catch (err: any) {
-        console.log("User check error:", err);
-        // If it's a 401 or 403 error, explicitly set user to null
-        if (err.response?.status === 401 || err.response?.status === 403) {
-          console.log("Authentication error - setting user to null");
-          setUser(null);
-        } else {
-          setUser(null);
-        }
+        const res = await axiosInstance.get(`/auth/check-user`);
+        setUser(res.data.user || null);
+      } catch (err) {
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -76,7 +71,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Conditional register function with optional extra field
   const register = async (
-    name: string,
+    firstName: string,
+    lastName: string,
     phone: string,
     email: string,
     password: string,
@@ -85,35 +81,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   ): Promise<void> => {
     setLoading(true);
     try {
-      console.log("Starting registration process...");
-      const payload: any = {
-        name,
+      const payload: RegisterPayload = {
+        firstName,
+        lastName,
         email,
         phone,
         password,
         role,
-        provider: "Email/Password",
+        provider: "email",
       };
 
       if (companyName) {
         payload.companyName = companyName;
       }
+      let res;
+      if (role === 'employer') {
+        res = await axiosInstance.post("/employers", payload);
+      } else if (role === 'candidate') {
+        res = await axiosInstance.post("/candidates", payload);
+      } else {
+        throw new Error("Invalid role provided");
+      }
+      console.log('response candidate signup: ', res.data);
 
-      console.log("Registration payload:", payload);
-      const res = await axiosInstance.post("/auth/signup", payload);
-      console.log("Signup response:", res);
-
-      if (res.status === 201) {
-        console.log("Registration successful, setting user data");
-        setUser(res.data.user);
-        router.push("/dashboard");
-
+      if (res.status === 201 && res?.data) {
+        setUser(res.data);
+        router.push("/dashboard/profile");
         showToast("success", "You registered successfully");
       } else {
-        showToast("error", res.data.message || "Registration failed");
+        showToast("error", res.data?.message || "Registration failed");
       }
-    } catch (error: any) {
-      console.log("Signup error:", error);
+
+    } catch (error) {
+      console.log(error);
       let errorMessage = "Registration failed";
       if (axios.isAxiosError(error)) {
         if (error.response?.data?.message) {
@@ -143,24 +143,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string): Promise<void> => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(`/auth/login`, {
-        email,
-        password,
-      });
-      console.log("Login response:", res);
-
-      if (res.status === 200) {
-        console.log("Login successful, setting user data");
-        setUser(res.data.user);
-
-        router.push("/dashboard");
-
-        showToast("success", "Logged in successfully");
-      } else {
-        showToast("error", res.data.message || "Login failed");
-      }
-    } catch (err: any) {
-      console.error("Login error:", err);
+      const res = await axiosInstance.post(`/auth/login`, { email, password });
+      console.log(res.data);
+      // assuming backend returns { user: {...}, token: '...' }
+      setUser(res.data.user);
+      router.push("/dashboard");
+      showToast("success", "Logged in successfully");
+      //setLoading(false);
+    } catch (err) {
+      console.error(err);
       let errorMessage = "Login failed";
       if (axios.isAxiosError(err)) {
         if (err.response?.data?.message) {
@@ -186,11 +177,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+
   // Logout function
   const logout = async (): Promise<void> => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(`/auth/logout`);
+      const res = await axiosInstance.post('/api/auth/logout');
+
       if (res.status === 200) {
         setUser(null);
 
@@ -215,7 +208,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  // ✅ Create the context value with proper type
+  //  Create the context value with proper type
   const value: AuthContextType = {
     user,
     loading,
@@ -227,7 +220,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// ✅ Custom hook with proper type checking
+// Custom hook with proper type checking
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
