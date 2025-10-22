@@ -17,6 +17,7 @@ import {
   ClipboardList,
   LucideIcon,
   Loader,
+  FileText,
 } from "lucide-react";
 import clsx from "clsx";
 // import { useToast } from "@/components/ui/Toast";
@@ -39,7 +40,7 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
       return [
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
         { name: "Statistics", href: "/dashboard/statistics", icon: BarChart3 },
-        // { name: "Job Posts", href: "/dashboard/job-posts", icon: Briefcase },
+        { name: "Job Posts", href: "/dashboard/job-posts", icon: Briefcase },
         {
           name: "Job Applies",
           href: "/dashboard/job-applies",
@@ -92,7 +93,7 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
           icon: Briefcase,
         },
         { name: "Saved Jobs", href: "/dashboard/saved-jobs", icon: Heart },
-        // { name: 'My Resume', href: '/dashboard/resume', icon: FileText },
+        { name: 'My Resume', href: '/dashboard/resume', icon: FileText },
         {
           name: "Change Password",
           href: "/dashboard/change-password",
