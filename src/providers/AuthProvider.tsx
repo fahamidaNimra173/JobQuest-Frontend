@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const fetchUser = async () => {
       try {
-        const res = await axiosInstance.get(`/auth/check-user`);
+        const res = await axiosInstance.get(`/auth/check`);
         setUser(res.data.user || null);
       } catch (err) {
         setUser(null);
@@ -182,7 +182,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const logout = async (): Promise<void> => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post('/api/auth/logout');
+      const res = await axiosInstance.post('/auth/logout');
 
       if (res.status === 200) {
         setUser(null);

@@ -132,13 +132,13 @@ export default function ResumeContent({ resumeData }: ResumeContentProps) {
 
   // ===== File View =====
   const handleViewPDF = (id: string) => {
-    const token = Cookies.get("authToken");
+    const token = Cookies.get("token");
     window.open(`${API_BASE_URL}/resume/view/${id}?token=${token}`, "_blank");
   };
 
   // ===== File Download =====
   const handleDownloadResume = (id: string, filename: string) => {
-    const token = Cookies.get("authToken");
+    const token = Cookies.get("token");
     const link = document.createElement("a");
     link.href = `${API_BASE_URL}/resume/download/${id}?token=${token}`;
     link.download = filename;
@@ -186,7 +186,7 @@ export default function ResumeContent({ resumeData }: ResumeContentProps) {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              className="inline-flex items-center px-4 py-2 bg-[#7670d6] text-white rounded-lg hover:bg-[#6659c4] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center cursor-pointer px-4 py-2 bg-[#7670d6] text-white rounded-lg hover:bg-[#6659c4] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Upload className="w-4 h-4 mr-2" />
               {isUploading ? "Uploading..." : "Choose File"}
@@ -238,7 +238,7 @@ export default function ResumeContent({ resumeData }: ResumeContentProps) {
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => handleViewPDF(resume._id)}
-                      className="flex items-center px-3 py-2 text-[#7670d6] border border-[#7670d6] rounded-lg hover:bg-[#7670d6] hover:text-white transition-colors"
+                      className="flex items-center cursor-pointer px-3 py-2 text-[#7670d6] border border-[#7670d6] rounded-lg hover:bg-[#7670d6] hover:text-white transition-colors"
                     >
                       <Eye className="w-4 h-4 mr-1" /> View
                     </button>
@@ -246,13 +246,13 @@ export default function ResumeContent({ resumeData }: ResumeContentProps) {
                       onClick={() =>
                         handleDownloadResume(resume._id, resume.filename)
                       }
-                      className="flex items-center px-3 py-2 bg-[#7670d6] text-white rounded-lg hover:bg-[#6659c4] transition-colors"
+                      className="flex items-center cursor-pointer px-3 py-2 bg-[#7670d6] text-white rounded-lg hover:bg-[#6659c4] transition-colors"
                     >
                       <Download className="w-4 h-4 mr-1" /> Download
                     </button>
                     <button
                       onClick={() => handleDeleteResume(resume._id)}
-                      className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                      className="p-2 text-gray-400 cursor-pointer hover:text-red-600 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
