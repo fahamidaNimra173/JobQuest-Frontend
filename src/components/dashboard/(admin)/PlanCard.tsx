@@ -30,7 +30,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onEdit, onDelete }) => {
     >
       {/* Popular Badge */}
       {plan.popular && (
-        <div className="absolute -top-3 right-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-md">
+        <div className="absolute -top-3.5 right-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1 shadow-md">
           <Star size={14} fill="white" />
           Popular
         </div>
