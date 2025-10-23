@@ -10,6 +10,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import Image from "next/image";
 import { BsFillSendFill } from "react-icons/bs";
 import HexaImage from '../../../../../public/—Pngtree—simple white hexagon paper projection_4070498.png'
+import ProtectLoginRoutes from "@/routes/ProtectLoginRoutes";
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -59,7 +60,8 @@ const CandidateSignUp = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#615bb8] via-[#7169d4] to-[#8279ff] mt-12">
+<ProtectLoginRoutes>
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#615bb8] via-[#7169d4] to-[#8279ff] mt-12">
       {/* Animated gradient orbs */}
       <div className="absolute top-10 left-10 w-96 lg:w-[500px] lg:h-[500px] h-96 bg-[#8279ff] rounded-full blur-3xl opacity-60 animate-pulse"></div>
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-[#877ff9] rounded-full blur-3xl opacity-60 animate-pulse" style={{ animationDelay: '1s' }}></div>
@@ -371,6 +373,7 @@ const CandidateSignUp = () => {
         }
       `}</style>
     </div>
+</ProtectLoginRoutes>
   );
 };
 
