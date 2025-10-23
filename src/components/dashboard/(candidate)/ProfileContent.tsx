@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   User,
   Mail,
@@ -33,7 +34,6 @@ interface ProfileFormData {
   socialLinks?: SocialLinks;
 }
 
-// Modal interfaces
 interface ExperienceFormData {
   company: string;
   position: string;
@@ -49,12 +49,11 @@ interface EducationFormData {
   fieldOfStudy?: string;
   startDate: string;
   endDate?: string;
+  isCurrentlyStudying: boolean;
 }
 
 export default function ProfileContent() {
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [candidateData, setCandidateData] = useState<Candidate | null>(null);
   const [formData, setFormData] = useState<ProfileFormData>({
     name: "",
     email: "",
@@ -72,12 +71,12 @@ export default function ProfileContent() {
   const [showExperienceModal, setShowExperienceModal] = useState(false);
   const [showEducationModal, setShowEducationModal] = useState(false);
   const [showSkillsModal, setShowSkillsModal] = useState(false);
-  const [editingExperience, setEditingExperience] = useState<Experience | null>(
-    null
-  );
-  const [editingEducation, setEditingEducation] = useState<Education | null>(
-    null
-  );
+  const [editingExperienceIndex, setEditingExperienceIndex] = useState<
+    number | null
+  >(null);
+  const [editingEducationIndex, setEditingEducationIndex] = useState<
+    number | null
+  >(null);
 
   // Form states
   const [experienceForm, setExperienceForm] = useState<ExperienceFormData>({
@@ -95,98 +94,79 @@ export default function ProfileContent() {
     fieldOfStudy: "",
     startDate: "",
     endDate: "",
+    isCurrentlyStudying: false,
   });
 
   const [skillsInput, setSkillsInput] = useState("");
 
   const { showToast } = useToast();
+  const queryClient = useQueryClient();
 
-  // Fetch candidate profile data
-  useEffect(() => {
-    fetchProfile();
-  }, [showToast]);
-
-  const fetchProfile = async () => {
-    try {
-      setIsLoading(true);
+  // Fetch candidate profile using TanStack Query
+  const { data: candidateData, isLoading } = useQuery({
+    queryKey: ["candidateProfile"],
+    queryFn: async () => {
       const response = await axiosInstance.get(
         "https://job-quest-i2wm.onrender.com/users/candidate/me"
       );
 
-      console.log("API Response:", response.data);
-
-      // Handle different possible response structures
-      let candidateData;
-
+      let candidate;
       if (response.data.success && response.data.data) {
-        candidateData = response.data.data;
+        candidate = response.data.data;
       } else if (response.data && response.data._id) {
-        candidateData = response.data;
-      } else if (response.data) {
-        candidateData = response.data;
+        candidate = response.data;
       } else {
-        throw new Error("Unexpected API response structure");
+        candidate = response.data;
       }
 
-      const candidate = candidateData as Candidate;
-      console.log("Processed Candidate:", candidate);
+      return candidate as Candidate;
+    },
+  });
 
-      setCandidateData(candidate);
+  // Update form data when candidate data is loaded
+  useEffect(() => {
+    if (candidateData) {
       setFormData({
-        name: candidate.name || "",
-        email: candidate.email || "",
-        phone: candidate.phone || "",
-        address: candidate.address || "",
-        bio: candidate.bio || "",
-        socialLinks: candidate.socialLinks || {
+        name: candidateData.name || "",
+        email: candidateData.email || "",
+        phone: candidateData.phone || "",
+        address: candidateData.address || "",
+        bio: candidateData.bio || "",
+        socialLinks: candidateData.socialLinks || {
           linkedin: "",
           github: "",
           portfolio: "",
         },
       });
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      showToast("error", "Error", "Failed to load profile data");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [candidateData]);
 
-  // Breadcrumb items for profile page
-  const breadcrumbItems = [
-    { name: "My Profile", href: "/dashboard/profile", current: true },
-  ];
-
-  // Save all candidate data to the single endpoint
-  const saveCandidateData = async (updatedData: Partial<Candidate>) => {
-    try {
+  // Mutation for updating candidate profile
+  const updateProfileMutation = useMutation({
+    mutationFn: async (updatedData: Partial<Candidate>) => {
       const response = await axiosInstance.patch(
         "https://job-quest-i2wm.onrender.com/users/candidate",
         updatedData
       );
 
-      console.log("Save response:", response.data);
-
-      let updatedCandidate;
-      if (response.data.success && response.data.data) {
-        updatedCandidate = response.data.data;
-      } else if (response.data) {
-        updatedCandidate = response.data;
-      } else {
-        throw new Error("Unexpected save response structure");
+      if (response.data.success) {
+        return response.data;
       }
+      throw new Error("Unexpected save response structure");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["candidateProfile"] });
+    },
+  });
 
-      setCandidateData(updatedCandidate as Candidate);
-      return updatedCandidate;
-    } catch (error) {
-      console.error("Error saving data:", error);
-      throw error;
-    }
-  };
+  // Breadcrumb items
+  const breadcrumbItems = [
+    { name: "My Profile", href: "/dashboard/profile", current: true },
+  ];
 
   // Experience Functions
   const handleAddExperience = () => {
-    setEditingExperience(null);
+    setEditingExperienceIndex(null);
     setExperienceForm({
       company: "",
       position: "",
@@ -198,13 +178,16 @@ export default function ProfileContent() {
     setShowExperienceModal(true);
   };
 
-  const handleEditExperience = (experience: Experience) => {
-    setEditingExperience(experience);
+  const handleEditExperience = (experience: Experience, index: number) => {
+    setEditingExperienceIndex(index);
     setExperienceForm({
       company: experience.company,
       position: experience.position,
       startDate: experience.startDate.split("T")[0],
-      endDate: experience.endDate ? experience.endDate.split("T")[0] : "",
+      endDate:
+        experience.endDate && experience.endDate !== "ongoing"
+          ? experience.endDate.split("T")[0]
+          : "",
       isCurrentlyWorking: experience.isCurrentlyWorking || false,
       responsibilities: experience.responsibilities || "",
     });
@@ -212,34 +195,37 @@ export default function ProfileContent() {
   };
 
   const handleSaveExperience = async () => {
-    try {
-      if (!candidateData) return;
+    if (!candidateData) return;
 
+    try {
       const newExperience: Experience = {
-        _id: editingExperience?._id || undefined,
         company: experienceForm.company,
         position: experienceForm.position,
         startDate: experienceForm.startDate,
         endDate: experienceForm.isCurrentlyWorking
-          ? undefined
+          ? "ongoing"
           : experienceForm.endDate,
         isCurrentlyWorking: experienceForm.isCurrentlyWorking,
         responsibilities: experienceForm.responsibilities,
       };
 
-      let updatedExperiences: Experience[];
+      // Ensure experience is always an array
+      const currentExperiences = Array.isArray(candidateData.experience)
+        ? candidateData.experience
+        : [];
 
-      if (editingExperience) {
+      let updatedExperiences: Experience[];
+      if (editingExperienceIndex !== null) {
         // Update existing experience
-        updatedExperiences = candidateData.experience.map((exp) =>
-          exp._id === editingExperience._id ? newExperience : exp
+        updatedExperiences = currentExperiences.map((exp, idx) =>
+          idx === editingExperienceIndex ? newExperience : exp
         );
       } else {
         // Add new experience
-        updatedExperiences = [...candidateData.experience, newExperience];
+        updatedExperiences = [...currentExperiences, newExperience];
       }
 
-      const updatedCandidate = await saveCandidateData({
+      await updateProfileMutation.mutateAsync({
         experience: updatedExperiences,
       });
 
@@ -247,7 +233,9 @@ export default function ProfileContent() {
       showToast(
         "success",
         "Success",
-        `Experience ${editingExperience ? "updated" : "added"} successfully!`
+        `Experience ${
+          editingExperienceIndex !== null ? "updated" : "added"
+        } successfully!`
       );
     } catch (error) {
       console.error("Error saving experience:", error);
@@ -255,18 +243,22 @@ export default function ProfileContent() {
     }
   };
 
-  const handleDeleteExperience = async (experienceId: string) => {
-    try {
-      if (!candidateData) return;
+  const handleDeleteExperience = async (index: number) => {
+    if (!candidateData) return;
 
-      const updatedExperiences = candidateData.experience.filter(
-        (exp) => exp._id !== experienceId
+    try {
+      // Ensure experience is always an array
+      const currentExperiences = Array.isArray(candidateData.experience)
+        ? candidateData.experience
+        : [];
+
+      const updatedExperiences = currentExperiences.filter(
+        (_, idx) => idx !== index
       );
 
-      await saveCandidateData({
+      await updateProfileMutation.mutateAsync({
         experience: updatedExperiences,
       });
-
       showToast("success", "Success", "Experience deleted successfully!");
     } catch (error) {
       console.error("Error deleting experience:", error);
@@ -276,63 +268,70 @@ export default function ProfileContent() {
 
   // Education Functions
   const handleAddEducation = () => {
-    setEditingEducation(null);
+    setEditingEducationIndex(null);
     setEducationForm({
       institution: "",
       degree: "",
       fieldOfStudy: "",
       startDate: "",
       endDate: "",
+      isCurrentlyStudying: false,
     });
     setShowEducationModal(true);
   };
 
-  const handleEditEducation = (education: Education) => {
-    setEditingEducation(education);
+  const handleEditEducation = (education: Education, index: number) => {
+    setEditingEducationIndex(index);
     setEducationForm({
       institution: education.institution,
       degree: education.degree,
       fieldOfStudy: education.fieldOfStudy || "",
       startDate: education.startDate.split("T")[0],
       endDate: education.endDate ? education.endDate.split("T")[0] : "",
+      isCurrentlyStudying: !education.endDate,
     });
     setShowEducationModal(true);
   };
 
   const handleSaveEducation = async () => {
-    try {
-      if (!candidateData) return;
+    if (!candidateData) return;
 
+    try {
       const newEducation: Education = {
-        _id: editingEducation?._id || undefined,
         institution: educationForm.institution,
         degree: educationForm.degree,
         fieldOfStudy: educationForm.fieldOfStudy,
         startDate: educationForm.startDate,
-        endDate: educationForm.endDate,
+        endDate: educationForm.isCurrentlyStudying
+          ? undefined
+          : educationForm.endDate,
       };
 
-      let updatedEducation: Education[];
+      // Ensure education is always an array
+      const currentEducation = Array.isArray(candidateData.education)
+        ? candidateData.education
+        : [];
 
-      if (editingEducation) {
+      let updatedEducation: Education[];
+      if (editingEducationIndex !== null) {
         // Update existing education
-        updatedEducation = candidateData.education.map((edu) =>
-          edu._id === editingEducation._id ? newEducation : edu
+        updatedEducation = currentEducation.map((edu, idx) =>
+          idx === editingEducationIndex ? newEducation : edu
         );
       } else {
         // Add new education
-        updatedEducation = [...candidateData.education, newEducation];
+        updatedEducation = [...currentEducation, newEducation];
       }
 
-      await saveCandidateData({
-        education: updatedEducation,
-      });
+      await updateProfileMutation.mutateAsync({ education: updatedEducation });
 
       setShowEducationModal(false);
       showToast(
         "success",
         "Success",
-        `Education ${editingEducation ? "updated" : "added"} successfully!`
+        `Education ${
+          editingEducationIndex !== null ? "updated" : "added"
+        } successfully!`
       );
     } catch (error) {
       console.error("Error saving education:", error);
@@ -340,18 +339,20 @@ export default function ProfileContent() {
     }
   };
 
-  const handleDeleteEducation = async (educationId: string) => {
-    try {
-      if (!candidateData) return;
+  const handleDeleteEducation = async (index: number) => {
+    if (!candidateData) return;
 
-      const updatedEducation = candidateData.education.filter(
-        (edu) => edu._id !== educationId
+    try {
+      // Ensure education is always an array
+      const currentEducation = Array.isArray(candidateData.education)
+        ? candidateData.education
+        : [];
+
+      const updatedEducation = currentEducation.filter(
+        (_, idx) => idx !== index
       );
 
-      await saveCandidateData({
-        education: updatedEducation,
-      });
-
+      await updateProfileMutation.mutateAsync({ education: updatedEducation });
       showToast("success", "Success", "Education deleted successfully!");
     } catch (error) {
       console.error("Error deleting education:", error);
@@ -366,17 +367,15 @@ export default function ProfileContent() {
   };
 
   const handleSaveSkills = async () => {
-    try {
-      if (!candidateData) return;
+    if (!candidateData) return;
 
+    try {
       const skillsArray = skillsInput
         .split(",")
         .map((skill) => skill.trim())
         .filter((skill) => skill);
 
-      await saveCandidateData({
-        skills: skillsArray,
-      });
+      await updateProfileMutation.mutateAsync({ skills: skillsArray });
 
       setShowSkillsModal(false);
       showToast("success", "Success", "Skills updated successfully!");
@@ -397,7 +396,7 @@ export default function ProfileContent() {
         socialLinks: formData.socialLinks,
       };
 
-      await saveCandidateData(profileData);
+      await updateProfileMutation.mutateAsync(profileData);
 
       showToast(
         "success",
@@ -414,8 +413,8 @@ export default function ProfileContent() {
   const handleCancel = () => {
     if (candidateData) {
       setFormData({
-        name: candidateData.name,
-        email: candidateData.email,
+        name: candidateData.name || "",
+        email: candidateData.email || "",
         phone: candidateData.phone || "",
         address: candidateData.address || "",
         bio: candidateData.bio || "",
@@ -427,14 +426,6 @@ export default function ProfileContent() {
       });
     }
     setIsEditing(false);
-  };
-
-  const handleEditToggle = () => {
-    if (isEditing) {
-      handleCancel();
-    } else {
-      setIsEditing(true);
-    }
   };
 
   if (isLoading) {
@@ -469,7 +460,7 @@ export default function ProfileContent() {
           </p>
         </div>
         <button
-          onClick={handleEditToggle}
+          onClick={() => (isEditing ? handleCancel() : setIsEditing(true))}
           type="button"
           className="flex items-center px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90 transition-colors"
         >
@@ -510,7 +501,7 @@ export default function ProfileContent() {
                   <input
                     type="email"
                     value={formData.email}
-                    disabled // Email should typically not be editable
+                    disabled
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
                   />
                   <p className="text-xs text-gray-500 mt-1">
@@ -626,10 +617,13 @@ export default function ProfileContent() {
                 <button
                   onClick={handleSave}
                   type="button"
-                  className="flex items-center px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90 transition-colors"
+                  disabled={updateProfileMutation.isPending}
+                  className="flex items-center px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90 transition-colors disabled:opacity-50"
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  Save Changes
+                  {updateProfileMutation.isPending
+                    ? "Saving..."
+                    : "Save Changes"}
                 </button>
                 <button
                   onClick={handleCancel}
@@ -680,13 +674,11 @@ export default function ProfileContent() {
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-5 h-5 text-gray-400 flex items-center justify-center">
-                      <Briefcase className="w-5 h-5" />
-                    </div>
+                    <Briefcase className="w-5 h-5 text-gray-400" />
                     <div>
                       <p className="text-sm text-gray-600">Role</p>
                       <p className="font-medium capitalize">
-                        {candidateData.role}
+                        {candidateData?.role}
                       </p>
                     </div>
                   </div>
@@ -766,8 +758,8 @@ export default function ProfileContent() {
         </div>
         <div className="p-6 space-y-6">
           {candidateData.experience && candidateData.experience.length > 0 ? (
-            candidateData.experience.map((exp) => (
-              <div key={exp._id} className="border-l-4 border-blue-500 pl-4">
+            candidateData.experience.map((exp, index) => (
+              <div key={index} className="border-l-4 border-blue-500 pl-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900">
@@ -779,7 +771,9 @@ export default function ProfileContent() {
                     <p className="text-sm text-gray-600 flex items-center mt-1">
                       <Calendar className="w-4 h-4 mr-1" />
                       {new Date(exp.startDate).toLocaleDateString()} -{" "}
-                      {exp.isCurrentlyWorking || !exp.endDate
+                      {exp.isCurrentlyWorking ||
+                      !exp.endDate ||
+                      exp.endDate === "ongoing"
                         ? "Present"
                         : new Date(exp.endDate).toLocaleDateString()}
                     </p>
@@ -791,13 +785,13 @@ export default function ProfileContent() {
                   </div>
                   <div className="flex space-x-2 ml-4">
                     <button
-                      onClick={() => handleEditExperience(exp)}
+                      onClick={() => handleEditExperience(exp, index)}
                       className="text-gray-400 hover:text-blue-600 transition-colors"
                     >
                       <Edit3 className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => handleDeleteExperience(exp._id!)}
+                      onClick={() => handleDeleteExperience(index)}
                       className="text-gray-400 hover:text-red-600 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -829,8 +823,8 @@ export default function ProfileContent() {
         </div>
         <div className="p-6 space-y-6">
           {candidateData.education && candidateData.education.length > 0 ? (
-            candidateData.education.map((edu) => (
-              <div key={edu._id} className="border-l-4 border-green-500 pl-4">
+            candidateData.education.map((edu, index) => (
+              <div key={index} className="border-l-4 border-green-500 pl-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900">
@@ -855,13 +849,13 @@ export default function ProfileContent() {
                   </div>
                   <div className="flex space-x-2 ml-4">
                     <button
-                      onClick={() => handleEditEducation(edu)}
+                      onClick={() => handleEditEducation(edu, index)}
                       className="text-gray-400 hover:text-blue-600 transition-colors"
                     >
                       <Edit3 className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => handleDeleteEducation(edu._id!)}
+                      onClick={() => handleDeleteEducation(index)}
                       className="text-gray-400 hover:text-red-600 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -913,9 +907,11 @@ export default function ProfileContent() {
       {/* Experience Modal */}
       {showExperienceModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-semibold mb-4">
-              {editingExperience ? "Edit Experience" : "Add Experience"}
+              {editingExperienceIndex !== null
+                ? "Edit Experience"
+                : "Add Experience"}
             </h3>
             <div className="space-y-4">
               <div>
@@ -1031,9 +1027,10 @@ export default function ProfileContent() {
               </button>
               <button
                 onClick={handleSaveExperience}
-                className="px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90"
+                disabled={updateProfileMutation.isPending}
+                className="px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90 disabled:opacity-50"
               >
-                Save
+                {updateProfileMutation.isPending ? "Saving..." : "Save"}
               </button>
             </div>
           </div>
@@ -1043,9 +1040,11 @@ export default function ProfileContent() {
       {/* Education Modal */}
       {showEducationModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-semibold mb-4">
-              {editingEducation ? "Edit Education" : "Add Education"}
+              {editingEducationIndex !== null
+                ? "Edit Education"
+                : "Add Education"}
             </h3>
             <div className="space-y-4">
               <div>
@@ -1126,9 +1125,30 @@ export default function ProfileContent() {
                         endDate: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    disabled={educationForm.isCurrentlyStudying}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                   />
                 </div>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="currentlyStudying"
+                  checked={educationForm.isCurrentlyStudying}
+                  onChange={(e) =>
+                    setEducationForm({
+                      ...educationForm,
+                      isCurrentlyStudying: e.target.checked,
+                    })
+                  }
+                  className="mr-2"
+                />
+                <label
+                  htmlFor="currentlyStudying"
+                  className="text-sm text-gray-700"
+                >
+                  I currently study here
+                </label>
               </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
@@ -1140,9 +1160,10 @@ export default function ProfileContent() {
               </button>
               <button
                 onClick={handleSaveEducation}
-                className="px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90"
+                disabled={updateProfileMutation.isPending}
+                className="px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90 disabled:opacity-50"
               >
-                Save
+                {updateProfileMutation.isPending ? "Saving..." : "Save"}
               </button>
             </div>
           </div>
@@ -1180,9 +1201,10 @@ export default function ProfileContent() {
               </button>
               <button
                 onClick={handleSaveSkills}
-                className="px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90"
+                disabled={updateProfileMutation.isPending}
+                className="px-4 py-2 bg-primary-dark text-white rounded-lg hover:opacity-90 disabled:opacity-50"
               >
-                Save Skills
+                {updateProfileMutation.isPending ? "Saving..." : "Save Skills"}
               </button>
             </div>
           </div>

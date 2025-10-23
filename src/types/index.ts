@@ -26,7 +26,7 @@ export interface Education {
   degree: string;
   fieldOfStudy?: string;
   startDate: string;
-  endDate: string;
+  endDate?: string;
 }
 
 export interface Experience {
