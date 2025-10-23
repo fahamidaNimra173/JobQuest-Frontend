@@ -7,7 +7,7 @@ import { Candidate, SocialLinks, Education, Experience } from "@/types";
 import axiosInstance from "@/lib/axios";
 
 // Import all the new components
-import ProfileHeader from "./ProfileHeader";
+import ProfileHeader from "../ProfileHeader";
 import PersonalInfoSection from "./PersonalInfoSection";
 import ExperienceSection from "./ExperienceSection";
 import EducationSection from "./EducationSection";
@@ -431,7 +431,7 @@ export default function ProfileContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-4">
       <ProfileHeader isEditing={isEditing} onToggleEdit={handleToggleEdit} />
 
       <PersonalInfoSection
@@ -441,7 +441,6 @@ export default function ProfileContent() {
         onFormChange={setFormData}
         onSave={handleSavePersonalInfo}
         onCancel={handleCancelEdit}
-        onEditToggle={handleToggleEdit}
         isSaving={updateProfileMutation.isPending}
       />
 

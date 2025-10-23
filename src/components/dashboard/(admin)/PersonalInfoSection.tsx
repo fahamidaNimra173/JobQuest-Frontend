@@ -10,7 +10,7 @@ import {
   Github,
   Link as LinkIcon,
 } from "lucide-react";
-import { Candidate } from "@/types";
+import { Admin } from "@/types";
 
 interface ProfileFormData {
   name: string;
@@ -26,7 +26,7 @@ interface ProfileFormData {
 }
 
 interface PersonalInfoSectionProps {
-  candidateData: Candidate;
+  adminData: Admin;
   isEditing: boolean;
   formData: ProfileFormData;
   onFormChange: (data: ProfileFormData) => void;
@@ -36,7 +36,7 @@ interface PersonalInfoSectionProps {
 }
 
 export default function PersonalInfoSection({
-  candidateData,
+  adminData,
   isEditing,
   formData,
   onFormChange,
@@ -251,7 +251,7 @@ export default function PersonalInfoSection({
                   <div>
                     <p className="text-sm text-gray-600">Role</p>
                     <p className="font-medium capitalize">
-                      {candidateData?.role}
+                      {adminData?.role}
                     </p>
                   </div>
                 </div>
