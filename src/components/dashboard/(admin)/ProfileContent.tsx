@@ -8,7 +8,7 @@ import axiosInstance from "@/lib/axios";
 
 // Import all the new components
 // import PersonalInfoSection from "./PersonalInfoSection";
-import ProfileHeader from "../(candidate)/ProfileHeader";
+import ProfileHeader from "../ProfileHeader";
 import PersonalInfoSection from "./PersonalInfoSection";
 
 interface ProfileFormData {
@@ -163,7 +163,7 @@ export default function ProfileContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-4">
       <ProfileHeader isEditing={isEditing} onToggleEdit={handleToggleEdit} />
 
       <PersonalInfoSection
