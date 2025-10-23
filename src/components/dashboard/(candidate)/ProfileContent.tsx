@@ -441,7 +441,6 @@ export default function ProfileContent() {
         onFormChange={setFormData}
         onSave={handleSavePersonalInfo}
         onCancel={handleCancelEdit}
-        onEditToggle={handleToggleEdit}
         isSaving={updateProfileMutation.isPending}
       />
 

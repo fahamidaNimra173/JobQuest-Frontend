@@ -48,7 +48,7 @@ export interface Candidate {
   address?: string;
   bio?: string;
   role: string;
-  authProvider: string;
+  provider: string;
   socialLinks?: SocialLinks;
   education: Education[];
   experience: Experience[];
@@ -60,6 +60,22 @@ export interface Candidate {
   updatedAt: string;
 }
 
+export interface Admin {
+  _id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  profileImage?: string;
+  address?: string;
+  bio?: string;
+  role: string;
+  provider: string;
+  socialLinks?: SocialLinks;
+  resume?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Job types
 export interface Job {
   id: string;
@@ -67,7 +83,7 @@ export interface Job {
   company: string;
   location: string;
   salary?: string;
-  jobType: 'Full-time' | 'Part-time' | 'Contract' | 'Freelance';
+  jobType: "Full-time" | "Part-time" | "Contract" | "Freelance";
   description: string;
   requirements: string[];
   benefits?: string[];
@@ -83,7 +99,13 @@ export interface JobApplication {
   id: string;
   jobId: string;
   userId: string;
-  status: 'Applied' | 'Under Review' | 'Interview Scheduled' | 'Rejected' | 'Offer' | 'Accepted';
+  status:
+    | "Applied"
+    | "Under Review"
+    | "Interview Scheduled"
+    | "Rejected"
+    | "Offer"
+    | "Accepted";
   appliedDate: string;
   coverLetter?: string;
   resumeUrl?: string;
@@ -101,7 +123,7 @@ export interface JobAlert {
   salaryMin?: number;
   salaryMax?: number;
   jobType?: string;
-  frequency: 'Daily' | 'Weekly' | 'Monthly';
+  frequency: "Daily" | "Weekly" | "Monthly";
   isActive: boolean;
   createdDate: string;
   lastNotified?: string;
@@ -193,13 +215,13 @@ export interface UserSettings {
     reminders: boolean;
   };
   privacy: {
-    profileVisibility: 'public' | 'recruiters' | 'private';
+    profileVisibility: "public" | "recruiters" | "private";
     showEmail: boolean;
     showPhone: boolean;
     allowRecruiterContact: boolean;
   };
   preferences: {
-    theme: 'light' | 'dark' | 'system';
+    theme: "light" | "dark" | "system";
     language: string;
     timezone: string;
     compactMode: boolean;
@@ -226,8 +248,8 @@ export interface SearchFilters {
   salaryMax?: number;
   company?: string;
   remote?: boolean;
-  sortBy?: 'relevance' | 'date' | 'salary';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "relevance" | "date" | "salary";
+  sortOrder?: "asc" | "desc";
 }
 
 // Form types
