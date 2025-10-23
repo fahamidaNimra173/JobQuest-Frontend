@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import apiClient from "@/lib/api";
 import axiosInstance from "@/lib/axios";
 
 export default function ChangePasswordContent() {

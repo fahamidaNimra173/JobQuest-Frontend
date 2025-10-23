@@ -18,6 +18,7 @@ import {
   LucideIcon,
   Loader,
   FileText,
+  CreditCard,
 } from "lucide-react";
 import clsx from "clsx";
 // import { useToast } from "@/components/ui/Toast";
@@ -58,6 +59,11 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
           icon: MessageSquare,
         },
         { name: "My Profile", href: "/dashboard/admin-profile", icon: User },
+        {
+          name: "Subcription Plans",
+          href: "/dashboard/subcription-plans",
+          icon: CreditCard,
+        },
         {
           name: "Change Password",
           href: "/dashboard/change-password",
