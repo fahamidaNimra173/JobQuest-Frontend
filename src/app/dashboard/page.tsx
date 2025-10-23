@@ -14,8 +14,6 @@ const Dashboard = () => {
     return null;
   }
 
-  console.log('user from dashboard', user)
-
   if (user?.role === "admin") {
     return <AdminDashboard />;
   } else if (user?.role === "candidate") {

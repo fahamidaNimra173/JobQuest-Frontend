@@ -85,7 +85,7 @@ export default function Navbar() {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className={`flex items-center space-x-2 transition-colors hover:opacity-80 text-white`}
                 >
-                  <span>{user?.name}</span>
+                  <span>{`${user?.firstName} ${user?.lastName}`}</span>
                   <ChevronDown size={16} />
                 </button>
 

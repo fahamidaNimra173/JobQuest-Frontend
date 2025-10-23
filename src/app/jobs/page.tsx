@@ -1,6 +1,3 @@
-
-
-
 import { Search, MapPin, Briefcase, Calendar, Tag, Filter } from 'lucide-react';
 import AllJobs from '../component/AllJobs';
 
@@ -45,7 +42,7 @@ export default async function BrowseJobsPage() {
 
               {/* Search by Title */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                   <Search size={16} />
                   Job Title
                 </label>
@@ -58,7 +55,7 @@ export default async function BrowseJobsPage() {
 
               {/* Filter by Location */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                   <MapPin size={16} />
                   Location
                 </label>
@@ -74,7 +71,7 @@ export default async function BrowseJobsPage() {
 
               {/* Filter by Work Arrangement */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                <label className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
                   <Briefcase size={16} />
                   Work Arrangement
                 </label>
@@ -93,7 +90,7 @@ export default async function BrowseJobsPage() {
 
               {/* Filter by Job Type */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                <label className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
                   <Briefcase size={16} />
                   Job Type
                 </label>
@@ -112,7 +109,7 @@ export default async function BrowseJobsPage() {
 
               {/* Filter by Date Posted */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                <label className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
                   <Calendar size={16} />
                   Date Posted
                 </label>
@@ -132,7 +129,7 @@ export default async function BrowseJobsPage() {
 
               {/* Filter by Category */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <label className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                   <Tag size={16} />
                   Category
                 </label>
