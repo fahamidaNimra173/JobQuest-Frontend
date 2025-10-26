@@ -282,11 +282,11 @@ export default function CommunityPage() {
             boxShadow: "0 2px 12px rgba(118, 112, 214, 0.08)",
           }}
         >
-          {!user && (
+          {/* {!user && (
             <p style={{ color: "red", marginBottom: "12px", fontSize: "14px" }}>
               You must be logged in to post.
             </p>
-          )}
+          )} */}
           <form
             onSubmit={handleSubmit}
             style={{ display: "flex", flexDirection: "column", gap: "12px" }}
@@ -317,7 +317,8 @@ export default function CommunityPage() {
               value={newPost}
               onChange={(e) => setNewPost(e.target.value)}
               placeholder="What's on your mind?"
-              disabled={!user||createPostMutation.isPending}
+              // disabled={!user||createPostMutation.isPending}
+              disabled={createPostMutation.isPending}
               style={{
                 color: 'black',
                 width: "100%",
@@ -349,8 +350,13 @@ export default function CommunityPage() {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <button
                 type="submit"
-                disabled={
-                  !user || !newPost.trim() ||
+                // disabled={
+                //   !user || !newPost.trim() ||
+                //   !newPostTitle.trim() ||
+                //   createPostMutation.isPending
+                // }
+                 disabled={
+                  !newPost.trim() ||
                   !newPostTitle.trim() ||
                   createPostMutation.isPending
                 }

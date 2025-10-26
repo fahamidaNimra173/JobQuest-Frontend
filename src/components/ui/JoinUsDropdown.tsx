@@ -41,21 +41,24 @@ export default function JoinUsDropdown() {
         <div className="absolute right-0 text-center mt-2 w-56 bg-primary-dark dark:bg-primary-dark rounded-md shadow-lg py-1 border border-gray-200 dark:border-gray-700 z-50">
           <Link
             href="/login"
-            className="block font-bold font-mono mx-6 py-2 border-b-2 text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 hover:text-white dark:hover:bg-gray-700 transition-colors"
+            className="block font-bold font-mono mx-6 py-2 border-b-2 text-sm text-gray-900 dark:text-gray-100 hover:bg-white/10 hover:backdrop-blur-md hover:text-white hover:border-white/30 transition-all duration-300 rounded-md"
+
             onClick={() => setIsOpen(false)}
           >
             Login
           </Link>
           <Link
             href="/signup/candidate"
-            className="block mx-2 font-medium font-mono border-b-1 py-2 text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 hover:text-white dark:hover:bg-gray-700 transition-colors"
+            className="block mx-2 font-medium font-mono border-b py-2 text-sm text-gray-900 dark:text-gray-100 hover:bg-white/10 hover:backdrop-blur-md hover:text-white hover:border-white/30 transition-all duration-300 rounded-md"
+
             onClick={() => setIsOpen(false)}
           >
             Sign Up as Candidate
           </Link>
           <Link
             href="/signup/employer"
-            className="block px-4 py-2 font-medium font-mono text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-100 hover:text-white dark:hover:bg-gray-700 transition-colors"
+            className="block px-4 py-2 font-medium font-mono text-sm text-gray-900 dark:text-gray-100 hover:bg-white/10 hover:backdrop-blur-md hover:text-white hover:border-white/30 transition-all duration-300 rounded-md"
+
             onClick={() => setIsOpen(false)}
           >
             Sign Up as Employer
