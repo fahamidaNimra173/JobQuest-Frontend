@@ -16,7 +16,7 @@ interface Post {
   totalLikes: number;
   totalHaha: number;
   totalLove: number;
-  postDate: string;
+  createdAt: string;
   userReaction?: "like" | "love" | "haha" | null;
 }
 
@@ -36,7 +36,8 @@ interface ReactionData {
 }
 
 // Time ago helper function
-const getTimeAgo = (timestamp: string): string => {
+const getTimeAgo = (timestamp?: string): string => {
+  if(!timestamp) return "just now"
   const now = new Date();
   const postTime = new Date(timestamp);
   const diffInMs = now.getTime() - postTime.getTime();
@@ -282,11 +283,11 @@ export default function CommunityPage() {
             boxShadow: "0 2px 12px rgba(118, 112, 214, 0.08)",
           }}
         >
-          {/* {!user && (
+          {!user && (
             <p style={{ color: "red", marginBottom: "12px", fontSize: "14px" }}>
               You must be logged in to post.
             </p>
-          )} */}
+          )}
           <form
             onSubmit={handleSubmit}
             style={{ display: "flex", flexDirection: "column", gap: "12px" }}
@@ -350,16 +351,16 @@ export default function CommunityPage() {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <button
                 type="submit"
-                // disabled={
-                //   !user || !newPost.trim() ||
-                //   !newPostTitle.trim() ||
-                //   createPostMutation.isPending
-                // }
-                 disabled={
-                  !newPost.trim() ||
+                disabled={
+                  !user || !newPost.trim() ||
                   !newPostTitle.trim() ||
                   createPostMutation.isPending
                 }
+                //  disabled={
+                //   !newPost.trim() ||
+                //   !newPostTitle.trim() ||
+                //   createPostMutation.isPending
+                // }
                 style={{
                   background:
                     newPost.trim() &&
@@ -525,7 +526,7 @@ export default function CommunityPage() {
                       {post.name}
                     </div>
                     <div style={{ fontSize: "13px", color: "#9da0dc" }}>
-                      {getTimeAgo(post.postDate)}
+                      {getTimeAgo(post.createdAt)}
                     </div>
                   </div>
                 </div>

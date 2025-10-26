@@ -85,7 +85,7 @@ export default function Navbar() {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className={`flex items-center space-x-2 transition-colors hover:opacity-80 text-white`}
                 >
-                  <span>{`${user?.firstName} ${user?.lastName}`}</span>
+                  <span>{`${user?.firstName}`}</span>
                   <ChevronDown size={16} />
                 </button>
 
@@ -142,7 +142,7 @@ export default function Navbar() {
             {user ? (
               <div className=" pt-2 border-t-2 border-primary-lightest bg-primary-dark text-white rounded-2xl px-3 py-2 mt-2">
                 <div className="py-2 mb-3 border-b-2 px-4 text-center  text-[22px] tracking-widest border-b-white rounded-2xl  font-bold uppercase  font-mono">
-                  {user?.name}
+                  {user?.role}
                 </div>
                 <a
                   href="/dashboard"

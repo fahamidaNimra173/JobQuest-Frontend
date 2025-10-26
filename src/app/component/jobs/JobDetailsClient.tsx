@@ -31,7 +31,7 @@ export default function JobDetailsClient({
   const { data: candidateData } = useQuery({
     queryKey: ["candidate"],
     queryFn: async () => {
-      const response = await axiosInstance.get("/candidates/me");
+      const response = await axiosInstance.get(`/candidates/${user.email}`);
       return response.data;
     },
     retry: false,
