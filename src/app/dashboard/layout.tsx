@@ -15,8 +15,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <Sidebar />
 
           {/* Main Content */}
-          <main className="flex-1 lg:ml-64 p-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-all duration-300">
-            <div className="max-w-[1500px] mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+          <main className="flex-1 lg:ml-64 p-6 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-all duration-300">
+            <div className="max-w-[1500px] min-h-screen mx-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
               {children}
             </div>
           </main>

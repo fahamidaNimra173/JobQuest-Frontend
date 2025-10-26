@@ -42,11 +42,11 @@ const getNavigationByRole = (role: UserRole): NavigationItem[] => {
         { name: "Dashboard", href: "/dashboard", icon: Briefcase },
         { name: "Statistics", href: "/dashboard/statistics", icon: BarChart3 },
         { name: "Job Posts", href: "/dashboard/job-posts", icon: Briefcase },
-        {
-          name: "Job Applies",
-          href: "/dashboard/job-applies",
-          icon: ClipboardList,
-        },
+        // {
+        //   name: "Job Applies",
+        //   href: "/dashboard/job-applies",
+        //   icon: ClipboardList,
+        // },
         { name: "Manage Users", href: "/dashboard/manage-users", icon: Users },
         {
           name: "Manage Reviews",
