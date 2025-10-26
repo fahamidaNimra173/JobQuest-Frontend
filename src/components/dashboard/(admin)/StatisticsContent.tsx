@@ -275,226 +275,224 @@ const StatisticsContent = () => {
   ];
 
   return (
-    <div className="w-full min-h-screen">
-      <div className="px-4">
-        <div className="mb-6">
-          <Breadcrumb items={breadcrumbItems} />
-        </div>
+    <div className="w-full min-h-screen px-4">
+      <div className="mb-6">
+        <Breadcrumb items={breadcrumbItems} />
+      </div>
 
-        {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">
-            Statistics Dashboard
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">
-            Overview of platform metrics and analytics
-          </p>
-        </div>
+      {/* Header */}
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800">
+          Statistics
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600 mt-2">
+          Overview of platform metrics and analytics
+        </p>
+      </div>
 
-        {/* Stats Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 sm:mb-8">
-          {statsCards.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
+      {/* Stats Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 sm:mb-8">
+        {statsCards.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-lg hover:shadow-xl p-4 sm:p-6 transition-shadow"
+            >
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className={`${stat.color} p-2 sm:p-3 rounded-lg`}>
+                  <Icon className="text-white text-xl sm:text-2xl" />
+                </div>
+                <span className="text-green-600 text-xs sm:text-sm font-semibold">
+                  {stat.change}
+                </span>
+              </div>
+              <h3 className="text-gray-600 text-xs sm:text-sm font-medium mb-1">
+                {stat.title}
+              </h3>
+              <p className="text-xl sm:text-2xl font-bold text-gray-800">
+                {stat.value}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Job Categories Pie Chart with Cards Grid */}
+      <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 mb-6 sm:mb-8">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 sm:mb-6">
+          Job Categories Distribution
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Pie Chart */}
+          <div className="flex items-center justify-center min-h-[250px] sm:min-h-[300px]">
+            <ResponsiveContainer width="100%" height={400}>
+              <PieChart>
+                <Pie
+                  data={jobCategoriesData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={renderCustomLabel}
+                  outerRadius={150}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {jobCategoriesData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Category Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            {jobCategoriesData.map((category, index) => (
               <div
                 key={index}
-                className="bg-white rounded-lg shadow-lg hover:shadow-xl p-4 sm:p-6 transition-shadow"
+                className="border-2 rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow"
+                style={{ borderColor: COLORS[index] }}
               >
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <div className={`${stat.color} p-2 sm:p-3 rounded-lg`}>
-                    <Icon className="text-white text-xl sm:text-2xl" />
-                  </div>
-                  <span className="text-green-600 text-xs sm:text-sm font-semibold">
-                    {stat.change}
-                  </span>
-                </div>
-                <h3 className="text-gray-600 text-xs sm:text-sm font-medium mb-1">
-                  {stat.title}
+                <div
+                  className="w-3 h-3 sm:w-4 sm:h-4 rounded-full mb-2 sm:mb-3"
+                  style={{ backgroundColor: COLORS[index] }}
+                />
+                <h3 className="text-gray-700 font-semibold text-sm sm:text-base mb-1">
+                  {category.name}
                 </h3>
                 <p className="text-xl sm:text-2xl font-bold text-gray-800">
-                  {stat.value}
+                  {category.value}
+                </p>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                  {(
+                    (category.value /
+                      jobCategoriesData.reduce(
+                        (sum, cat) => sum + cat.value,
+                        0
+                      )) *
+                    100
+                  ).toFixed(1)}
+                  % of total
                 </p>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Job Categories Pie Chart with Cards Grid */}
-        <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 mb-6 sm:mb-8">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 sm:mb-6">
-            Job Categories Distribution
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Pie Chart */}
-            <div className="flex items-center justify-center min-h-[250px] sm:min-h-[300px]">
-              <ResponsiveContainer width="100%" height={400}>
-                <PieChart>
-                  <Pie
-                    data={jobCategoriesData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={renderCustomLabel}
-                    outerRadius={150}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {jobCategoriesData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Category Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              {jobCategoriesData.map((category, index) => (
-                <div
-                  key={index}
-                  className="border-2 rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow"
-                  style={{ borderColor: COLORS[index] }}
-                >
-                  <div
-                    className="w-3 h-3 sm:w-4 sm:h-4 rounded-full mb-2 sm:mb-3"
-                    style={{ backgroundColor: COLORS[index] }}
-                  />
-                  <h3 className="text-gray-700 font-semibold text-sm sm:text-base mb-1">
-                    {category.name}
-                  </h3>
-                  <p className="text-xl sm:text-2xl font-bold text-gray-800">
-                    {category.value}
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                    {(
-                      (category.value /
-                        jobCategoriesData.reduce(
-                          (sum, cat) => sum + cat.value,
-                          0
-                        )) *
-                      100
-                    ).toFixed(1)}
-                    % of total
-                  </p>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Monthly Job Applies by Type */}
-        <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 mb-6 sm:mb-8">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 sm:mb-6">
-            Monthly Job Applications by Type
-          </h2>
-          <div className="w-full overflow-x-auto">
-            <div className="min-w-[500px] sm:min-w-0">
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={monthlyAppliesData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip contentStyle={{ fontSize: "14px" }} />
-                  <Legend wrapperStyle={{ fontSize: "12px" }} iconSize={12} />
-                  <Line
-                    type="monotone"
-                    dataKey="fullTime"
-                    stroke="#8b5cf6"
-                    strokeWidth={2}
-                    name="Full-time"
-                    dot={{ r: 3 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="partTime"
-                    stroke="#10b981"
-                    strokeWidth={2}
-                    name="Part-time"
-                    dot={{ r: 3 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="internship"
-                    stroke="#f59e0b"
-                    strokeWidth={2}
-                    name="Internship"
-                    dot={{ r: 3 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="contractual"
-                    stroke="#ef4444"
-                    strokeWidth={2}
-                    name="Contractual"
-                    dot={{ r: 3 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+      {/* Monthly Job Applies by Type */}
+      <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 mb-6 sm:mb-8">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 sm:mb-6">
+          Monthly Job Applications by Type
+        </h2>
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-[500px] sm:min-w-0">
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={monthlyAppliesData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip contentStyle={{ fontSize: "14px" }} />
+                <Legend wrapperStyle={{ fontSize: "12px" }} iconSize={12} />
+                <Line
+                  type="monotone"
+                  dataKey="fullTime"
+                  stroke="#8b5cf6"
+                  strokeWidth={2}
+                  name="Full-time"
+                  dot={{ r: 3 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="partTime"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  name="Part-time"
+                  dot={{ r: 3 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="internship"
+                  stroke="#f59e0b"
+                  strokeWidth={2}
+                  name="Internship"
+                  dot={{ r: 3 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="contractual"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  name="Contractual"
+                  dot={{ r: 3 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
+      </div>
 
-        {/* Monthly Job Posts and Applies with Tabs */}
-        <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 sm:mb-6">
-            Monthly Overview
-          </h2>
+      {/* Monthly Job Posts and Applies with Tabs */}
+      <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 sm:mb-6">
+          Monthly Overview
+        </h2>
 
-          {/* Tabs */}
-          <div className="flex gap-2 mb-4 sm:mb-6 border-b border-gray-200 overflow-x-auto">
-            <button
-              onClick={() => setActiveTab("posts")}
-              className={`px-4 sm:px-6 py-2 sm:py-3 font-medium transition-colors whitespace-nowrap text-sm sm:text-base ${
-                activeTab === "posts"
-                  ? "text-purple-600 border-b-2 border-purple-600"
-                  : "text-gray-600 hover:text-gray-800"
-              }`}
-            >
-              Job Posts
-            </button>
-            <button
-              onClick={() => setActiveTab("applies")}
-              className={`px-4 sm:px-6 py-2 sm:py-3 font-medium transition-colors whitespace-nowrap text-sm sm:text-base ${
-                activeTab === "applies"
-                  ? "text-purple-600 border-b-2 border-purple-600"
-                  : "text-gray-600 hover:text-gray-800"
-              }`}
-            >
-              Job Applies
-            </button>
-          </div>
+        {/* Tabs */}
+        <div className="flex gap-2 mb-4 sm:mb-6 border-b border-gray-200 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab("posts")}
+            className={`px-4 sm:px-6 py-2 sm:py-3 font-medium transition-colors whitespace-nowrap text-sm sm:text-base ${
+              activeTab === "posts"
+                ? "text-purple-600 border-b-2 border-purple-600"
+                : "text-gray-600 hover:text-gray-800"
+            }`}
+          >
+            Job Posts
+          </button>
+          <button
+            onClick={() => setActiveTab("applies")}
+            className={`px-4 sm:px-6 py-2 sm:py-3 font-medium transition-colors whitespace-nowrap text-sm sm:text-base ${
+              activeTab === "applies"
+                ? "text-purple-600 border-b-2 border-purple-600"
+                : "text-gray-600 hover:text-gray-800"
+            }`}
+          >
+            Job Applies
+          </button>
+        </div>
 
-          {/* Chart */}
-          <div className="w-full overflow-x-auto">
-            <div className="min-w-[500px] sm:min-w-0">
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={
-                    activeTab === "posts"
-                      ? monthlyJobPostsData
-                      : monthlyJobAppliesData
+        {/* Chart */}
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-[500px] sm:min-w-0">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={
+                  activeTab === "posts"
+                    ? monthlyJobPostsData
+                    : monthlyJobAppliesData
+                }
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip contentStyle={{ fontSize: "14px" }} />
+                <Legend wrapperStyle={{ fontSize: "12px" }} iconSize={12} />
+                <Bar
+                  dataKey="count"
+                  fill={activeTab === "posts" ? "#8b5cf6" : "#6366f1"}
+                  radius={[8, 8, 0, 0]}
+                  name={
+                    activeTab === "posts" ? "Job Posts" : "Job Applications"
                   }
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip contentStyle={{ fontSize: "14px" }} />
-                  <Legend wrapperStyle={{ fontSize: "12px" }} iconSize={12} />
-                  <Bar
-                    dataKey="count"
-                    fill={activeTab === "posts" ? "#8b5cf6" : "#6366f1"}
-                    radius={[8, 8, 0, 0]}
-                    name={
-                      activeTab === "posts" ? "Job Posts" : "Job Applications"
-                    }
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
