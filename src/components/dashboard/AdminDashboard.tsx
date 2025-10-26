@@ -87,7 +87,7 @@ const AdminDashboard = () => {
       salary: "$130k - $160k",
       postedDate: "5 hours ago",
       applicants: 67,
-      status: "Active",
+      status: "Closed",
     },
     {
       id: 3,
@@ -153,7 +153,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full">
       <div className="px-4">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
@@ -161,12 +161,13 @@ const AdminDashboard = () => {
             Admin Dashboard
           </h1>
           <p className="text-sm sm:text-base text-gray-600 mt-2">
-            Welcome back! Here&apos;s what&apos;s happening with your platform today.
+            Welcome back! Here&apos;s what&apos;s happening with your platform
+            today.
           </p>
         </div>
 
         {/* Stats Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6 sm:mb-8">
           {statsCards.map((stat, index) => {
             const Icon = stat.icon;
             return (
@@ -195,7 +196,7 @@ const AdminDashboard = () => {
 
         {/* Recent Job Posts Section */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-          <div className="p-5 sm:p-6 border-b border-gray-200">
+          <div className="p-4 sm:p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
