@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -6,6 +7,8 @@ import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { PhoneNumberUtil } from "google-libphonenumber";
 import { useAuth } from "@/providers/AuthProvider";
+import Image from "next/image";
+import singnupImage from '../../../../../public/signup-resgister.webp'
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -18,7 +21,7 @@ const isPhoneValid = (phone: string) => {
 };
 
 const EmployerSignUp = () => {
-  const { register } = useAuth();
+  const { register, GoogleLogin, setRoleForGoogleSignUp } = useAuth();
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
     useState<boolean>(false);
@@ -38,7 +41,7 @@ const EmployerSignUp = () => {
     const lastName = (form.elements.namedItem("lastName") as HTMLInputElement)
       .value;
     const companyName = (
-      form.elements.namedItem("company_name") as HTMLInputElement
+      form.elements.namedItem("companyName") as HTMLInputElement
     ).value;
     const email = (form.elements.namedItem("email") as HTMLInputElement).value;
     const password = (form.elements.namedItem("password") as HTMLInputElement)
@@ -67,187 +70,231 @@ const EmployerSignUp = () => {
   };
 
   return (
-    <section className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
-        {/* title */}
-        <h1 className="text-2xl font-bold text-gray-800 mb-2 text-center">
-          Create an Employer Account
-        </h1>
-
-        <p className="text-gray-600 mb-6 text-sm text-center">
-          Post job openings and hire top talents
-        </p>
-
-        {/* register form */}
-        <form onSubmit={handleRegister} className="space-y-4">
-          <div>
-            <label className="text-sm text-gray-600 font-medium">
-              First Name
-            </label>
-            <input
-              type="text"
-              name="firstName"
-              className="w-full mt-1 rounded-md border border-gray-300 bg-gray-50 text-gray-800 text-sm p-2.5 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              placeholder="Enter your first name"
-              required
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-primary-lightest transition-colors duration-300">
+          {/* Left side illustration */}
+          <div className="hidden md:flex md:w-1/2 items-center justify-center">
+            <Image
+              src={singnupImage}
+              alt="Candidate Signup Illustration"
+              width={450}
+              height={450}
+              className="object-contain"
             />
           </div>
-
-          <div>
-            <label className="text-sm text-gray-600 font-medium">
-              Last Name
-            </label>
-            <input
-              type="text"
-              name="lastName"
-              className="w-full mt-1 rounded-md border border-gray-300 bg-gray-50 text-gray-800 text-sm p-2.5 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              placeholder="Enter your last name"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-gray-600 font-medium">
-              Company Name
-            </label>
-            <input
-              type="text"
-              name="company_name"
-              className="w-full mt-1 rounded-md border border-gray-300 bg-gray-50 text-gray-800 text-sm p-2.5 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              placeholder="Enter your company name"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-gray-600 font-medium">Email</label>
-            <input
-              type="email"
-              name="email"
-              className="w-full mt-1 rounded-md border border-gray-300 bg-gray-50 text-gray-800 text-sm p-2.5 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="text-sm text-gray-600 font-medium">Phone</label>
-            <PhoneInput
-              defaultCountry="bd"
-              value={phone}
-              onChange={(phone) => setPhone(phone)}
-              inputStyle={{
-                width: "100%",
-                backgroundColor: "#f9fafb",
-                color: "#1f2937",
-                border: "1px solid #d1d5db",
-                borderRadius: "6px",
-                padding: "8px",
-                fontSize: "14px",
-              }}
-              required
-            />
-            {!isNumberValid && (
-              <p className="text-red-500 text-xs mt-1 font-medium">
-                Invalid phone number
+    
+          {/* Right side form */}
+          <div className="w-full md:w-1/2 flex items-center justify-center py-6 px-4 min-h-screen bg-white mt-12 dark:bg-gray-800">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full p-8">
+              <h1 className="text-3xl font-semibold text-center mb-4 text-primary-dark">
+                Create an Employer Account
+              </h1>
+              <p className="text-center text-gray-500 dark:text-gray-400 mb-6">
+                Join Job Quest to explore new opportunities
               </p>
-            )}
-          </div>
-
-          <div>
-            <label className="text-sm text-gray-600 font-medium">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type={isShowPassword ? "text" : "password"}
-                name="password"
-                className={`w-full mt-1 rounded-md border bg-gray-50 text-gray-800 text-sm p-2.5 focus:ring-2 focus:ring-blue-400 focus:outline-none ${
-                  !isPasswordValid ? "border-red-500" : "border-gray-300"
-                }`}
-                placeholder="Enter your password"
-                required
-              />
-              {isShowPassword ? (
-                <FaEyeSlash
-                  onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer text-gray-600"
-                  size={17}
-                />
-              ) : (
-                <FaEye
-                  onClick={() => setIsShowPassword(!isShowPassword)}
-                  className="absolute top-3 right-3 cursor-pointer text-gray-600"
-                  size={17}
-                />
-              )}
+    
+              <form onSubmit={handleRegister} className="space-y-5">
+                {/* First Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="Enter your first name"
+                    required
+                    className="w-full px-4 py-2 border border-primary-light rounded-lg bg-transparent focus:outline-none focus:border-primary-dark placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                  />
+                </div>
+    
+                {/* Last Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Enter your last name"
+                    required
+                    className="w-full px-4 py-2 border border-primary-light rounded-lg bg-transparent focus:outline-none focus:border-primary-dark placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                  />
+                </div>
+                {/* Last Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Company Name
+                  </label>
+                  <input
+                    type="text"
+                    name="companyName"
+                    placeholder="Enter your company name"
+                    required
+                    className="w-full px-4 py-2 border border-primary-light rounded-lg bg-transparent focus:outline-none focus:border-primary-dark placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                  />
+                </div>
+    
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                    className="w-full px-4 py-2 border border-primary-light rounded-lg bg-transparent focus:outline-none focus:border-primary-dark placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                  />
+                </div>
+    
+                {/* Phone */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Phone Number
+                  </label>
+                  <PhoneInput
+                    defaultCountry="bd"
+                    value={phone}
+                    onChange={(phone) => setPhone(phone)}
+                    inputStyle={{
+                      width: "100%",
+                      backgroundColor: "transparent",
+                      color: "inherit",
+                      border: "1px solid var(--primary-light)",
+                      borderRadius: "8px",
+                      padding: "0.5rem",
+                    }}
+                    required
+                  />
+                  {!isNumberValid && (
+                    <p className="text-red-600 text-xs mt-1">
+                      Please enter a valid phone number.
+                    </p>
+                  )}
+                </div>
+    
+                {/* Password */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={isShowPassword ? "text" : "password"}
+                      name="password"
+                      placeholder="Enter your password"
+                      required
+                      className={`w-full px-4 py-2 border rounded-lg bg-transparent focus:outline-none ${isPasswordValid
+                        ? "border-primary-light focus:border-primary-dark"
+                        : "border-red-500"
+                        } placeholder:text-gray-500 dark:placeholder:text-gray-400`}
+                    />
+                    {isShowPassword ? (
+                      <FaEyeSlash
+                        onClick={() => setIsShowPassword(!isShowPassword)}
+                        className="absolute top-3 right-3 cursor-pointer text-gray-600 dark:text-gray-300"
+                        size={18}
+                      />
+                    ) : (
+                      <FaEye
+                        onClick={() => setIsShowPassword(!isShowPassword)}
+                        className="absolute top-3 right-3 cursor-pointer text-gray-600 dark:text-gray-300"
+                        size={18}
+                      />
+                    )}
+                  </div>
+                  {!isPasswordValid && (
+                    <p className="text-red-600 text-xs mt-1">
+                      Password must have at least 8 characters including:
+                      <br />• One number, one lowercase, and one uppercase letter.
+                    </p>
+                  )}
+                </div>
+    
+                {/* Confirm Password */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={isShowConfirmPassword ? "text" : "password"}
+                      name="confirm_password"
+                      placeholder="Re-enter your password"
+                      required
+                      className="w-full px-4 py-2 border border-primary-light rounded-lg bg-transparent focus:outline-none focus:border-primary-dark placeholder:text-gray-500 dark:placeholder:text-gray-400"
+                    />
+                    {isShowConfirmPassword ? (
+                      <FaEyeSlash
+                        onClick={() =>
+                          setIsShowConfirmPassword(!isShowConfirmPassword)
+                        }
+                        className="absolute top-3 right-3 cursor-pointer text-gray-600 dark:text-gray-300"
+                        size={18}
+                      />
+                    ) : (
+                      <FaEye
+                        onClick={() =>
+                          setIsShowConfirmPassword(!isShowConfirmPassword)
+                        }
+                        className="absolute top-3 right-3 cursor-pointer text-gray-600 dark:text-gray-300"
+                        size={18}
+                      />
+                    )}
+                  </div>
+                  {!isPasswordMatch && (
+                    <p className="text-red-600 text-xs mt-1">
+                      Passwords do not match.
+                    </p>
+                  )}
+                </div>
+    
+                {/* Register Button */}
+                <button
+                  type="submit"
+                  disabled={!isNumberValid}
+                  className="w-full bg-primary-dark text-white py-2 rounded-lg hover:bg-primary-medium transition duration-200 font-medium disabled:bg-gray-300 disabled:text-gray-600"
+                >
+                  Register
+                </button>
+              </form>
+    
+              {/* Already have account */}
+              <p className="mt-5 text-center text-sm text-gray-600 dark:text-gray-400">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="text-primary-dark hover:underline font-medium"
+                >
+                  Login
+                </Link>
+              </p>
+    
+              {/* Divider + Google Signup */}
+              <div className="flex items-center gap-3 my-6">
+                <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
+                <span className="text-sm text-gray-500 dark:text-gray-400">OR</span>
+                <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
+              </div>
+    
+              <button
+                type="button"
+                onClick={() => {
+                  setRoleForGoogleSignUp('employer')
+                  GoogleLogin()
+                }}
+                className="w-full flex items-center justify-center gap-3 border border-primary-light py-2 rounded-lg hover:bg-primary-light transition duration-200"
+              >
+                <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g><path d="m0 0H512V512H0" fill="#fff"></path><path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"></path><path fill="#4285f4" d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"></path><path fill="#fbbc02" d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"></path><path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path></g></svg>
+                <span className="text-gray-700 dark:text-gray-200">
+                  Continue with Google
+                </span>
+              </button>
+    
             </div>
-            {!isPasswordValid && (
-              <p className="text-red-500 text-xs mt-1 font-medium">
-                Password must include:
-                <br />• 8+ characters<br />• 1 uppercase<br />• 1 lowercase<br />•
-                1 number
-              </p>
-            )}
           </div>
-
-          <div>
-            <label className="text-sm text-gray-600 font-medium">
-              Confirm Password
-            </label>
-            <div className="relative">
-              <input
-                type={isShowConfirmPassword ? "text" : "password"}
-                name="confirm_password"
-                className="w-full mt-1 rounded-md border border-gray-300 bg-gray-50 text-gray-800 text-sm p-2.5 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-                placeholder="Confirm your password"
-                required
-              />
-              {isShowConfirmPassword ? (
-                <FaEyeSlash
-                  onClick={() =>
-                    setIsShowConfirmPassword(!isShowConfirmPassword)
-                  }
-                  className="absolute top-3 right-3 cursor-pointer text-gray-600"
-                  size={17}
-                />
-              ) : (
-                <FaEye
-                  onClick={() =>
-                    setIsShowConfirmPassword(!isShowConfirmPassword)
-                  }
-                  className="absolute top-3 right-3 cursor-pointer text-gray-600"
-                  size={17}
-                />
-              )}
-            </div>
-            {!isPasswordMatch && (
-              <p className="text-red-500 text-xs mt-1 font-medium">
-                Passwords don’t match
-              </p>
-            )}
-          </div>
-
-          <button
-            disabled={!isNumberValid}
-            type="submit"
-            className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2.5 rounded-md transition-all duration-200 disabled:bg-gray-300 disabled:text-gray-600"
-          >
-            Register
-          </button>
-        </form>
-
-        <p className="text-center text-xs text-gray-600 font-medium mt-4">
-          Already have an account?{" "}
-          <Link
-            href="/login"
-            className="text-blue-700 hover:underline font-semibold"
-          >
-            Login
-          </Link>
-        </p>
-      </div>
-    </section>
+        </div>
   );
 };
 
@@ -256,263 +303,3 @@ export default EmployerSignUp;
 
 
 
-// "use client";
-// // import GoogleLogin from "@/components/GoogleLogin";
-// import Link from "next/link";
-// import React, { useState } from "react";
-// import { FaEye, FaEyeSlash } from "react-icons/fa";
-// import { PhoneInput } from "react-international-phone";
-// import "react-international-phone/style.css";
-// import { PhoneNumberUtil } from "google-libphonenumber";
-// import { useAuth } from "@/providers/AuthProvider";
-
-// const phoneUtil = PhoneNumberUtil.getInstance();
-
-// const isPhoneValid = (phone: string) => {
-//   try {
-//     return phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phone));
-//   } catch (error) {
-//     return false;
-//   }
-// };
-
-// const EmployerSignUp = () => {
-//   const {register} = useAuth()
-//   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
-//   const [isShowConfirmPassword, setIsShowConfirmPassword] =
-//     useState<boolean>(false);
-//   const [isPasswordValid, setIsPasswordValid] = useState<boolean>(true);
-//   const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(true);
-//   const [phone, setPhone] = useState<string>("");
-//   const isNumberValid = isPhoneValid(phone);
-
-//   // Regular expression for strong password
-//   const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-
-//   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-
-//     const form = e.target as HTMLFormElement;
-
-//     const firstName = (form.elements.namedItem("firstName") as HTMLInputElement)
-//       .value;
-//     const lastName = (form.elements.namedItem("lastName") as HTMLInputElement)
-//       .value;
-//     const companyName = (
-//       form.elements.namedItem("company_name") as HTMLInputElement
-//     ).value;
-//     const email = (form.elements.namedItem("email") as HTMLInputElement).value;
-//     const password = (form.elements.namedItem("password") as HTMLInputElement)
-//       .value;
-//     const confirm_password = (
-//       form.elements.namedItem("confirm_password") as HTMLInputElement
-//     ).value;
-
-//     const isPasswordValid = passwordPattern.test(password);
-
-//     if (!isPasswordValid) {
-//       return setIsPasswordValid(false);
-//     }
-
-//     setIsPasswordValid(true);
-
-//     if (password !== confirm_password) {
-//       return setIsPasswordMatch(false);
-//     }
-
-//     setIsPasswordMatch(true);
-
-//     register(firstName, lastName, phone, email, password, 'employer', companyName)
-//   };
-
-//   return (
-//     <section className="px-4 pb-10 pt-30">
-//       <div className="max-w-lg mx-auto bg-primary-dark rounded-lg shadow-lg p-4">
-//         {/* title */}
-//         <h1 className="text-xl text-black font-bold mb-2">
-//           Create an Employer Account
-//         </h1>
-
-//         {/* small description */}
-//         <p className="text-black mb-4 font-medium text-sm">
-//           Join our team to post job openings and hire talents
-//         </p>
-
-//         {/* register form */}
-//         <form onSubmit={handleRegister} className="space-y-3">
-//           <div>
-//             <p className="text-xs text-black/60 font-semibold">First Name</p>
-//             <input
-//               type="text"
-//               name="firstName"
-//               className="border   border-black w-full mt-1 rounded text-black text-xs p-2"
-//               placeholder="Enter Your First Name"
-//               required
-//             />
-//           </div>
-
-//           <div>
-//             <p className="text-xs text-black/60 font-semibold">Last Name</p>
-//             <input
-//               type="text"
-//               name="lastName"
-//               className="border   border-black w-full mt-1 rounded text-black text-xs p-2"
-//               placeholder="Enter Your Last Name"
-//               required
-//             />
-//           </div>
-
-//           <div>
-//             <p className="text-xs text-black/60 font-semibold">Company Name</p>
-//             <input
-//               type="text"
-//               name="company_name"
-//               className="border   border-black w-full mt-1 rounded text-black text-xs p-2"
-//               placeholder="Enter Your Company Name"
-//               required
-//             />
-//           </div>
-
-//           <div>
-//             <p className="text-xs text-black/60 font-semibold">Email</p>
-//             <input
-//               type="email"
-//               name="email"
-//               className="border   border-black w-full mt-1 rounded text-black text-xs p-2"
-//               placeholder="Enter Your Email"
-//               required
-//             />
-//           </div>
-
-//           <div>
-//             <p className="text-xs text-black/60 font-semibold">Phone</p>
-//             <PhoneInput
-//               defaultCountry="bd"
-//               value={phone}
-//               onChange={(phone) => setPhone(phone)}
-//                inputStyle={{
-//                 width: "100%",
-//                 backgroundColor: "transparent",
-//                 color: "black",
-//                 border: "1px solid black",
-//               }}
-//               required
-//             />
-
-//             {!isNumberValid && (
-//               <p className="text-red-600 font-semibold text-xs mt-1">
-//                 Phone is not valid
-//               </p>
-//             )}
-//           </div>
-
-//           <div>
-//             <p className="text-xs text-black/60 font-semibold">Password</p>
-//             <div className="relative">
-//               <input
-//                 type={isShowPassword ? "text" : "password"}
-//                 className={`border w-full mt-1 rounded text-black text-xs p-2 ${
-//                   !isPasswordValid ? "border-red-500" : "border-black"
-//                 }`}
-//                 name="password"
-//                 placeholder="Enter Your Password"
-//                 required
-//               />
-
-//               {isShowPassword ? (
-//                 <FaEyeSlash
-//                   onClick={() => setIsShowPassword(!isShowPassword)}
-//                   className="absolute top-3 right-3 cursor-pointer z-10 text-black"
-//                   size={17}
-//                 />
-//               ) : (
-//                 <FaEye
-//                   onClick={() => setIsShowPassword(!isShowPassword)}
-//                   className="absolute top-3 right-3 cursor-pointer z-10 text-black"
-//                   size={17}
-//                 />
-//               )}
-
-//               {!isPasswordValid && (
-//                 <p className="text-red-600 font-semibold text-xs mt-1">
-//                   Must be at least 8 characters and include:
-//                   <br />• One number
-//                   <br />• One lowercase letter
-//                   <br />• One uppercase letter
-//                 </p>
-//               )}
-//             </div>
-//           </div>
-
-//           <div>
-//             <p className="text-xs text-black/60 font-semibold">
-//               Confirm Password
-//             </p>
-//             <div className="relative">
-//               <input
-//                 type={isShowConfirmPassword ? "text" : "password"}
-//                 className="border   border-black w-full mt-1 rounded text-black text-xs p-2"
-//                 placeholder="Enter The Password Again"
-//                 name="confirm_password"
-//                 required
-//               />
-
-//               {isShowConfirmPassword ? (
-//                 <FaEyeSlash
-//                   onClick={() =>
-//                     setIsShowConfirmPassword(!isShowConfirmPassword)
-//                   }
-//                   className="absolute top-3 right-3 cursor-pointer z-10 text-black"
-//                   size={17}
-//                 />
-//               ) : (
-//                 <FaEye
-//                   onClick={() =>
-//                     setIsShowConfirmPassword(!isShowConfirmPassword)
-//                   }
-//                   className="absolute top-3 right-3 cursor-pointer z-10 text-black"
-//                   size={17}
-//                 />
-//               )}
-
-//               {!isPasswordMatch && (
-//                 <p className="text-red-600 font-semibold text-xs mt-1">
-//                   Password doesn&apos;t match
-//                 </p>
-//               )}
-//             </div>
-//           </div>
-
-//           <div className="mt-6">
-//             <button
-//               disabled={!isNumberValid}
-//               type="submit"
-//               className="w-full rounded px-4 py-2 text-white bg-blue-600 text-sm cursor-pointer disabled:bg-gray-300 disabled:text-black/60"
-//             >
-//               Register
-//             </button>
-//           </div>
-//         </form>
-
-//         <p className="my-2 text-center text-xs text-black/70 font-semibold">
-//           Already Have an Account? Please{" "}
-//           <Link href="/login" className="text-blue-700 hover:underline">
-//             Login
-//           </Link>
-//         </p>
-
-//         {/* divider */}
-//         {/* <div className="flex items-center gap-2 my-6">
-//           <div className="flex-1 border-t-2 border-black/60"></div>
-//           <span className="text-black text-sm font-medium">OR</span>
-//           <div className="flex-1 border-t-2 border-black/60"></div>
-//         </div> */}
-
-//         {/* google login */}
-//         {/* <GoogleLogin role="employer" from="signup" /> */}
-//       </div>
-//     </section>
-//   );
-// };
-
-// export default EmployerSignUp;

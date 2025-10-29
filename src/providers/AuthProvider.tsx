@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import { useToast } from "@/components/ui/Toast";
 import axios from "axios";
+// import jwt from "json-web-token"
+import { useGoogleLogin } from "@react-oauth/google";
 
 interface AuthContextType {
   user: any | null;
@@ -26,6 +28,8 @@ interface AuthContextType {
   ) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  GoogleLogin: () => Promise<void>;
+  setRoleForGoogleSignUp: () => Promise<void>;
 }
 interface RegisterPayload {
   firstName: string;
@@ -48,6 +52,7 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { showToast } = useToast();
   const [user, setUser] = useState<any | null>(null);
+  const [roleForGoogleSignUp, setRoleForGoogleSignUp] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const fetched = useRef(false);
@@ -106,12 +111,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (res.status === 201 && res?.data) {
         setUser(res.data);
-        router.push("/dashboard/profile");
+        router.push("/dashboard");
         showToast("success", "You registered successfully");
       } else {
         showToast("error", res.data?.message || "Registration failed");
       }
-
     } catch (error) {
       console.log(error);
       let errorMessage = "Registration failed";
@@ -207,6 +211,52 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const googleLoginHook = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setLoading(true);
+        const { access_token } = tokenResponse;
+
+        const { data: googleUser } = await axios.get(
+          "https://www.googleapis.com/oauth2/v2/userinfo",
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        );
+
+        const [firstName, ...rest] = googleUser.name.split(" ");
+        const lastName = rest.join(" ");
+        console.log("Google user info:", googleUser);
+        const res = await axiosInstance.post("/api/auth/google", {
+          firstName,
+          lastName,
+          email: googleUser.email,
+          profileImage: googleUser.picture,
+          googleLogin: true,
+          role: roleForGoogleSignUp,
+        });
+
+        if (res.status === 200 || res.status === 201) {
+          setUser(res.data.user);
+          router.push("/dashboard");
+          showToast("success", "Logged in with Google successfully!");
+        }
+      } catch (err) {
+        console.error(err);
+        showToast("error", "Google login failed");
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => showToast("error", "Google login failed"),
+  });
+
+  // Function to trigger Google login popup
+  const GoogleLogin = () => googleLoginHook();
+
+  
+
+
   //  Create the context value with proper type
   const value: AuthContextType = {
     user,
@@ -214,9 +264,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     register,
     login,
     logout,
+    GoogleLogin,
+    setRoleForGoogleSignUp,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  );
 };
 
 // Custom hook with proper type checking
@@ -227,3 +281,6 @@ export const useAuth = () => {
   }
   return context;
 };
+
+
+
