@@ -29,6 +29,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   GoogleLogin: () => Promise<void>;
+  GoogleSignUp: () => Promise<void>;
   setRoleForGoogleSignUp: () => Promise<void>;
 }
 interface RegisterPayload {
@@ -210,8 +211,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setLoading(false);
     }
   };
-
-  const googleLoginHook = useGoogleLogin({
+  // signup with google
+  const googleSignUpHook = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
         setLoading(true);
@@ -250,11 +251,46 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     },
     onError: () => showToast("error", "Google login failed"),
   });
+  const GoogleSignUp = () => googleSignUpHook();
 
-  // Function to trigger Google login popup
+  // signup with google
+  const googleLoginHook = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setLoading(true);
+        const { access_token } = tokenResponse;
+
+        const { data: googleUser } = await axios.get(
+          "https://www.googleapis.com/oauth2/v2/userinfo",
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        );
+
+        const [firstName, ...rest] = googleUser.name.split(" ");
+        const lastName = rest.join(" ");
+        console.log("Google user info:", googleUser);
+        const email = googleUser.email;
+        const password = access_token; // Using access token as a dummy password
+        const res = await axiosInstance.post(`/api/auth/login`, { email, password, googleLogin: true });
+        console.log('login successfull', res.data);
+        if (res.status === 200 || res.status === 201) {
+          setUser(res.data.user);
+          router.push("/dashboard");
+          showToast("success", "Logged in with Google successfully!");
+        }
+      } catch (err) {
+        console.error(err);
+        showToast("error", "Google login failed");
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => showToast("error", "Google login failed"),
+  });
   const GoogleLogin = () => googleLoginHook();
 
-  
+
 
 
   //  Create the context value with proper type
@@ -265,6 +301,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     login,
     logout,
     GoogleLogin,
+    GoogleSignUp,
     setRoleForGoogleSignUp,
   };
 

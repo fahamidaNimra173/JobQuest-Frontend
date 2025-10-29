@@ -21,7 +21,7 @@ const isPhoneValid = (phone: string) => {
 };
 
 const EmployerSignUp = () => {
-  const { register, GoogleLogin, setRoleForGoogleSignUp } = useAuth();
+  const { register, GoogleSignUp, setRoleForGoogleSignUp } = useAuth();
   const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
   const [isShowConfirmPassword, setIsShowConfirmPassword] =
     useState<boolean>(false);
@@ -282,7 +282,7 @@ const EmployerSignUp = () => {
                 type="button"
                 onClick={() => {
                   setRoleForGoogleSignUp('employer')
-                  GoogleLogin()
+                  GoogleSignUp()
                 }}
                 className="w-full flex items-center justify-center gap-3 border border-primary-light py-2 rounded-lg hover:bg-primary-light transition duration-200"
               >
