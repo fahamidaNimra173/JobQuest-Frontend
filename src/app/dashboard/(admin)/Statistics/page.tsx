@@ -1,11 +1,11 @@
-import React from 'react';
+import StatisticsContent from "@/components/dashboard/(admin)/StatisticsContent";
+import { Metadata } from "next";
 
-const Statistics = () => {
-    return (
-        <div>
-            
-        </div>
-    );
+export const metadata: Metadata = {
+  title: "Statistics - JobQuest",
+  description: "See al the stats of the website",
 };
 
-export default Statistics;
+export default function StatisticsPage() {
+  return <StatisticsContent />;
+}

@@ -1,11 +1,11 @@
-import React from 'react';
+import ProfileContent from '@/components/dashboard/(admin)/ProfileContent';
+import { Metadata } from 'next';
 
-const AdminProfile = () => {
-    return (
-        <div>
-            
-        </div>
-    );
+export const metadata: Metadata = {
+  title: 'My Profile - JobQuest',
+  description: 'Manage your profile information',
 };
 
-export default AdminProfile;
+export default function ProfilePage() {
+  return <ProfileContent />;
+}

@@ -1,5 +1,5 @@
 "use client";
-//import './post.css'
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -12,21 +12,47 @@ import {
     Tags,
     ListChecks,
 } from "lucide-react";
+import axios from "axios";
+
+interface FormData {
+    jobTitle: string;
+    companyName: string;
+    companyDescription: string;
+    companyGoals: string;
+    location: string;
+    jobType: string;
+    workArrangement: string;
+    jobStartDate: string;
+    salaryMin: string;
+    salaryMax: string;
+    salaryCurrency: string;
+    benefits: string;
+    keyResponsibilities: string;
+    requirements: string;
+    otherRequirements: string;
+    skills: string;
+    educationRequirements: string;
+    experienceLevel: string;
+    experienceYears: string;
+    seniorityLevel: string;
+    applicationDeadline: string;
+    tags: string;
+}
 
 export default function PostJobPage() {
     const router = useRouter();
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         jobTitle: "",
         companyName: "",
         companyDescription: "",
         companyGoals: "",
         location: "",
-        jobDescription: "",
         jobType: "Full-time",
         workArrangement: "On-site",
         jobStartDate: "",
-        salaryFixed: "",
+        salaryMin: "",
+        salaryMax: "",
         salaryCurrency: "USD",
         benefits: "",
         keyResponsibilities: "",
@@ -34,12 +60,11 @@ export default function PostJobPage() {
         otherRequirements: "",
         skills: "",
         educationRequirements: "",
-        industry: "",
-        tags: "",
         experienceLevel: "Entry",
         experienceYears: "",
         seniorityLevel: "Entry",
         applicationDeadline: "",
+        tags: "",
     });
 
     const handleChange = (
@@ -49,331 +74,238 @@ export default function PostJobPage() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Job Posted:", formData);
-        alert("Job posted successfully (mock)!");
-        router.push("/dashboard/my-jobs");
+
+        try {
+            const res = await axios.post(
+                "https://job-portal-backend-xshy.onrender.com/api/jobs",
+                formData,
+                { withCredentials: true }
+            );
+
+            alert("Job posted successfully!");
+            router.push("/dashboard/my-jobs");
+        } catch (err: any) {
+            console.error("Error posting job:", err.response?.data || err.message);
+            alert("Failed to post job. Please try again.");
+        }
     };
 
     return (
         <section className="p-6 max-w-5xl mx-auto">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
+            <h1 className="text-2xl font-bold mb-6 flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <Briefcase className="w-6 h-6 text-primary" /> Post a New Job
             </h1>
 
             <form
                 onSubmit={handleSubmit}
-                className="bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 dark:text-white rounded-xl p-6 space-y-6"
+                className="bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700 rounded-xl p-6 space-y-6"
             >
                 {/* Job Info */}
                 <div className="grid gap-4 md:grid-cols-2">
-                    <div>
-                        <label className="label dark:text-white text-gray-800">Job Title</label>
-                        <input
-                            name="jobTitle"
-                            value={formData.jobTitle}
-                            onChange={handleChange}
-                            placeholder="Data Analyst"
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="label dark:text-white text-gray-800">Job Type</label>
-                        <select
-                            name="jobType"
-                            value={formData.jobType}
-                            onChange={handleChange}
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        >
-                            <option>Full-time</option>
-                            <option>Part-time</option>
-                            <option>Contract</option>
-                            <option>Internship</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label className="label dark:text-white text-gray-800">Work Arrangement</label>
-                        <select
-                            name="workArrangement"
-                            value={formData.workArrangement}
-                            onChange={handleChange}
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        >
-                            <option>On-site</option>
-                            <option>Remote</option>
-                            <option>Hybrid</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="label dark:text-white text-gray-800">Seniority Level</label>
-                        <select
-                            name="seniorityLevel"
-                            value={formData.seniorityLevel}
-                            onChange={handleChange}
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        >
-                            <option>Internship</option>
-                            <option>Entry</option>
-                            <option>Associate</option>
-                            <option>Mid-Senior</option>
-                            <option>Senior</option>
-                            <option>Director</option>
-                            <option>Executive</option>
-                        </select>
-                    </div>
-                    
-
-                </div>
-
-                {/* Description fields */}
-                <div>
-                    <label className="label dark:text-white text-gray-800">Company Name</label>
-                    <input
-                        name="companyName"
-                        value={formData.companyName}
+                    <InputField
+                        label="Job Title"
+                        name="jobTitle"
+                        value={formData.jobTitle}
                         onChange={handleChange}
-                        placeholder="InsightPro"
-                        className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
+                        placeholder="Frontend Developer"
                         required
                     />
-                </div>
-                <div>
-                    <label className="label dark:text-white text-gray-800">Company Description</label>
-                    <textarea
-                        name="companyDescription"
-                        value={formData.companyDescription}
+                    <SelectField
+                        label="Job Type"
+                        name="jobType"
+                        value={formData.jobType}
                         onChange={handleChange}
-                        rows={2}
-                        className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
+                        options={["Full-time", "Part-time", "Contract", "Internship"]}
+                    />
+                    <SelectField
+                        label="Work Arrangement"
+                        name="workArrangement"
+                        value={formData.workArrangement}
+                        onChange={handleChange}
+                        options={["On-site", "Remote", "Hybrid"]}
+                    />
+                    <SelectField
+                        label="Seniority Level"
+                        name="seniorityLevel"
+                        value={formData.seniorityLevel}
+                        onChange={handleChange}
+                        options={[
+                            "Internship",
+                            "Entry",
+                            "Associate",
+                            "Mid-Senior",
+                            "Senior",
+                            "Director",
+                            "Executive",
+                        ]}
                     />
                 </div>
-                <div>
-                    <label className="label flex items-center gap-1">
-                        <MapPin className="w-4 h-4" /> Location
-                    </label>
-                    <input
-                        name="location"
-                        value={formData.location}
-                        onChange={handleChange}
-                        placeholder="London, UK"
-                        className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                    />
-                </div>
+
+                {/* Company Info */}
+                <InputField
+                    label="Company Name"
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleChange}
+                    placeholder="TechNova Innovations Ltd."
+                    required
+                />
+                <TextareaField
+                    label="Company Description"
+                    name="companyDescription"
+                    value={formData.companyDescription}
+                    onChange={handleChange}
+                    placeholder="Describe your company in at least 200 words"
+                    rows={5}
+                />
+                <TextareaField
+                    label="Company Goals"
+                    name="companyGoals"
+                    value={formData.companyGoals}
+                    onChange={handleChange}
+                    placeholder="Describe your company goals (at least 100 words)"
+                    rows={3}
+                />
 
                 {/* Job Details */}
+                <InputField
+                    labelIcon={<MapPin className="w-4 h-4" />}
+                    label="Location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    placeholder="Dhaka, Bangladesh"
+                />
                 <div className="grid gap-4 md:grid-cols-2">
-
-
+                    <InputField
+                        labelIcon={<Calendar className="w-4 h-4" />}
+                        label="Start Date"
+                        type="date"
+                        name="jobStartDate"
+                        value={formData.jobStartDate}
+                        onChange={handleChange}
+                    />
                     <div>
                         <label className="label flex items-center gap-1">
-                            <Calendar className="w-4 h-4" /> Start Date
+                            <Coins className="w-4 h-4" /> Salary (Min - Max)
                         </label>
-                        <input
-                            type="date"
-                            name="jobStartDate"
-                            value={formData.jobStartDate}
-                            onChange={handleChange}
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="label flex items-center gap-1">
-                            <Coins className="w-4 h-4" /> Salary
-                        </label>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
                             <input
                                 type="number"
-                                name="salaryFixed"
-                                value={formData.salaryFixed}
+                                name="salaryMin"
+                                value={formData.salaryMin}
                                 onChange={handleChange}
-                                placeholder="45000"
-                                className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
+                                placeholder="70000"
+                                className="input"
+                            />
+                            <input
+                                type="number"
+                                name="salaryMax"
+                                value={formData.salaryMax}
+                                onChange={handleChange}
+                                placeholder="90000"
+                                className="input"
                             />
                             <select
                                 name="salaryCurrency"
                                 value={formData.salaryCurrency}
                                 onChange={handleChange}
-                                className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
+                                className="input"
                             >
-                                <option value="USD">USD</option>
-                                <option value="GBP">GBP</option>
-                                <option value="EUR">EUR</option>
+                                <option>BDT</option>
+                                <option>USD</option>
+                                <option>EUR</option>
                             </select>
                         </div>
                     </div>
-
-
                 </div>
 
+                {/* Requirements & Skills */}
+                <TextareaField
+                    labelIcon={<ListChecks className="w-4 h-4" />}
+                    label="Key Responsibilities"
+                    name="keyResponsibilities"
+                    value={formData.keyResponsibilities}
+                    onChange={handleChange}
+                    placeholder="Separate by commas"
+                    rows={3}
+                />
+                <TextareaField
+                    label="Requirements"
+                    name="requirements"
+                    value={formData.requirements}
+                    onChange={handleChange}
+                    placeholder="Separate by commas"
+                    rows={3}
+                />
+                <InputField
+                    label="Other Requirements"
+                    name="otherRequirements"
+                    value={formData.otherRequirements}
+                    onChange={handleChange}
+                    placeholder="Knowledge of Next.js or TypeScript"
+                />
+                <InputField
+                    label="Skills"
+                    name="skills"
+                    value={formData.skills}
+                    onChange={handleChange}
+                    placeholder="React.js, JavaScript, Redux"
+                />
+                <InputField
+                    label="Benefits"
+                    name="benefits"
+                    value={formData.benefits}
+                    onChange={handleChange}
+                    placeholder="Health Insurance, Paid Leave, Bonus"
+                />
 
-
-                {/* Requirements */}
-                <div className="grid gap-4 md:grid-cols-2">
-                    <div>
-                        <label className="label flex items-center gap-1">
-                            <GraduationCap className="w-4 h-4" /> Education Requirement
-                        </label>
-                        <input
-                            name="educationRequirements"
-                            value={formData.educationRequirements}
-                            onChange={handleChange}
-                            placeholder="Bachelor"
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="label flex items-center gap-1">
-                            <Building2 className="w-4 h-4" /> Industry
-                        </label>
-                        <input
-                            name="industry"
-                            value={formData.industry}
-                            onChange={handleChange}
-                            placeholder="Consulting"
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        />
-                    </div>
-                </div>
-
-                {/* Lists */}
-                <div>
-                    <label className="label flex items-center gap-1">
-                        <ListChecks className="w-4 h-4" /> Key Responsibilities
-                    </label>
-                    <textarea
-                        name="keyResponsibilities"
-                        value={formData.keyResponsibilities}
-                        onChange={handleChange}
-                        placeholder="Separate by commas"
-                        rows={2}
-                        className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                    />
-                </div>
-
-                <div>
-                    <label className="label dark:text-white text-gray-800">Requirements</label>
-                    <textarea
-                        name="requirements"
-                        value={formData.requirements}
-                        onChange={handleChange}
-                        placeholder="Separate by commas"
-                        rows={2}
-                        className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                    />
-                </div>
-
-                <div>
-                    <label className="label dark:text-white text-gray-800">Skills</label>
-                    <input
-                        name="skills"
-                        value={formData.skills}
-                        onChange={handleChange}
-                        placeholder="SQL, Excel, Power BI"
-                        className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                    />
-                </div>
-
-                <div>
-                    <label className="label dark:text-white text-gray-800">Benefits</label>
-                    <input
-                        name="benefits"
-                        value={formData.benefits}
-                        onChange={handleChange}
-                        placeholder="Flexible Hours, Learning Budget"
-                        className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                    />
-                </div>
-
-                <div>
-                    <label className="label dark:text-white text-gray-800">Other Requirements</label>
-                    <input
-                        name="otherRequirements"
-                        value={formData.otherRequirements}
-                        onChange={handleChange}
-                        placeholder="Knowledge of Power BI"
-                        className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                    />
-                </div>
-
-                <div>
-                    <label className="label flex items-center gap-1">
-                        <Tags className="w-4 h-4" /> Tags
-                    </label>
-                    <input
-                        name="tags"
-                        value={formData.tags}
-                        onChange={handleChange}
-                        placeholder="data, analytics"
-                        className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                    />
-                </div>
-
-                {/* Experience */}
                 {/* Education & Experience */}
                 <div className="grid gap-4 md:grid-cols-2">
-                    <div>
-                        <label className="label dark:text-white text-gray-800">Education Requirement</label>
-                        <select
-                            name="educationRequirements"
-                            value={formData.educationRequirements}
-                            onChange={handleChange}
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        >
-                            <option>High School</option>
-                            <option>Associate</option>
-                            <option>Bachelor</option>
-                            <option>Master</option>
-                            <option>Doctorate</option>
-                            <option>Not Applicable</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="label dark:text-white text-gray-800">Experience Level</label>
-                        <select
-                            name="experienceLevel"
-                            value={formData.experienceLevel}
-                            onChange={handleChange}
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        >
-                            <option>Entry</option>
-                            <option>Mid</option>
-                            <option>Senior</option>
-                            <option>Director</option>
-                            <option>Executive</option>
-                            <option>Internship</option>
-                        </select>
-                    </div>
+                    <SelectField
+                        label="Education Requirement"
+                        name="educationRequirements"
+                        value={formData.educationRequirements}
+                        onChange={handleChange}
+                        options={["High School", "Associate", "Bachelor", "Master", "Doctorate", "Not Applicable"]}
+                    />
+                    <SelectField
+                        label="Experience Level"
+                        name="experienceLevel"
+                        value={formData.experienceLevel}
+                        onChange={handleChange}
+                        options={["Entry", "Mid", "Senior", "Director", "Executive", "Internship"]}
+                    />
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
-
-
-                    <div>
-                        <label className="label dark:text-white text-gray-800">Years of Experience</label>
-                        <input
-                            type="number"
-                            name="experienceYears"
-                            value={formData.experienceYears}
-                            onChange={handleChange}
-                            placeholder="1"
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        />
-                    </div>
-                    <div>
-                        <label className="label dark:text-white text-gray-800">Application Deadline</label>
-                        <input
-                            type="date"
-                            name="applicationDeadline"
-                            value={formData.applicationDeadline}
-                            onChange={handleChange}
-                            className="w-full pl-2 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 dark:focus:ring-sky-400 focus:border-sky-500 dark:focus:border-sky-400 outline-none transition duration-300 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100"
-                        />
-                    </div>
+                    <InputField
+                        label="Years of Experience"
+                        type="number"
+                        name="experienceYears"
+                        value={formData.experienceYears}
+                        onChange={handleChange}
+                        placeholder="2"
+                    />
+                    <InputField
+                        label="Application Deadline"
+                        type="date"
+                        name="applicationDeadline"
+                        value={formData.applicationDeadline}
+                        onChange={handleChange}
+                    />
                 </div>
+
+                {/* Tags */}
+                <InputField
+                    labelIcon={<Tags className="w-4 h-4" />}
+                    label="Tags"
+                    name="tags"
+                    value={formData.tags}
+                    onChange={handleChange}
+                    placeholder="frontend, react, hybrid"
+                />
 
                 {/* Submit */}
                 <button
@@ -386,6 +318,62 @@ export default function PostJobPage() {
         </section>
     );
 }
+
+/* Reusable components */
+const InputField = ({
+    label,
+    name,
+    value,
+    onChange,
+    placeholder,
+    type = "text",
+    labelIcon,
+    required = false,
+}: any) => (
+    <div>
+        <label className="label flex items-center gap-1 text-gray-800 dark:text-white">
+            {labelIcon} {label}
+        </label>
+        <input
+            type={type}
+            name={name}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            className="input w-full"
+            required={required}
+        />
+    </div>
+);
+
+const TextareaField = ({ label, name, value, onChange, placeholder, rows = 3, labelIcon }: any) => (
+    <div>
+        <label className="label flex items-center gap-1 text-gray-800 dark:text-white">
+            {labelIcon} {label}
+        </label>
+        <textarea
+            name={name}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            rows={rows}
+            className="input w-full"
+        />
+    </div>
+);
+
+const SelectField = ({ label, name, value, onChange, options }: any) => (
+    <div>
+        <label className="label text-gray-800 dark:text-white">{label}</label>
+        <select name={name} value={value} onChange={onChange} className="input w-full">
+            {options.map((opt: string) => (
+                <option key={opt} value={opt}>
+                    {opt}
+                </option>
+            ))}
+        </select>
+    </div>
+);
 
 
 

@@ -11,13 +11,15 @@ import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios";
 import { useToast } from "@/components/ui/Toast";
 import axios from "axios";
+// import jwt from "json-web-token"
+import { useGoogleLogin } from "@react-oauth/google";
 
-// ✅ Define the type for the Auth Context
 interface AuthContextType {
   user: any | null;
   loading: boolean;
   register: (
-    name: string,
+    firstName: string,
+    lastName: string,
     phone: string,
     email: string,
     password: string,
@@ -26,9 +28,22 @@ interface AuthContextType {
   ) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  GoogleLogin: () => Promise<void>;
+  GoogleSignUp: () => Promise<void>;
+  setRoleForGoogleSignUp: () => Promise<void>;
+}
+interface RegisterPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: string;
+  provider: string;
+  companyName?: string;
 }
 
-// ✅ Create context with proper type
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
@@ -38,6 +53,7 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { showToast } = useToast();
   const [user, setUser] = useState<any | null>(null);
+  const [roleForGoogleSignUp, setRoleForGoogleSignUp] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const fetched = useRef(false);
@@ -48,25 +64,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const fetchUser = async () => {
       try {
-        console.log("Initializing auth...");
-        const res = await axiosInstance.get(`/auth/check`);
-        console.log("User check response:", res);
-        if (res.status === 200 && res.data.success && res.data.user) {
-          console.log("User authenticated:", res.data.user);
-          setUser(res.data.user);
-        } else {
-          console.log("User not authenticated or invalid response");
-          setUser(null);
-        }
-      } catch (err: any) {
-        console.log("User check error:", err);
-        // If it's a 401 or 403 error, explicitly set user to null
-        if (err.response?.status === 401 || err.response?.status === 403) {
-          console.log("Authentication error - setting user to null");
-          setUser(null);
-        } else {
-          setUser(null);
-        }
+        const res = await axiosInstance.get(`/api/auth/check-login`);
+        console.log('check login response: ', res.data.user);
+        setUser(res.data.user || null);
+      } catch (err) {
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -76,7 +78,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Conditional register function with optional extra field
   const register = async (
-    name: string,
+    firstName: string,
+    lastName: string,
     phone: string,
     email: string,
     password: string,
@@ -85,35 +88,38 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   ): Promise<void> => {
     setLoading(true);
     try {
-      console.log("Starting registration process...");
-      const payload: any = {
-        name,
+      const payload: RegisterPayload = {
+        firstName,
+        lastName,
         email,
         phone,
         password,
         role,
-        provider: "Email/Password",
+        provider: "email",
       };
 
       if (companyName) {
         payload.companyName = companyName;
       }
+      let res;
+      if (role === 'employer') {
+        res = await axiosInstance.post("/api/employers", payload);
+      } else if (role === 'candidate') {
+        res = await axiosInstance.post("/api/candidates", payload);
+      } else {
+        throw new Error("Invalid role provided");
+      }
+      console.log('response candidate signup: ', res.data);
 
-      console.log("Registration payload:", payload);
-      const res = await axiosInstance.post("/auth/signup", payload);
-      console.log("Signup response:", res);
-
-      if (res.status === 201) {
-        console.log("Registration successful, setting user data");
-        setUser(res.data.user);
+      if (res.status === 201 && res?.data) {
+        setUser(res.data);
         router.push("/dashboard");
-
         showToast("success", "You registered successfully");
       } else {
-        showToast("error", res.data.message || "Registration failed");
+        showToast("error", res.data?.message || "Registration failed");
       }
-    } catch (error: any) {
-      console.log("Signup error:", error);
+    } catch (error) {
+      console.log(error);
       let errorMessage = "Registration failed";
       if (axios.isAxiosError(error)) {
         if (error.response?.data?.message) {
@@ -143,24 +149,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string): Promise<void> => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(`/auth/login`, {
-        email,
-        password,
-      });
-      console.log("Login response:", res);
-
-      if (res.status === 200) {
-        console.log("Login successful, setting user data");
-        setUser(res.data.user);
-
-        router.push("/dashboard");
-
-        showToast("success", "Logged in successfully");
-      } else {
-        showToast("error", res.data.message || "Login failed");
-      }
-    } catch (err: any) {
-      console.error("Login error:", err);
+      const res = await axiosInstance.post(`/api/auth/login`, { email, password });
+      console.log(res.data);
+      // assuming backend returns { user: {...}, token: '...' }
+      setUser(res.data.user);
+      router.push("/dashboard");
+      showToast("success", "Logged in successfully");
+      //setLoading(false);
+    } catch (err) {
+      console.error(err);
       let errorMessage = "Login failed";
       if (axios.isAxiosError(err)) {
         if (err.response?.data?.message) {
@@ -186,11 +183,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+
   // Logout function
   const logout = async (): Promise<void> => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(`/auth/logout`);
+      const res = await axiosInstance.post('/api/auth/logout');
+
       if (res.status === 200) {
         setUser(null);
 
@@ -214,20 +213,106 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setLoading(false);
     }
   };
+  // signup with google
+  const googleSignUpHook = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setLoading(true);
+        const { access_token } = tokenResponse;
 
-  // ✅ Create the context value with proper type
+        const { data: googleUser } = await axios.get(
+          "https://www.googleapis.com/oauth2/v2/userinfo",
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        );
+
+        const [firstName, ...rest] = googleUser.name.split(" ");
+        const lastName = rest.join(" ");
+        console.log("Google user info:", googleUser);
+        const res = await axiosInstance.post("/api/auth/google", {
+          firstName,
+          lastName,
+          email: googleUser.email,
+          profileImage: googleUser.picture,
+          googleLogin: true,
+          role: roleForGoogleSignUp,
+        });
+
+        if (res.status === 200 || res.status === 201) {
+          setUser(res.data.user);
+          router.push("/dashboard");
+          showToast("success", "Logged in with Google successfully!");
+        }
+      } catch (err) {
+        console.error(err);
+        showToast("error", "Google login failed");
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => showToast("error", "Google login failed"),
+  });
+  const GoogleSignUp = () => googleSignUpHook();
+
+  // signup with google
+  const googleLoginHook = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setLoading(true);
+        const { access_token } = tokenResponse;
+
+        const { data: googleUser } = await axios.get(
+          "https://www.googleapis.com/oauth2/v2/userinfo",
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        );
+
+        const [firstName, ...rest] = googleUser.name.split(" ");
+        const lastName = rest.join(" ");
+        console.log("Google user info:", googleUser);
+        const email = googleUser.email;
+        const password = access_token; // Using access token as a dummy password
+        const res = await axiosInstance.post(`/api/auth/login`, { email, password, googleLogin: true });
+        console.log('login successfull', res.data);
+        if (res.status === 200 || res.status === 201) {
+          setUser(res.data.user);
+          router.push("/dashboard");
+          showToast("success", "Logged in with Google successfully!");
+        }
+      } catch (err) {
+        console.error(err);
+        showToast("error", "Google login failed");
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => showToast("error", "Google login failed"),
+  });
+  const GoogleLogin = () => googleLoginHook();
+
+
+
+
+  //  Create the context value with proper type
   const value: AuthContextType = {
     user,
     loading,
     register,
     login,
     logout,
+    GoogleLogin,
+    GoogleSignUp,
+    setRoleForGoogleSignUp,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  );
 };
 
-// ✅ Custom hook with proper type checking
+// Custom hook with proper type checking
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -235,3 +320,6 @@ export const useAuth = () => {
   }
   return context;
 };
+
+
+
