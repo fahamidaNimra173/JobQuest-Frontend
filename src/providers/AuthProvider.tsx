@@ -64,7 +64,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const fetchUser = async () => {
       try {
-        const res = await axiosInstance.get(`/api/auth/check-user`);
+        const res = await axiosInstance.get(`/api/auth/check-login`);
+        console.log('check login response: ', res.data.user);
         setUser(res.data.user || null);
       } catch (err) {
         setUser(null);
@@ -149,7 +150,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setLoading(true);
     try {
       const res = await axiosInstance.post(`/api/auth/login`, { email, password });
-      console.log('login successfull', res.data);
+      console.log(res.data);
+      // assuming backend returns { user: {...}, token: '...' }
       setUser(res.data.user);
       router.push("/dashboard");
       showToast("success", "Logged in successfully");

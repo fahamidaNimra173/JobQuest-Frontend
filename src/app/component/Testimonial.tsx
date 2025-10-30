@@ -21,7 +21,7 @@ export function AnimatedTestimonialsDemo() {
     queryKey: ["reviews"],
     queryFn: async (): Promise<ReviewData[]> => {
       try {
-        const response = await axiosInstance.get<ReviewData[]>("/reviews");
+        const response = await axiosInstance.get<ReviewData[]>("/api/reviews");
         console.log("API Response:", response.data); // Debug response
         if (!response.data) {
           throw new Error("No data returned from API");
