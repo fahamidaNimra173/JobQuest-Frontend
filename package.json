@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -14,6 +14,7 @@
     "@heroicons/react": "^2.2.0",
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
+    "@react-oauth/google": "^0.12.2",
     "@tabler/icons-react": "^3.35.0",
     "@tanstack/react-query": "^5.90.2",
     "axios": "^1.12.2",
@@ -33,6 +34,7 @@
     "react-icons": "^5.5.0",
     "react-international-phone": "^4.6.0",
     "react-select": "^5.10.2",
+    "recharts": "^3.3.0",
     "sweetalert2": "^11.25.0",
     "tailwind-merge": "^3.3.1"
   },

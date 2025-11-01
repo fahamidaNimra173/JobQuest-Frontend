@@ -15,6 +15,7 @@ import { ToastProvider } from "@/components/ui/Toast";
 import { ThemeProvider } from "@/components/theme-provider";
 import LayoutClientWrapper from "./component/shared/LayoutClientWrapper";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const majorMono = Major_Mono_Display({
   weight: "400",
@@ -74,6 +75,7 @@ export default function RootLayout({
         />
       </head>
       <ToastProvider>
+        <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
         <AuthProvider>
           <body
             className={`${junge.variable} ${majorMono.variable} ${sen.variable} ${geistMono.variable} ${geistSans.variable} antialiased scroll-smooth`}
@@ -99,6 +101,7 @@ export default function RootLayout({
             </ThemeProvider>
           </body>
         </AuthProvider>
+        </GoogleOAuthProvider>
       </ToastProvider>
     </html>
   );

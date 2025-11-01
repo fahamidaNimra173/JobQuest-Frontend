@@ -32,7 +32,7 @@ export default function JobDetailsClient({
   const { data: candidateData } = useQuery({
     queryKey: ["candidate"],
     queryFn: async () => {
-      const response = await axiosInstance.get(`/candidates/${user.email}`);
+      const response = await axiosInstance.get(`/api/candidates/${user._id}`);
       return response.data;
     },
     retry: false,
@@ -42,65 +42,59 @@ export default function JobDetailsClient({
   // Check if job is already saved or applied
   useEffect(() => {
     if (candidateData) {
+      // Check saved jobs
       if (candidateData.savedJobs?.includes(jobId)) {
         setIsSaved(true);
       }
-      if (candidateData.appliedJobs?.includes(jobId)) {
+
+      // Check applied jobs (array of objects)
+      if (candidateData.appliedJobs?.some(
+        (aj: any) => aj.job === jobId || aj.job._id === jobId
+      )) {
         setIsApplied(true);
       }
     }
   }, [candidateData, jobId]);
 
+
   // Combined apply mutation - handles both endpoints
   const applyMutation = useMutation({
     mutationFn: async (data: { primaryEnquiries: string[] }) => {
-      // Execute both requests in parallel for better performance
-      const [jobResponse, candidateResponse] = await Promise.all([
-        axiosInstance.post(`/jobs/${jobId}/applicants`, {
-          employeeId: candidateData._id,
-          status: "applied",
-          primaryEnquiries: data.primaryEnquiries,
-        }),
-        axiosInstance.post(`/candidates/${user.email}/appliedJobs`, {
-          jobId: jobId,
-          status: "applied",
-          primaryEnquiries: data.primaryEnquiries,
-        }),
-      ]);
-      
-      return { jobResponse: jobResponse.data, candidateResponse: candidateResponse.data };
-    },
-    onSuccess: () => {
-      toast.success("Application submitted successfully!");
-      setShowApplyForm(false);
-      setIsApplied(true);
-      setEnquiryAnswers(
-        primaryEnquiries ? new Array(primaryEnquiries.length).fill("") : []
-      );
-      // Invalidate all relevant queries
-      queryClient.invalidateQueries({ queryKey: ["job", jobId] });
-      queryClient.invalidateQueries({ queryKey: ["appliedJobs"] });
-      queryClient.invalidateQueries({ queryKey: ["candidate"] });
-    },
-    onError: (error: unknown) => {
-      if (axios.isAxiosError(error)) {
-        toast.error(
-          error.response?.data?.message || "Failed to submit application"
-        );
-      } else {
-        toast.error("An unexpected error occurred");
+      try {
+        const [candidateResponse] = await Promise.all([
+          // axiosInstance.post(`/api/jobs/${jobId}/apply`, {
+          //   employeeId: user._id,
+          //   status: "applied",
+          //   primaryEnquiries: data.primaryEnquiries,
+          // }).catch((error) => { throw { source: "jobs API", error }; }),
+
+          axiosInstance.post(`/api/candidates/${user._id}/apply/${jobId}`, {
+
+            status: "applied",
+            primaryEnquiries: data.primaryEnquiries || [],
+          }).catch((error) => { throw { source: "candidates API", error }; }),
+        ]);
+
+        return { candidateResponse: candidateResponse.data };
+      } catch (err) {
+        throw err;
       }
     },
   });
 
+
+  console.log("this is job id", jobId)
+  console.log(primaryEnquiries)
+  console.log("and this is user id", user?._id, user)
   // Save job mutation - Updates savedJobs array with job ID
   const saveJobMutation = useMutation({
     mutationFn: async () => {
-      const response = await axiosInstance.patch("/candidates/savedJobs", {
+      const response = await axiosInstance.put(`/api/candidates/${user._id}/savedjobs`, {
         jobId: jobId,
       });
       return response.data;
     },
+
     onSuccess: () => {
       setIsSaved(true);
       toast.success("Job saved successfully!");

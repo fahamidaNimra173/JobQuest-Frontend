@@ -3,12 +3,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Heart, Send, Smile, Laugh, MessageCircle } from "lucide-react";
+import { Heart, Send, Smile, Laugh, MessageCircle, Users, Briefcase, MessageSquare, TrendingUp } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axios";
 import { useAuth } from "@/providers/AuthProvider";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { AiFillLike } from "react-icons/ai";
+import { FaHandHoldingHeart, FaLaughSquint } from "react-icons/fa";
 
 interface Comment {
   _id: string;
@@ -26,10 +28,12 @@ interface Comment {
 interface Post {
   _id: string;
   userId: string;
+  role: string;
   firstName: string;
   lastName: string;
   email: string;
   postTitle: string;
+  postStatus: string;
   post: string;
   totalLikes: string[] | number;
   totalHaha: string[] | number;
@@ -41,6 +45,7 @@ interface Post {
 interface CreatePostData {
   postTitle: string;
   post: string;
+  role: string
 }
 
 // Time ago helper function
@@ -95,10 +100,11 @@ export default function CommunityPage() {
   const { data: posts = [], isLoading } = useQuery<Post[]>({
     queryKey: ["posts"],
     queryFn: async () => {
-      const response = await axiosInstance.get("/community");
+      const response = await axiosInstance.get("/api/community");
       return response.data;
     },
   });
+  const approvedPosts = posts.filter(post => post.postStatus === "approved")
 
   // Get user's reaction on a post
   const getUserPostReaction = (post: Post): "like" | "love" | "haha" | null => {
@@ -110,6 +116,7 @@ export default function CommunityPage() {
     if (likesArray.includes(user._id)) return "like";
     if (loveArray.includes(user._id)) return "love";
     if (hahaArray.includes(user._id)) return "haha";
+    console.log(user._id)
 
     return null;
   };
@@ -126,7 +133,7 @@ export default function CommunityPage() {
   // Create post mutation
   const createPostMutation = useMutation({
     mutationFn: async (postData: CreatePostData) => {
-      const response = await axiosInstance.post("/community", postData);
+      const response = await axiosInstance.post("/api/community", postData);
       return response.data;
     },
     onSuccess: () => {
@@ -146,7 +153,7 @@ export default function CommunityPage() {
   const reactToPostMutation = useMutation({
     mutationFn: async ({ postId, reactionType }: { postId: string; reactionType: "like" | "love" | "haha" }) => {
       const response = await axiosInstance.patch(
-        `/community/${postId}/react`,
+        `/api/community/${postId}/react`,
         { type: reactionType }
       );
       return response.data;
@@ -164,7 +171,7 @@ export default function CommunityPage() {
   // Add comment mutation
   const addCommentMutation = useMutation({
     mutationFn: async ({ postId, commentText }: { postId: string; commentText: string }) => {
-      const response = await axiosInstance.post(`/community/${postId}/comment`, {
+      const response = await axiosInstance.post(`/api/community/${postId}/comments`, {
         commentText,
       });
       return response.data;
@@ -185,7 +192,7 @@ export default function CommunityPage() {
   const reactToCommentMutation = useMutation({
     mutationFn: async ({ postId, commentId, reactionType }: { postId: string; commentId: string; reactionType: "like" | "love" | "haha" }) => {
       const response = await axiosInstance.patch(
-        `/community/${postId}/comment/${commentId}/react`,
+        `/api/community/${postId}/comments/${commentId}/react`,
         { type: reactionType }
       );
       return response.data;
@@ -207,9 +214,10 @@ export default function CommunityPage() {
     createPostMutation.mutate({
       postTitle: newPostTitle,
       post: newPost,
+      role: "Candidate"
     });
   };
-
+  // console.log(user.role)
   const handlePostReaction = (postId: string, reaction: "like" | "love" | "haha") => {
     if (!user) {
       toast.error("Please login to react");
@@ -255,58 +263,98 @@ export default function CommunityPage() {
   };
 
   return (
-    <div className="min-h-screen flex gap-6 px-1.5 pt-24">
+    <div className="min-h-screen  flex gap-6 px-1.5 pt-24">
       {/* Left Section - Animation and Welcome (Fixed) */}
-      <div
-        className="flex-shrink-0 sticky top-6 h-fit hidden animation-section"
+      <div className="flex-shrink-0 sticky top-6 h-fit hidden animation-section">
+        <div className="min-h-screen bg-white rounded-[20px] p-8 shadow-[0_4px_24px_rgba(118,112,214,0.15)] text-center flex flex-col items-center justify-center relative overflow-hidden">
 
-      >
-        <div
-          className="min-h-screen bg-white rounded-[20px] p-8 shadow-[0_4px_24px_rgba(118,112,214,0.15)] text-center flex flex-col items-center justify-center"
-
-        >
-          {/* Animation */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginBottom: "24px",
-            }}
-          >
-            {React.createElement("dotlottie-player", {
-              src: "https://lottie.host/b12558fa-87b9-4c5b-8f27-713322ee8396/Xps7CNWCxF.lottie",
-              style: { width: "500px" },
-              autoplay: true,
-              loop: true,
-            })}
+          {/* Animated Background */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-10 left-10 w-32 h-32 bg-purple-500 rounded-b-full animate-blob"></div>
+            <div className="absolute top-40 right-20 w-40 h-40 bg-blue-500 rounded-full animate-blob animation-delay-2000"></div>
+            <div className="absolute bottom-20 left-1/4 w-36 h-36 bg-indigo-500 rounded-full animate-blob animation-delay-4000"></div>
           </div>
 
-          {/* Welcome Text */}
-          <div>
-            <h2
-              style={{
-                color: "#7670d6",
-                fontSize: "28px",
-                fontWeight: "700",
-                margin: "0 0 12px 0",
-                lineHeight: "1.3",
-              }}
-            >
-              {user
-                ? `Hello ${user?.firstName} ${user?.lastName}`
-                : "Hello"}
-              ! 👋
-            </h2>
-            <p
-              style={{
-                color: "#9da0dc",
-                fontSize: "16px",
-                lineHeight: "1.6",
-                margin: "0",
-              }}
-            >
-              Welcome to the community! What would you like to share today?
-            </p>
+          <style>{`
+          @keyframes blob {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(20px, -20px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(20px, 20px) scale(1.05); }
+          }
+          .animate-blob {
+            animation: blob 8s infinite ease-in-out;
+          }
+          .animation-delay-2000 {
+            animation-delay: 2s;
+          }
+          .animation-delay-4000 {
+            animation-delay: 4s;
+          }
+        `}</style>
+
+          {/* Content Container */}
+          <div className="relative z-10 w-full max-w-md">
+
+            {/* Header */}
+            <div className="mb-8">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl mb-6 shadow-lg">
+                <Users className="w-10 h-10 text-white" />
+              </div>
+
+              <h2 className="text-3xl font-bold text-gray-800 mb-3">
+                {user ? `Welcome, ${user.firstName}!` : "Welcome!"} 👋
+              </h2>
+
+              <p className="text-gray-500 text-base leading-relaxed">
+                Join our vibrant community of professionals sharing insights, opportunities, and career growth.
+              </p>
+            </div>
+
+            {/* Info Cards */}
+            <div className="space-y-4 mb-8">
+              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-4 text-left border border-purple-100">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                    <Briefcase className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 text-sm mb-1">Discover Opportunities</h3>
+                    <p className="text-xs text-gray-600">Find jobs, projects, and collaborations</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 text-left border border-blue-100">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                    <MessageSquare className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 text-sm mb-1">Share & Connect</h3>
+                    <p className="text-xs text-gray-600">Engage with peers and industry leaders</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 text-left border border-indigo-100">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                    <TrendingUp className="w-5 h-5 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-800 text-sm mb-1">Grow Together</h3>
+                    <p className="text-xs text-gray-600">Learn from experiences and insights</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Call to Action */}
+            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg">
+              <p className="text-sm font-medium mb-2">Ready to get started?</p>
+              <p className="text-xs opacity-90">Share your first post and connect with the community!</p>
+            </div>
           </div>
         </div>
       </div>
@@ -314,12 +362,11 @@ export default function CommunityPage() {
 
 
       {/* Right Section - Posts (Scrollable) */}
-      <div
-
-      >
+      <div className="flex-1 max-w-full mx-auto">
         {/* Header */}
-        <div className="text-[#f8f3ed] text-[32px] font-bold mb-2">
-          <h1 className="flex-1 max-w-full mx-auto">
+        <div className="bg-[#7670d6] rounded-[16px] py-8 px-6 mb-6 shadow-[0_4px_24px_rgba(118,112,214,0.2)]">
+          <h1 className="text-[#f8f3ed] text-[32px] font-bold mb-2"
+          >
             Community Thoughts
           </h1>
           <p
@@ -438,7 +485,7 @@ export default function CommunityPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            {posts.map((post) => {
+            {approvedPosts.map((post) => {
               const userReaction = getUserPostReaction(post);
               const isCommentsExpanded = expandedComments.has(post._id);
 
@@ -500,76 +547,53 @@ export default function CommunityPage() {
 
                   {/* Post Reactions */}
                   <div className="flex gap-2 pt-4 border-t border-[#f8f3ed] flex-wrap items-center">
-
+                    {/* LIKE */}
                     <button
                       onClick={() => handlePostReaction(post._id, "like")}
                       disabled={reactToPostMutation.isPending}
-                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "like" ? "bg-[#7670d6] text-white" : "bg-[#f8f3ed] text-[#7670d6]"
-                        }`}
-
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background =
-                          userReaction === "like" ? "#9da0dc" : "#d3d2ea";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background =
-                          userReaction === "like" ? "#7670d6" : "#f8f3ed";
-                      }}
+                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "like" ? "bg-[#7670d6]/40 backdrop-blur-sm text-[#3A3AFC]" : "bg-transparent text-[#3A3AFC]"}`}
                     >
-                      <Smile size={18} />
+                      <AiFillLike size={18} />
+                      {Array.isArray(post.totalLikes)
+                        ? post.totalLikes.length > 0 && post.totalLikes.length
+                        : post.totalLikes > 0 && post.totalLikes}
 
-                      {post.totalLikes?.length > 0 && post.totalLikes.length}
                     </button>
+
+                    {/* LOVE */}
                     <button
                       onClick={() => handlePostReaction(post._id, "love")}
                       disabled={reactToPostMutation.isPending}
-                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "love" ? "bg-[#7670d6] text-white" : "bg-[#f8f3ed] text-[#7670d6]"
-                        }`}
-
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background =
-                          userReaction === "love" ? "#9da0dc" : "#d3d2ea";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background =
-                          userReaction === "love" ? "#7670d6" : "#f8f3ed";
-                      }}
-                    >
-                      <Heart
-                        size={18}
-                        fill={userReaction === "love" ? "white" : "none"}
-                      />
-                      {post.totalLove?.length > 0 && post.totalLove.length}
+                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "love" ? "bg-red-500/40 text-[#DE3107]" : "bg-transparent text-[#DE3107]"}`}
+                    >    <FaHandHoldingHeart size={18} />
+                      {Array.isArray(post.totalLove)
+                        ? post.totalLove.length > 0 && post.totalLove.length
+                        : post.totalLove > 0 && post.totalLove}
                     </button>
+
+                    {/* HAHA */}
                     <button
                       onClick={() => handlePostReaction(post._id, "haha")}
                       disabled={reactToPostMutation.isPending}
-                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "haha" ? "bg-[#7670d6] text-white" : "bg-[#f8f3ed] text-[#7670d6]"
-                        }`}
-
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background =
-                          userReaction === "haha" ? "#9da0dc" : "#d3d2ea";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background =
-                          userReaction === "haha" ? "#7670d6" : "#f8f3ed";
-                      }}
+                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "haha" ? "bg-yellow-400/10 text-[#FCBB3A]" : "bg-transparent text-[#FCBB3A]"}`}
                     >
-                      <Laugh size={18} />
-                      {post.totalHaha?.length > 0 && post.totalHaha.length}
+                      <FaLaughSquint size={18} />
+                      {Array.isArray(post.totalHaha)
+                        ? post.totalHaha.length > 0 && post.totalHaha.length
+                        : post.totalHaha > 0 && post.totalHaha}
                     </button>
 
                     {/* Comment Toggle Button */}
                     <button
                       onClick={() => toggleComments(post._id)}
-                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ml-auto ${isCommentsExpanded ? "bg-[#7670d6] text-white" : "bg-[#f8f3ed] text-[#7670d6]"
-                        }`}
+                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ml-auto 
+      ${isCommentsExpanded ? "bg-[#7670d6] text-white" : "bg-transparent text-[#7670d6]"}`}
                     >
                       <MessageCircle size={18} />
                       {post.comments?.length || 0}
                     </button>
                   </div>
+
 
                   {/* Comments Section */}
                   {
@@ -660,93 +684,48 @@ export default function CommunityPage() {
                                   </p>
 
                                   {/* Comment Reactions */}
-                                  <div className="flex gap-1.5 flex-wrap"
-                                  >
+                                  <div className="flex gap-2 pt-4 border-t border-[#f8f3ed] flex-wrap items-center">
+                                    {/* LIKE */}
                                     <button
-                                      onClick={() => handleCommentReaction(post._id, comment._id, "like")
-                                      }
+                                      onClick={() => handleCommentReaction(post._id, comment._id, "like")}
                                       disabled={reactToCommentMutation.isPending}
-                                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] border-none text-[12px] font-semibold transition-all duration-200 cursor-pointer ${commentReaction === "like" ? "bg-[#7670d6] text-white" : "bg-white text-[#7670d6]"
-                                        }`}
-
-                                      onMouseEnter={(e) => {
-                                        e.currentTarget.style.background =
-                                          commentReaction === "like"
-                                            ? "#9da0dc"
-                                            : "#e8e3f7";
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        e.currentTarget.style.background =
-                                          commentReaction === "like"
-                                            ? "#7670d6"
-                                            : "white";
-                                      }}
+                                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${commentReaction === "like" ? "bg-[#7670d6]/40 backdrop-blur-sm text-[#3A3AFC]" : "bg-transparent text-[#3A3AFC]"}`}
                                     >
-                                      <Smile size={14} />
-                                      {comment.totalLikes?.length > 0 &&
-                                        comment.totalLikes.length}
+                                      <AiFillLike size={18} />
+                                      {Array.isArray(comment.totalLikes)
+                                        ? comment.totalLikes.length > 0 && comment.totalLikes.length
+                                        : comment.totalLikes > 0 && comment.totalLikes}
                                     </button>
-                                    <button
-                                      onClick={() => handleCommentReaction(post._id, comment._id, "love")
-                                      }
-                                      disabled={reactToCommentMutation.isPending}
-                                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] border-none text-[12px] font-semibold transition-all duration-200 cursor-pointer ${commentReaction === "love" ? "bg-[#7670d6] text-white" : "bg-white text-[#7670d6]"
-                                        }`}
 
-                                      onMouseEnter={(e) => {
-                                        e.currentTarget.style.background =
-                                          commentReaction === "love"
-                                            ? "#9da0dc"
-                                            : "#e8e3f7";
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        e.currentTarget.style.background =
-                                          commentReaction === "love"
-                                            ? "#7670d6"
-                                            : "white";
-                                      }}
+                                    {/* LOVE */}
+                                    <button
+                                      onClick={() => handleCommentReaction(post._id, comment._id, "love")}
+                                      disabled={reactToCommentMutation.isPending}
+                                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${commentReaction === "love" ? "bg-red-500/40 text-[#DE3107]" : "bg-transparent text-[#DE3107]"}`}
                                     >
-                                      <Heart
-                                        size={14}
-                                        fill={
-                                          commentReaction === "love"
-                                            ? "white"
-                                            : "none"
-                                        }
-                                      />
-                                      {comment.totalLove?.length > 0 &&
-                                        comment.totalLove.length}
+                                      <FaHandHoldingHeart size={18} />
+                                      {Array.isArray(comment.totalLove)
+                                        ? comment.totalLove.length > 0 && comment.totalLove.length
+                                        : comment.totalLove > 0 && comment.totalLove}
                                     </button>
-                                    <button
-                                      onClick={() =>
-                                        handleCommentReaction(
-                                          post._id,
-                                          comment._id,
-                                          "haha"
-                                        )
-                                      }
-                                      disabled={reactToCommentMutation.isPending}
-                                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] border-none text-[12px] font-semibold transition-all duration-200 cursor-pointer ${commentReaction === "haha" ? "bg-[#7670d6] text-white" : "bg-white text-[#7670d6]"
-                                        }`}
 
-                                      onMouseEnter={(e) => {
-                                        e.currentTarget.style.background =
-                                          commentReaction === "haha"
-                                            ? "#9da0dc"
-                                            : "#e8e3f7";
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        e.currentTarget.style.background =
-                                          commentReaction === "haha"
-                                            ? "#7670d6"
-                                            : "white";
-                                      }}
+                                    {/* HAHA */}
+                                    <button
+                                      onClick={() => handleCommentReaction(post._id, comment._id, "haha")}
+                                      disabled={reactToCommentMutation.isPending}
+                                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${commentReaction === "haha" ? "bg-yellow-400/10 text-[#FCBB3A]" : "bg-transparent text-[#FCBB3A]"}`}
                                     >
-                                      <Laugh size={14} />
-                                      {comment.totalHaha?.length > 0 &&
-                                        comment.totalHaha.length}
+                                      <FaLaughSquint size={18} />
+                                      {Array.isArray(comment.totalHaha)
+                                        ? comment.totalHaha.length > 0 && comment.totalHaha.length
+                                        : comment.totalHaha > 0 && comment.totalHaha}
                                     </button>
                                   </div>
+
+
+
+
+
                                 </div>
                               );
                             })}
