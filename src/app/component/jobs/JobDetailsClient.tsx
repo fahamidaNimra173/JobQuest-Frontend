@@ -42,56 +42,61 @@ export default function JobDetailsClient({
   // Check if job is already saved or applied
   useEffect(() => {
     if (candidateData) {
-      // Check saved jobs
       if (candidateData.savedJobs?.includes(jobId)) {
         setIsSaved(true);
       }
-
-      // Check applied jobs (array of objects)
-      if (candidateData.appliedJobs?.some(
-        (aj: any) => aj.job === jobId || aj.job._id === jobId
-      )) {
+      if (candidateData.appliedJobs?.includes(jobId)) {
         setIsApplied(true);
       }
     }
   }, [candidateData, jobId]);
 
-
-  // Combined apply mutation - handles both endpoints
+  // Apply Job Mutation
   const applyMutation = useMutation({
     mutationFn: async (data: { primaryEnquiries: string[] }) => {
-      try {
-        const [candidateResponse] = await Promise.all([
-          // axiosInstance.post(`/api/jobs/${jobId}/apply`, {
-          //   employeeId: user._id,
-          //   status: "applied",
-          //   primaryEnquiries: data.primaryEnquiries,
-          // }).catch((error) => { throw { source: "jobs API", error }; }),
+      if (!user?._id || !jobId) throw new Error("Missing user ID or job ID");
 
-          axiosInstance.post(`/api/candidates/${user._id}/apply/${jobId}`, {
+      const response = await axiosInstance.post(
+        `/api/candidates/${user._id}/apply/${jobId}`,
+        {
+          status: "applied",
+          primaryEnquiries: data.primaryEnquiries || [],
+        }
+      );
 
-            status: "applied",
-            primaryEnquiries: data.primaryEnquiries || [],
-          }).catch((error) => { throw { source: "candidates API", error }; }),
-        ]);
+      return response.data;
+    },
 
-        return { candidateResponse: candidateResponse.data };
-      } catch (err) {
-        throw err;
+    onSuccess: () => {
+      toast.success("Job applied successfully!");
+      queryClient.invalidateQueries({ queryKey: ["appliedJobs"] });
+      queryClient.invalidateQueries({ queryKey: ["candidate"] });
+      setIsApplied(true);
+      setShowApplyForm(false);
+    },
+
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed to apply for job");
+      } else {
+        toast.error("Unexpected error occurred");
       }
     },
   });
 
-
-  console.log("this is job id", jobId)
-  console.log(primaryEnquiries)
-  console.log("and this is user id", user?._id, user)
-  // Save job mutation - Updates savedJobs array with job ID
+  // Save Job Mutation
   const saveJobMutation = useMutation({
     mutationFn: async () => {
-      const response = await axiosInstance.put(`/api/candidates/${user._id}/savedjobs`, {
-        jobId: jobId,
-      });
+      if (!user?._id || !jobId) throw new Error("Missing user ID or job ID");
+
+      const response = await axiosInstance.put(
+        `/api/candidates/${user._id}/savedjobs`,
+        {
+          jobId: jobId,
+          action: "add", // make sure backend receives add/remove
+        }
+      );
+
       return response.data;
     },
 
@@ -101,15 +106,17 @@ export default function JobDetailsClient({
       queryClient.invalidateQueries({ queryKey: ["savedJobs"] });
       queryClient.invalidateQueries({ queryKey: ["candidate"] });
     },
+
     onError: (error: unknown) => {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || "Failed to save job");
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error("Unexpected error occurred");
       }
     },
   });
 
+  // Handle Apply Click
   const handleApplyClick = () => {
     if (isApplied) {
       toast("You have already applied to this job", { icon: "ℹ️" });
@@ -117,49 +124,44 @@ export default function JobDetailsClient({
     }
 
     if (!primaryEnquiries || primaryEnquiries.length === 0) {
-      // If no enquiries, apply directly with empty array
-      applyMutation.mutate({
-        primaryEnquiries: [],
-      });
+      applyMutation.mutate({ primaryEnquiries: [] });
     } else {
-      // Show the form with enquiries
       setShowApplyForm(true);
     }
   };
 
+  // Handle Enquiry Form Submit
   const handleSubmitApplication = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate that all enquiries are answered if they exist
     if (primaryEnquiries && primaryEnquiries.length > 0) {
-      const hasEmptyAnswers = enquiryAnswers.some(
-        (answer) => answer.trim() === ""
-      );
+      const hasEmptyAnswers = enquiryAnswers.some((answer) => answer.trim() === "");
       if (hasEmptyAnswers) {
         toast.error("Please answer all questions before submitting");
         return;
       }
     }
 
-    // Single mutation call that handles both endpoints
-    applyMutation.mutate({
-      primaryEnquiries: enquiryAnswers,
-    });
+    applyMutation.mutate({ primaryEnquiries: enquiryAnswers });
   };
 
+  // Handle Save Job
   const handleSaveJob = () => {
     if (isSaved) {
       toast("Job already saved", { icon: "ℹ️" });
       return;
     }
+
     saveJobMutation.mutate();
   };
 
+  // Handle Enquiry Change
   const handleEnquiryChange = (index: number, value: string) => {
     const newAnswers = [...enquiryAnswers];
     newAnswers[index] = value;
     setEnquiryAnswers(newAnswers);
   };
+
 
   return (
     <>

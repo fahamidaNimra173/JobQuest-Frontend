@@ -29,9 +29,10 @@ interface AuthContextType {
   ) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  GoogleLogin: () => Promise<void>;
-  GoogleSignUp: () => Promise<void>;
-  setRoleForGoogleSignUp: () => Promise<void>;
+  GoogleLogin: () => void;
+  GoogleSignUp: () => void;
+  setRoleForGoogleSignUp: React.Dispatch<React.SetStateAction<string>>;
+
 }
 interface RegisterPayload {
   firstName: string;
@@ -54,7 +55,7 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { showToast } = useToast();
   const [user, setUser] = useState<any | null>(null);
-  const [roleForGoogleSignUp, setRoleForGoogleSignUp] = useState<string | null>(null);
+  const [roleForGoogleSignUp, setRoleForGoogleSignUp] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const fetched = useRef(false);
@@ -65,9 +66,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const fetchUser = async () => {
       try {
-        const res = await axiosInstance.get(`/api/auth/check-login`);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        const res = await axiosInstance.get(`/api/auth/check-login`, {
+          signal: controller.signal,
+        });
         console.log('check login response: ', res.data.user);
         setUser(res.data.user || null);
+        clearTimeout(timeout)
       } catch (err) {
         setUser(null);
       } finally {
@@ -75,6 +81,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     };
     fetchUser();
+
   }, []);
 
   // Conditional register function with optional extra field

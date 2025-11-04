@@ -173,6 +173,9 @@ export default function CommunityPage() {
     mutationFn: async ({ postId, commentText }: { postId: string; commentText: string }) => {
       const response = await axiosInstance.post(`/api/community/${postId}/comments`, {
         commentText,
+        commenterName:user? `${user.firstName} ${user.lastName}`:"Anonymous",
+
+
       });
       return response.data;
     },
@@ -303,7 +306,7 @@ export default function CommunityPage() {
               </div>
 
               <h2 className="text-3xl font-bold text-gray-800 mb-3">
-                {user ? `Welcome, ${user.firstName}!` : "Welcome!"} 👋
+                {user ? `Welcome, ${user?.firstName}!` : "Welcome!"} 👋
               </h2>
 
               <p className="text-gray-500 text-base leading-relaxed">
