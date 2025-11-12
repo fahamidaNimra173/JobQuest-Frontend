@@ -9,8 +9,10 @@ import axiosInstance from "@/lib/axios";
 import { useAuth } from "@/providers/AuthProvider";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { AiFillLike } from "react-icons/ai";
-import { FaHandHoldingHeart, FaLaughSquint } from "react-icons/fa";
+import Lottie from "lottie-react";
+import boyWindow from "../../../public/wave.json";
+import bee from "../../../public/Flying Bee.json";
+import Image from "next/image";
 
 interface Comment {
   _id: string;
@@ -173,7 +175,7 @@ export default function CommunityPage() {
     mutationFn: async ({ postId, commentText }: { postId: string; commentText: string }) => {
       const response = await axiosInstance.post(`/api/community/${postId}/comments`, {
         commentText,
-        commenterName:user? `${user.firstName} ${user.lastName}`:"Anonymous",
+        commenterName: user ? `${user.firstName} ${user.lastName}` : "Anonymous",
 
 
       });
@@ -266,17 +268,35 @@ export default function CommunityPage() {
   };
 
   return (
-    <div className="min-h-screen  flex gap-6 px-1.5 pt-24">
+    <div className="min-h-screen z-10 flex gap-6 px-1.5 pt-24">
       {/* Left Section - Animation and Welcome (Fixed) */}
       <div className="flex-shrink-0 sticky top-6 h-fit hidden animation-section">
-        <div className="min-h-screen bg-white rounded-[20px] p-8 shadow-[0_4px_24px_rgba(118,112,214,0.15)] text-center flex flex-col items-center justify-center relative overflow-hidden">
+        <span className=" absolute z-100 -top-50" >
+          <Lottie animationData={bee} loop />
+        </span>
+        <div className="min-h-screen bg-[#423ba6]   shadow-[inset_0_0_40px_#8f89ed]   rounded-[20px] p-8  text-center flex flex-col items-center justify-center relative overflow-hidden">
 
           {/* Animated Background */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-10 left-10 w-32 h-32 bg-purple-500 rounded-b-full animate-blob"></div>
-            <div className="absolute top-40 right-20 w-40 h-40 bg-blue-500 rounded-full animate-blob animation-delay-2000"></div>
-            <div className="absolute bottom-20 left-1/4 w-36 h-36 bg-indigo-500 rounded-full animate-blob animation-delay-4000"></div>
+          <div className="absolute inset-0 opacity-90">
+            {/* Purple glow blob */}
+            <div className="absolute top-10 left-10 w-32 h-32 
+                  bg-gradient-to-br from-purple-400 via-purple-600 to-pink-500 
+                  rounded-b-full animate-blob 
+                  blur-xl shadow-[0_0_40px_20px_rgba(168,85,247,0.6)]"></div>
+
+            {/* Blue glow blob */}
+            <div className="absolute top-40 right-20 w-40 h-40 
+                  bg-gradient-to-br from-blue-400 via-blue-600 to-cyan-500 
+                  rounded-full animate-blob animation-delay-2000 
+                  blur-xl shadow-[0_0_40px_20px_rgba(59,130,246,0.6)]"></div>
+
+            {/* Indigo glow blob */}
+            <div className="absolute bottom-20 left-1/4 w-36 h-36 
+                  bg-gradient-to-br from-indigo-400 via-indigo-600 to-violet-500 
+                  rounded-full animate-blob animation-delay-4000 
+                  blur-xl shadow-[0_0_40px_20px_rgba(99,102,241,0.6)]"></div>
           </div>
+
 
           <style>{`
           @keyframes blob {
@@ -301,15 +321,15 @@ export default function CommunityPage() {
 
             {/* Header */}
             <div className="mb-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl mb-6 shadow-lg">
-                <Users className="w-10 h-10 text-white" />
+              <div className="inline-flex items-center justify-center w-90 h-40 rounded-2xl shadow-lg">
+
               </div>
 
-              <h2 className="text-3xl font-bold text-gray-800 mb-3">
+              <h2 className="text-3xl -mt-10 font-mono font-bold text-white mb-3">
                 {user ? `Welcome, ${user?.firstName}!` : "Welcome!"} 👋
               </h2>
 
-              <p className="text-gray-500 text-base leading-relaxed">
+              <p className="text-gray-100 text-base leading-relaxed">
                 Join our vibrant community of professionals sharing insights, opportunities, and career growth.
               </p>
             </div>
@@ -365,9 +385,12 @@ export default function CommunityPage() {
 
 
       {/* Right Section - Posts (Scrollable) */}
-      <div className="flex-1 max-w-full mx-auto">
+      <div className="flex-1  max-w-full mx-auto">
         {/* Header */}
-        <div className="bg-[#7670d6] rounded-[16px] py-8 px-6 mb-6 shadow-[0_4px_24px_rgba(118,112,214,0.2)]">
+        <div className="bg-[#423ba6] relative  shadow-[inset_0_0_40px_#8f89ed]  rounded-[16px] py-8 px-6 mb-6 ">
+          <div className="absolute z-5 -top-10 " >
+            <Lottie animationData={boyWindow} loop />
+          </div>
           <h1 className="text-[#f8f3ed] text-[32px] font-bold mb-2"
           >
             Community Thoughts
@@ -376,96 +399,100 @@ export default function CommunityPage() {
             className="text-[#d3d2ea] m-0 text-[16px]">
             Share your ideas and connect with others
           </p>
+          <div
+            className=" relative z-10  rounded-[16px] p-6  "
+
+          >
+            {!user && (
+
+              <p className="text-red-300 text-[18px] my-3 text-center font-medium">
+
+
+                Hey stranger <span className="animate-bounce inline-block px-2">!</span> You’ve got to log in before you can post anything.
+              </p>
+            )}
+            <form
+              onSubmit={handleSubmit}
+              style={{ display: "flex", flexDirection: "column", gap: "12px" }}
+            >
+              <input
+                type="text"
+                value={newPostTitle}
+                onChange={(e) => setNewPostTitle(e.target.value)}
+                placeholder="Post Title"
+                disabled={createPostMutation.isPending}
+                className="text-white dark:text-white w-full border-2 border-[#d3d2ea] rounded-[12px] p-4 text-[15px] font-inherit font-semibold outline-none transition-colors duration-200 box-border"
+
+                onFocus={(e) => (e.target.style.borderColor = "#7670d6")}
+                onBlur={(e) => (e.target.style.borderColor = "#d3d2ea")}
+              />
+              <textarea
+                value={newPost}
+                onChange={(e) => setNewPost(e.target.value)}
+                placeholder="What's on your mind?"
+                disabled={createPostMutation.isPending}
+                style={{ resize: "vertical" }}
+                className="text-white dark:text-white resize-none w-full min-h-[100px] border-2 border-[#d3d2ea] rounded-[12px] p-4 text-[15px] font-inherit  outline-none transition-colors duration-200 box-border"
+
+
+                onFocus={(e) => (e.target.style.borderColor = "#7670d6")}
+                onBlur={(e) => (e.target.style.borderColor = "#d3d2ea")}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Enter" &&
+                    e.ctrlKey &&
+                    newPost.trim() &&
+                    newPostTitle.trim()
+                  ) {
+                    handleSubmit(e);
+                  }
+                }}
+              />
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <button
+                  type="submit"
+                  disabled={
+                    !user ||
+                    !newPost.trim() ||
+                    !newPostTitle.trim() ||
+                    createPostMutation.isPending
+                  }
+
+                  className={`flex items-center gap-2 px-6 py-3 rounded-[10px] text-[15px] font-semibold transition-all duration-200 border-none text-white ${newPost.trim() && newPostTitle.trim() && !createPostMutation.isPending
+                    ? "bg-[#7670d6] cursor-pointer"
+                    : "bg-[#d3d2ea] cursor-not-allowed"
+                    }`}
+                  onMouseEnter={(e) => {
+                    if (
+                      newPost.trim() &&
+                      newPostTitle.trim() &&
+                      !createPostMutation.isPending
+                    ) {
+                      e.currentTarget.style.background = "#9da0dc";
+                      e.currentTarget.style.transform = "translateY(-2px)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (
+                      newPost.trim() &&
+                      newPostTitle.trim() &&
+                      !createPostMutation.isPending
+                    ) {
+                      e.currentTarget.style.background = "#7670d6";
+                      e.currentTarget.style.transform = "translateY(0)";
+                    }
+                  }}
+                >
+                  <Send size={18} />
+                  {createPostMutation.isPending ? "Posting..." : "Post"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
 
         {/* Post Input */}
-        <div
-          className="bg-white rounded-[16px] p-6 mb-6 shadow-[0_2px_12px_rgba(118,112,214,0.08)]"
 
-        >
-          {!user && (
-            <p style={{ color: "red", marginBottom: "12px", fontSize: "14px" }}>
-              You must be logged in to post.
-            </p>
-          )}
-          <form
-            onSubmit={handleSubmit}
-            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-          >
-            <input
-              type="text"
-              value={newPostTitle}
-              onChange={(e) => setNewPostTitle(e.target.value)}
-              placeholder="Post Title"
-              disabled={createPostMutation.isPending}
-              className="text-black w-full border-2 border-[#d3d2ea] rounded-[12px] p-4 text-[15px] font-inherit font-semibold outline-none transition-colors duration-200 box-border"
-
-              onFocus={(e) => (e.target.style.borderColor = "#7670d6")}
-              onBlur={(e) => (e.target.style.borderColor = "#d3d2ea")}
-            />
-            <textarea
-              value={newPost}
-              onChange={(e) => setNewPost(e.target.value)}
-              placeholder="What's on your mind?"
-              disabled={createPostMutation.isPending}
-              style={{ resize: "vertical" }}
-              className="text-black resize-none w-full min-h-[100px] border-2 border-[#d3d2ea] rounded-[12px] p-4 text-[15px] font-inherit  outline-none transition-colors duration-200 box-border"
-
-
-              onFocus={(e) => (e.target.style.borderColor = "#7670d6")}
-              onBlur={(e) => (e.target.style.borderColor = "#d3d2ea")}
-              onKeyDown={(e) => {
-                if (
-                  e.key === "Enter" &&
-                  e.ctrlKey &&
-                  newPost.trim() &&
-                  newPostTitle.trim()
-                ) {
-                  handleSubmit(e);
-                }
-              }}
-            />
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <button
-                type="submit"
-                disabled={
-                  !user ||
-                  !newPost.trim() ||
-                  !newPostTitle.trim() ||
-                  createPostMutation.isPending
-                }
-
-                className={`flex items-center gap-2 px-6 py-3 rounded-[10px] text-[15px] font-semibold transition-all duration-200 border-none text-white ${newPost.trim() && newPostTitle.trim() && !createPostMutation.isPending
-                  ? "bg-[#7670d6] cursor-pointer"
-                  : "bg-[#d3d2ea] cursor-not-allowed"
-                  }`}
-                onMouseEnter={(e) => {
-                  if (
-                    newPost.trim() &&
-                    newPostTitle.trim() &&
-                    !createPostMutation.isPending
-                  ) {
-                    e.currentTarget.style.background = "#9da0dc";
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (
-                    newPost.trim() &&
-                    newPostTitle.trim() &&
-                    !createPostMutation.isPending
-                  ) {
-                    e.currentTarget.style.background = "#7670d6";
-                    e.currentTarget.style.transform = "translateY(0)";
-                  }
-                }}
-              >
-                <Send size={18} />
-                {createPostMutation.isPending ? "Posting..." : "Post"}
-              </button>
-            </div>
-          </form>
-        </div>
 
         {/* Posts Feed */}
         {isLoading ? (
@@ -549,14 +576,20 @@ export default function CommunityPage() {
                   </p>
 
                   {/* Post Reactions */}
-                  <div className="flex gap-2 pt-4 border-t border-[#f8f3ed] flex-wrap items-center">
+                  <div className="flex gap-2 pt-4 border-t border-[#f8f3ed] flex-wrap  items-center">
                     {/* LIKE */}
                     <button
                       onClick={() => handlePostReaction(post._id, "like")}
                       disabled={reactToPostMutation.isPending}
-                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "like" ? "bg-[#7670d6]/40 backdrop-blur-sm text-[#3A3AFC]" : "bg-transparent text-[#3A3AFC]"}`}
+                      className={`flex shadow-2xs hover:shadow-2xl hover:shadow-black items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "like" ? "bg-[#7670d6]/40 backdrop-blur-sm text-[#3A3AFC]" : "bg-transparent text-[#3A3AFC]"}`}
                     >
-                      <AiFillLike size={18} />
+                      <Image
+                        width={19}
+                        height={19}
+                        src="/icons8-like-100.png"
+                        alt="like icon"
+                        className=" shadow-2xl  shadow-black/80"
+                      />
                       {Array.isArray(post.totalLikes)
                         ? post.totalLikes.length > 0 && post.totalLikes.length
                         : post.totalLikes > 0 && post.totalLikes}
@@ -567,8 +600,13 @@ export default function CommunityPage() {
                     <button
                       onClick={() => handlePostReaction(post._id, "love")}
                       disabled={reactToPostMutation.isPending}
-                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "love" ? "bg-red-500/40 text-[#DE3107]" : "bg-transparent text-[#DE3107]"}`}
-                    >    <FaHandHoldingHeart size={18} />
+                      className={`flex shadow-2xs hover:shadow-2xl hover:shadow-black items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "love" ? "bg-red-500/40 text-[#DE3107]" : "bg-transparent text-[#DE3107]"}`}
+                    >                          <Image
+                        width={19}
+                        height={19}
+                        src="/icons8-hand-holding-heart-50.png"
+                        alt="like icon"
+                      />
                       {Array.isArray(post.totalLove)
                         ? post.totalLove.length > 0 && post.totalLove.length
                         : post.totalLove > 0 && post.totalLove}
@@ -578,9 +616,16 @@ export default function CommunityPage() {
                     <button
                       onClick={() => handlePostReaction(post._id, "haha")}
                       disabled={reactToPostMutation.isPending}
-                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "haha" ? "bg-yellow-400/10 text-[#FCBB3A]" : "bg-transparent text-[#FCBB3A]"}`}
+                      className={`flex shadow-2xs hover:shadow-2xl hover:shadow-black items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "haha" ? "bg-yellow-400/10 text-[#FCBB3A]" : "bg-transparent text-[#FCBB3A]"}`}
                     >
-                      <FaLaughSquint size={18} />
+                      <Image
+                        width={19}
+                        height={19}
+                        src="/icons8-grinning-squinting-face-32 (1).png"
+                        alt="like icon"
+                      />
+
+
                       {Array.isArray(post.totalHaha)
                         ? post.totalHaha.length > 0 && post.totalHaha.length
                         : post.totalHaha > 0 && post.totalHaha}
@@ -692,9 +737,15 @@ export default function CommunityPage() {
                                     <button
                                       onClick={() => handleCommentReaction(post._id, comment._id, "like")}
                                       disabled={reactToCommentMutation.isPending}
-                                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${commentReaction === "like" ? "bg-[#7670d6]/40 backdrop-blur-sm text-[#3A3AFC]" : "bg-transparent text-[#3A3AFC]"}`}
+                                      className={`flex shadow-2xs hover:shadow-2xl hover:shadow-black items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "like" ? "bg-[#7670d6]/40 backdrop-blur-sm text-[#3A3AFC]" : "bg-transparent text-[#3A3AFC]"}`}
                                     >
-                                      <AiFillLike size={18} />
+                                      <Image
+                                        width={19}
+                                        height={19}
+                                        src="/icons8-like-100.png"
+                                        alt="like icon"
+                                        className=" shadow-2xl  shadow-black/80"
+                                      />
                                       {Array.isArray(comment.totalLikes)
                                         ? comment.totalLikes.length > 0 && comment.totalLikes.length
                                         : comment.totalLikes > 0 && comment.totalLikes}
@@ -704,9 +755,13 @@ export default function CommunityPage() {
                                     <button
                                       onClick={() => handleCommentReaction(post._id, comment._id, "love")}
                                       disabled={reactToCommentMutation.isPending}
-                                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${commentReaction === "love" ? "bg-red-500/40 text-[#DE3107]" : "bg-transparent text-[#DE3107]"}`}
-                                    >
-                                      <FaHandHoldingHeart size={18} />
+                                      className={`flex shadow-2xs hover:shadow-2xl hover:shadow-black items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${userReaction === "love" ? "bg-red-500/40 text-[#DE3107]" : "bg-transparent text-[#DE3107]"}`}
+                                    >                          <Image
+                                        width={19}
+                                        height={19}
+                                        src="/icons8-hand-holding-heart-50.png"
+                                        alt="like icon"
+                                      />
                                       {Array.isArray(comment.totalLove)
                                         ? comment.totalLove.length > 0 && comment.totalLove.length
                                         : comment.totalLove > 0 && comment.totalLove}
@@ -716,9 +771,15 @@ export default function CommunityPage() {
                                     <button
                                       onClick={() => handleCommentReaction(post._id, comment._id, "haha")}
                                       disabled={reactToCommentMutation.isPending}
-                                      className={`flex items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${commentReaction === "haha" ? "bg-yellow-400/10 text-[#FCBB3A]" : "bg-transparent text-[#FCBB3A]"}`}
+                                      className={`flex shadow-2xs hover:shadow-2xl hover:shadow-black items-center gap-[6px] px-4 py-2 rounded-[10px] border-none cursor-pointer text-[14px] font-semibold transition-all duration-200 ${commentReaction === "haha" ? "bg-yellow-400/10 text-[#FCBB3A]" : "bg-transparent text-[#FCBB3A]"}`}
                                     >
-                                      <FaLaughSquint size={18} />
+                                      <Image
+                                        width={19}
+                                        height={19}
+                                        src="/icons8-grinning-squinting-face-32 (1).png"
+                                        alt="like icon"
+                                        className="shadow-2xs  hover:shadow-2xl hover:shadow-black"
+                                      />
                                       {Array.isArray(comment.totalHaha)
                                         ? comment.totalHaha.length > 0 && comment.totalHaha.length
                                         : comment.totalHaha > 0 && comment.totalHaha}
