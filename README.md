@@ -1,167 +1,113 @@
-# Job Quest Frontend
+<div align="center">
+  <img src="https://i.ibb.co.com/rKfNTZdb/screencapture-localhost-3000-2025-11-11-16-25-29.png" alt="JobQuest Banner" />
+</div>
 
-[![Frontend Repository](https://img.shields.io/badge/Frontend-GitHub-black)](https://github.com/mottasimsadi/job-quest-frontend)
-[![Backend Repository 1](https://img.shields.io/badge/Backend1-GitHub-blue)](https://github.com/SarfarazAkram17/Job-Quest-Backend)
-[![Backend Repository 2](https://img.shields.io/badge/Backend2-GitHub-green)](https://github.com/sowmitraguho/job-portal-backend)
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://job-quest-frontend-lemon.vercel.app/)
+<h1 align="center">🚀 JobQuest – Your Smart Job Hunting Companion</h1>
 
-Job Quest is a comprehensive job portal platform built with Next.js that connects job seekers with employers. The platform offers distinct dashboards for candidates, employers, and administrators, providing a tailored experience for each user type.
+<p align="center">
+  A modern job portal platform built with Next.js, TypeScript, and a powerful backend — connecting job seekers and employers with ease.
+</p>
 
-## Table of Contents
+<div align="center">
 
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Environment Variables](#environment-variables)
-- [Project Structure](#project-structure)
-- [User Roles](#user-roles)
-- [Available Scripts](#available-scripts)
-- [Deployment](#deployment)
+### 🛠 Tech Stack
 
-## Features
+![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-gray?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+![NextAuth](https://img.shields.io/badge/NextAuth-000?style=for-the-badge&logo=next.js&logoColor=white)
+![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/FramerMotion-black?style=for-the-badge&logo=framer&logoColor=white)
+![Lottie](https://img.shields.io/badge/Lottie-1A9FFF?style=for-the-badge&logo=lottie&logoColor=white)
 
-- **Multi-role Authentication System**: Separate dashboards for candidates, employers, and admins
-- **Job Management**: Create, browse, and apply for jobs with detailed descriptions
-- **User Profiles**: Comprehensive profile management for all user types
-- **Application Tracking**: Candidates can track their job applications
-- **Demo Login**: One-click demo login for immediate access as admin, candidate, or employer without account creation
-- **Responsive Design**: Mobile-friendly interface built with Tailwind CSS
-- **Dark Mode Support**: Theme switching capability
-- **Real-time Notifications**: Toast notifications for user actions
-- **SEO Optimized**: Built with Next.js for optimal performance and SEO
+</div>
 
-### Demo Login Feature
+---
 
-For quick testing and exploration of the platform, we've implemented a demo login feature on the login page. Users can immediately access the platform as:
+## 🔗 Live Demo  
+👉 **Demo Link:**https://jonquest.vercel.app/  
 
-- **Admin**: Full access to administration features
-- **Candidate**: Job seeker functionality to browse and apply for jobs
-- **Employer**: Employer functionality to post jobs and manage applications
 
-This feature eliminates the need to create accounts during initial exploration of the platform.
+---
 
-## Tech Stack
+## ✨ Key Features
 
-- **Frontend Framework**: [Next.js 15](https://nextjs.org/)
-- **Language**: TypeScript
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **State Management**: React Context API
-- **Data Fetching**: Axios with React Query
-- **Authentication**: NextAuth.js
-- **UI Components**: 
-  - Lucide React Icons
-  - Material UI
-  - React Icons
-- **Form Handling**: React Hook Form (implied)
-- **Animations**: Framer Motion
+### ✦ Role-Based Dashboard  
+Different functionalities for job seekers and employers(dashboard work is still in progress).
 
-## Architecture
+### ✦ Secure Authentication  
+JWT + NextAuth Google login for enhanced security.
 
-The application follows a component-based architecture with a clear separation of concerns:
+### ✦ Job Search & Application  
+Search jobs, view detailed listings, and apply directly.
 
-- **Pages**: Contain the main views and server-side logic
-- **Components**: Reusable UI elements
-- **Providers**: Context providers for global state management
-- **Lib**: Utility functions and API configurations
-- **Routes**: Role-based access control wrappers
-- **Types**: TypeScript type definitions
+### ✦ Filter-Based Job Search  
+Find relevant jobs quickly through advanced filtering.
 
-## Getting Started
+### ✦ Review System  
+Users can leave reviews and save jobs.
 
-### Prerequisites
+### ✦ Community Page  
+Users can:
+- Create posts  
+- React to posts (Love, Haha, Wow, etc.)  
+- Comment  
+- React to comments  
 
-- Node.js 18.x or later
-- npm, yarn, or pnpm package manager
-- Backend API (separate service)
+### ✦ Employer Features  
+Post new jobs, view applicants, and select candidates.
 
-### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/mottasimsadi/job-quest-frontend
-   cd job-quest-frontend
-   ```
+### ✦ Career Advice Page  
+Provides guidance for professional growth.
 
-2. Install dependencies:
-   ```bash
-   npm install
-   # or
-   yarn install
-   # or
-   pnpm install
-   ```
+---
 
-3. Set up environment variables (see [Environment Variables](#environment-variables))
+## 🛠️ Technologies Used
 
-4. Run the development server:
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   # or
-   pnpm dev
-   ```
+- **Next.js**
+- **TypeScript**
+- **Tailwind CSS**
+- **Node.js**
+- **Express.js**
+- **Mongoose**
+- **JWT Authentication**
+- **NextAuth**
+- **Axios**
+- **TanStack Query**
+- **Lottie**
+- **Framer Motion**
+- **ShadCN UI**
+- **Acernity UI**
+- **Lucide React Icons**
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+---
 
-### Environment Variables
+## 🧩 Challenges Faced
 
-Create a `.env.local` file in the root directory with the following variables:
+Building the **Community Page** was one of the biggest challenges — especially managing reactions and comment interaction smoothly.
 
-```env
-NEXT_PUBLIC_API_URL=https://your-backend-api-url.com
-```
+To ensure accurate reaction counts and swapping reactions (example: changing from “haha” ➝ “love”), we implemented:
 
-Replace `https://your-backend-api-url.com` with your actual backend API URL.
+- A **unique user ID array** for each reaction type  
+- Separate tracking for posts and comments  
+- Clean logic for reaction state updates  
 
-## Project Structure
+This ensured consistent and bug-free user experience.
 
-```
-src/
-├── app/                 # Next.js app router pages
-│   ├── (auth)/          # Authentication pages (login, signup)
-│   ├── api/             # API routes
-│   ├── dashboard/       # Dashboard pages for all roles
-│   ├── jobs/            # Job listing and detail pages
-│   └── ...
-├── components/          # Reusable components
-│   ├── dashboard/       # Role-specific dashboard components
-│   ├── ui/              # Generic UI components
-│   └── ...
-├── lib/                 # Utility functions and configurations
-├── providers/           # React context providers
-├── routes/              # Route protection components
-└── types/               # TypeScript type definitions
-```
+---
 
-## User Roles
+## 🚀 Future Improvements
 
-### Candidate
-- Browse and search for jobs
-- Apply to jobs
-- Track application status
-- Manage profile and resume
-- Save favorite jobs
+- **Real-time notifications** for community interactions using Socket.IO  
+- **Resume parsing** to auto-fill profile information from uploaded CVs  
+- **Video resume uploads** so users can display their skills visually  
 
-### Employer
-- Post new job listings
-- Manage company profile
-- Review job applications
-- View applicant details
+---
 
-### Admin
-- Manage users
-- Moderate job posts
-- Oversee community posts
-- View platform statistics
 
-## Available Scripts
-
-- `npm run dev` - Starts the development server
-- `npm run build` - Builds the application for production
-- `npm run start` - Starts the production server
-- `npm run lint` - Runs ESLint for code quality checks
 
