@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://i.ibb.co.com/rKfNTZdb/screencapture-localhost-3000-2025-11-11-16-25-29.png" alt="JobQuest Banner" />
+  <img src="https://i.ibb.co/rKfNTZdb/screencapture-localhost-3000-2025-11-11-16-25-29.png" alt="JobQuest Banner" />
 </div>
 
 <h1 align="center">🚀 JobQuest – Your Smart Job Hunting Companion</h1>
