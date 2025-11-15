@@ -1,13 +1,7 @@
-<table>
-  <tr>
-    <td><img src="https://i.ibb.co.com/rGqWXqVy/screencapture-localhost-3000-2025-11-11-16-25-29-1.png" alt="JobQuest Banner 1" width="300"/></td>
-    <td><img src="https://i.ibb.co.com/35FjsLwy/jobquest-banner-2-1.png" alt="JobQuest Banner 2" width="300"/></td>
-  </tr>
-  <tr>
-    <td><img src="https://i.ibb.co.com/JR1T0NDw/jobquest-banner-3-1.png" alt="JobQuest Banner 3" width="300"/></td>
-    <td><img src="https://i.ibb.co.com/ZtKZLtG/jobquest-banner4-1.png" alt="JobQuest Banner 4" width="300"/></td>
-  </tr>
-</table>
+<div align="center"> 
+<img src="https://i.ibb.co.com/rGqWXqVy/screencapture-localhost-3000-2025-11-11-16-25-29-1.png" alt="JobQuest Banner" width="600" /> 
+
+</div>
 
 
 <h1 align="center">🚀 JobQuest – Your Smart Job Hunting Companion</h1>
