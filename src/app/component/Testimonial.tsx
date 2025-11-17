@@ -47,11 +47,12 @@ export function AnimatedTestimonialsDemo() {
   const testimonials =
     data?.map((review) => ({
       quote: review.review,
-      name: review.name || "Anonymous User",
+      name: review.name ,
       designation: review.designation || "JobQuest Member",
       src:
-        review.image || "https://i.ibb.co.com/d06hvC97/icons-1294545-1280.png",
+        review.image || "https://i.ibb.co.com/1fvWXyL9/bc9fd4bd-de9b-4555-976c-8360576c6708.jpg",
     })) || defaultTestimonials;
+    console.log(testimonials)
 
   if (isLoading) {
     return (

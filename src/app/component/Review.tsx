@@ -31,7 +31,7 @@ export function ReviewSection() {
     designation: "",
     review: "",
   });
-  const defaultUserImage = "https://i.ibb.co/ZVFsg37/default-avatar.png";
+  const defaultUserImage = "https://i.ibb.co.com/1fvWXyL9/bc9fd4bd-de9b-4555-976c-8360576c6708.jpg";
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ✅ Mutation function to POST review
@@ -80,8 +80,9 @@ export function ReviewSection() {
       // userEmail: user?.email || defaultUserEmail,
       // userImage: user?.photoURL || defaultUserImage,
       userID: user?._id,
-      userName:user?.firstName,
+     
       role: user.role,
+      userName:formData.name,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user?.email || "user@gmail.com",
@@ -90,6 +91,7 @@ export function ReviewSection() {
       // createdAt: new Date().toISOString(),
       // status: "pending",
     };
+    console.log("this is review data",reviewData)
 
     await mutateAsync(reviewData);
   };

@@ -7,6 +7,7 @@ import { job } from "./types/job";
 import { AnimatedTestimonialsDemo } from "./component/Testimonial";
 import { ThreeDMarqueeDemo } from "./component/ThreeDMarqueeDemo";
 import { ReviewSection } from "./component/Review";
+import { WorldMapDemo } from "./component/CommunityCard";
 
 
 async function getLatestJobs(): Promise<job[]> {
@@ -74,6 +75,7 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      <WorldMapDemo></WorldMapDemo>
       <div className="my-20 lg:my-30">
         <h1 className="text-3xl mb-15 font-bold font-mono text-center px-6 md:text-4xl  text-primary-dark ">Trusted Remote-First Tech <span className="text-yellow-500">Companies</span> for <span className="text-yellow-500"> Developers</span> </h1>
         <ThreeDMarqueeDemo></ThreeDMarqueeDemo>
