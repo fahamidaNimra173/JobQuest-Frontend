@@ -4,9 +4,9 @@ import { motion } from "motion/react";
 
 export function WorldMapDemo() {
     return (
-        <div className="flex flex-col lg:flex-row-reverse  py-40 dark:bg-primary-dark bg-primary-dark w-full">
+        <div className="flex flex-col items-center px-10 justify-center gap-20 lg:flex-row-reverse  py-40 dark:bg-primary-dark bg-primary-dark w-full">
             <div className=" text-center">
-                <p className="font-bold text-xl md:text-4xl dark:text-white text-black">
+                <p className="font-bold text-xl md:text-4xl lg:text-6xl dark:text-white text-black">
                     Grow Together in the {" "}
                     <span className="text-yellow-400">
                         {"JobQuest Community".split("").map((word, idx) => (
