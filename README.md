@@ -1,13 +1,15 @@
-<div align="center">
-  <img src="https://i.ibb.co.com/rGqWXqVy/screencapture-localhost-3000-2025-11-11-16-25-29-1.png" alt="JobQuest Banner" width="1200" />
-</div>
+
+
 
 <h1 align="center">🚀 JobQuest – Your Smart Job Hunting Companion</h1>
 
 <p align="center">
-  A modern job portal platform built with Next.js, TypeScript, and a powerful backend — connecting job seekers and employers with ease.
+  A modern job portal platform built with Next.js, TypeScript, and a powerful backend — connecting job seekers and employers with ease. Users can search for jobs and view details such as location, work type (remote or onsite), salary, and company information, and apply directly. Employers can post job listings, and the platform includes a community page where users can share thoughts, ask questions, and react or comment on posts. Users can also leave reviews about the portal. We are still working on the role-based dashboard, which will provide different functionalities for job seekers and employers.
 </p>
+<div align="center"> 
+<img src="https://i.ibb.co.com/rGqWXqVy/screencapture-localhost-3000-2025-11-11-16-25-29-1.png" alt="JobQuest Banner" width="800" height="600" /> 
 
+</div>
 <div align="center">
 
 ### 🛠 Tech Stack
@@ -21,8 +23,13 @@
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
 ![NextAuth](https://img.shields.io/badge/NextAuth-000?style=for-the-badge&logo=next.js&logoColor=white)
 ![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
+![TanStack Query](https://img.shields.io/badge/TanStack_Query-FF4154?style=for-the-badge&logo=reactquery&logoColor=white)
 ![Framer Motion](https://img.shields.io/badge/FramerMotion-black?style=for-the-badge&logo=framer&logoColor=white)
 ![Lottie](https://img.shields.io/badge/Lottie-1A9FFF?style=for-the-badge&logo=lottie&logoColor=white)
+![ShadCN UI](https://img.shields.io/badge/ShadCN_UI-000000?style=for-the-badge&logo=ui&logoColor=white)
+![Aceternity UI](https://img.shields.io/badge/Aceternity_UI-4F46E5?style=for-the-badge&logo=sparkles&logoColor=white)
+![Lucide React](https://img.shields.io/badge/Lucide_React-9F7AEA?style=for-the-badge&logo=lucide&logoColor=white)
+
 
 </div>
 
@@ -65,33 +72,12 @@ Post new jobs, view applicants, and select candidates.
 ### ✦ Career Advice Page  
 Provides guidance for professional growth.
 
----
-
-## 🛠️ Technologies Used
-
-- **Next.js**
-- **TypeScript**
-- **Tailwind CSS**
-- **Node.js**
-- **Express.js**
-- **Mongoose**
-- **JWT Authentication**
-- **NextAuth**
-- **Axios**
-- **TanStack Query**
-- **Lottie**
-- **Framer Motion**
-- **ShadCN UI**
-- **Acernity UI**
-- **Lucide React Icons**
 
 ---
 
 ## 🧩 Challenges Faced
 
-Building the **Community Page** was one of the biggest challenges — especially managing reactions and comment interaction smoothly.
-
-To ensure accurate reaction counts and swapping reactions (example: changing from “haha” ➝ “love”), we implemented:
+Building the **Community Page** was one of the biggest challenges — especially managing reactions and comment interaction smoothly.To ensure accurate reaction counts and swapping reactions (example: changing from “haha” ➝ “love”), we implemented:
 
 - A **unique user ID array** for each reaction type  
 - Separate tracking for posts and comments  
